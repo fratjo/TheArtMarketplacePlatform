@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArtMarketplacePlatform.WebAPI", "TheArtMarketplacePlatform.WebAPI\TheArtMarketplacePlatform.WebAPI.csproj", "{6C5C442D-52E9-43FE-B49B-08856D2C8F69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArtMarketplacePlatform.BusinessLayer", "TheArtMarketplacePlatform.BusinessLayer\TheArtMarketplacePlatform.BusinessLayer.csproj", "{A2B0A7AF-EA33-4419-A674-FA813586DAB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArtMarketplacePlatform.DataAccessLayer", "TheArtMarketplacePlatform.DataAccessLayer\TheArtMarketplacePlatform.DataAccessLayer.csproj", "{5063239C-5BFF-4CD9-8603-44B1804B67EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArtMarketplacePlatform.Core", "TheArtMarketplacePlatform.Core\TheArtMarketplacePlatform.Core.csproj", "{171AFDBA-8ECA-4371-BC19-E216F390E267}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C5C442D-52E9-43FE-B49B-08856D2C8F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C5C442D-52E9-43FE-B49B-08856D2C8F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C5C442D-52E9-43FE-B49B-08856D2C8F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C5C442D-52E9-43FE-B49B-08856D2C8F69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2B0A7AF-EA33-4419-A674-FA813586DAB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2B0A7AF-EA33-4419-A674-FA813586DAB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2B0A7AF-EA33-4419-A674-FA813586DAB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2B0A7AF-EA33-4419-A674-FA813586DAB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5063239C-5BFF-4CD9-8603-44B1804B67EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5063239C-5BFF-4CD9-8603-44B1804B67EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5063239C-5BFF-4CD9-8603-44B1804B67EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5063239C-5BFF-4CD9-8603-44B1804B67EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{171AFDBA-8ECA-4371-BC19-E216F390E267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{171AFDBA-8ECA-4371-BC19-E216F390E267}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{171AFDBA-8ECA-4371-BC19-E216F390E267}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{171AFDBA-8ECA-4371-BC19-E216F390E267}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

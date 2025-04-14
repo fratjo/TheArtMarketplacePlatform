@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "m4gFM6UzCbWMPPI70ZItcNrGBp/fYV4p2A7d9cZfa1Y=",
+  "Source": "TheArtMarketplacePlatform.API",
+  "BasePath": "_content/TheArtMarketplacePlatform.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
