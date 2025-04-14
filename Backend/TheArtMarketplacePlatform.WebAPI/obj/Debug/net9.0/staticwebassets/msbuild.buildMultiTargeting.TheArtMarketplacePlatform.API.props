@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/TheArtMarketplacePlatform.API.props" />
+</Project>
