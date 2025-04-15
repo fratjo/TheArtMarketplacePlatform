@@ -1,0 +1,28 @@
+# Build
+bin/
+obj/
+
+# User-specific files (VS Code)
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+*.csproj.iml
+
+# Visual Studio files
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log

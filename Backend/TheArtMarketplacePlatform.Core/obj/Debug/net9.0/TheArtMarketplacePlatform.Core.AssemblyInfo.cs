@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TheArtMarketplacePlatform.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c31cdc07637ffa6e34c17ce8f1b50d7a4bdd1e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a889492a68c17eb808e176ab279535b8d76d76f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("TheArtMarketplacePlatform.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TheArtMarketplacePlatform.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
