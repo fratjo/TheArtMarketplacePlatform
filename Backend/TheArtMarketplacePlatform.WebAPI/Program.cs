@@ -1,10 +1,21 @@
+using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<TheArtMarketplacePlatform.DataAccessLayer.TheArtMarketplacePlatformDbContext>(options =>
+    options
+        .UseSqlServer(connectionString)
+        .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll));
 
-builder.Services.AddControllers();
+// Add services to the container.
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
