@@ -2,6 +2,11 @@
 bin/
 obj/
 
+*/**/bin
+*/**/obj
+
+*/**/*.cache
+
 # User-specific files (VS Code)
 .vscode/
 
