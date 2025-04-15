@@ -91,11 +91,6 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
             modelBuilder.Entity<DeliveryPartnerProfile>(entity =>
             {
                 entity.HasKey(d => d.UserId);
-
-                entity.HasMany(d => d.Orders)
-                    .WithOne(o => o.DeliveryPartner)
-                    .HasForeignKey(o => o.DeliveryPartnerId)
-                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Product entity configuration
@@ -154,7 +149,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.HasOne(pr => pr.Product)
                     .WithMany(p => p.ProductReviews)
                     .HasForeignKey(pr => pr.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(pr => pr.Customer)
                     .WithMany(c => c.ProductReviews)
@@ -172,7 +167,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.HasOne(o => o.DeliveryPartner)
                     .WithMany(d => d.Orders)
                     .HasForeignKey(o => o.DeliveryPartnerId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(o => o.Customer)
                     .WithMany(c => c.Orders)

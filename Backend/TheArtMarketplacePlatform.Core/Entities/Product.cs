@@ -50,7 +50,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Guid? CustomerId { get; set; }
         public string CustomerComment { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public Guid Rating { get; set; }
+        public int Rating { get; set; }
 
         // Artisan
         public string ArtisanResponse { get; set; } = string.Empty;
