@@ -53,7 +53,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ShippingAddress = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
+                    ShippingAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,6 +117,8 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeliveryPartnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeliveryPartnerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ShippingAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Pending"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
                 },
@@ -143,9 +145,9 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Rating = table.Column<int>(type: "int", nullable: false),
                     CustomerComment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    Rating = table.Column<int>(type: "int", nullable: false),
                     ArtisanResponse = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     ArtisanProfileUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -163,13 +165,13 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         name: "FK_ProductReviews_CustomerProfiles_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "CustomerProfiles",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_ProductReviews_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -199,6 +201,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ArtisanName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ProductName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ProductDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ProductPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
@@ -265,6 +268,18 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 name: "IX_Products_ArtisanId",
                 table: "Products",
                 column: "ArtisanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Username",
+                table: "Users",
+                column: "Username",
+                unique: true);
         }
 
         /// <inheritdoc />

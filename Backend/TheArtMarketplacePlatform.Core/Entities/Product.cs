@@ -16,7 +16,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public int QuantityLeft { get; set; } = 0;
         public ProductCategory Category { get; set; } = ProductCategory.Art;
         public ProductStatus Status { get; set; } = ProductStatus.OutOfStock;
-        public bool IsAvailable { get; set; } = true; // Used to hide product from the marketplace // Temporary soft delete
+        public bool IsAvailable { get; set; } = false; // Used to hide product from the marketplace // Temporary soft delete
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public ArtisanProfile Artisan { get; set; } = null!;
@@ -48,9 +48,9 @@ namespace TheArtMarketplacePlatform.Core.Entities
 
         // Customer 
         public Guid? CustomerId { get; set; }
+        public int Rating { get; set; }
         public string CustomerComment { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public int Rating { get; set; }
 
         // Artisan
         public string ArtisanResponse { get; set; } = string.Empty;

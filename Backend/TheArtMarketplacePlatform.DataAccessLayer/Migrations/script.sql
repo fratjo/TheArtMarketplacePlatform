@@ -31,7 +31,7 @@ CREATE TABLE [ArtisanProfiles] (
 
 CREATE TABLE [CustomerProfiles] (
     [UserId] uniqueidentifier NOT NULL,
-    [ShippingAddress] nvarchar(250) NOT NULL,
+    [ShippingAddress] nvarchar(256) NOT NULL,
     CONSTRAINT [PK_CustomerProfiles] PRIMARY KEY ([UserId]),
     CONSTRAINT [FK_CustomerProfiles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
@@ -62,6 +62,8 @@ CREATE TABLE [Orders] (
     [Id] uniqueidentifier NOT NULL,
     [DeliveryPartnerId] uniqueidentifier NULL,
     [CustomerId] uniqueidentifier NULL,
+    [DeliveryPartnerName] nvarchar(100) NOT NULL,
+    [ShippingAddress] nvarchar(256) NOT NULL,
     [Status] nvarchar(max) NOT NULL DEFAULT N'Pending',
     [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
     CONSTRAINT [PK_Orders] PRIMARY KEY ([Id]),
@@ -73,17 +75,17 @@ CREATE TABLE [ProductReviews] (
     [Id] uniqueidentifier NOT NULL,
     [ProductId] uniqueidentifier NULL,
     [CustomerId] uniqueidentifier NULL,
+    [Rating] int NOT NULL,
     [CustomerComment] nvarchar(500) NOT NULL,
     [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
-    [Rating] int NOT NULL,
     [ArtisanResponse] nvarchar(500) NOT NULL,
     [UpdatedAt] datetime2 NULL DEFAULT (GETDATE()),
     [ArtisanProfileUserId] uniqueidentifier NULL,
     CONSTRAINT [PK_ProductReviews] PRIMARY KEY ([Id]),
     CONSTRAINT [CK_ProductReview_Rating] CHECK (Rating >= 1 AND Rating <= 5),
     CONSTRAINT [FK_ProductReviews_ArtisanProfiles_ArtisanProfileUserId] FOREIGN KEY ([ArtisanProfileUserId]) REFERENCES [ArtisanProfiles] ([UserId]),
-    CONSTRAINT [FK_ProductReviews_CustomerProfiles_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [CustomerProfiles] ([UserId]) ON DELETE SET NULL,
-    CONSTRAINT [FK_ProductReviews_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id])
+    CONSTRAINT [FK_ProductReviews_CustomerProfiles_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [CustomerProfiles] ([UserId]),
+    CONSTRAINT [FK_ProductReviews_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id]) ON DELETE CASCADE
 );
 
 CREATE TABLE [DeliveryStatusUpdates] (
@@ -99,6 +101,7 @@ CREATE TABLE [OrderProducts] (
     [Id] uniqueidentifier NOT NULL,
     [OrderId] uniqueidentifier NOT NULL,
     [ProductId] uniqueidentifier NULL,
+    [ArtisanName] nvarchar(100) NOT NULL,
     [ProductName] nvarchar(100) NOT NULL,
     [ProductDescription] nvarchar(500) NOT NULL,
     [ProductPrice] decimal(10,2) NOT NULL,
@@ -126,8 +129,12 @@ CREATE INDEX [IX_ProductReviews_ProductId] ON [ProductReviews] ([ProductId]);
 
 CREATE INDEX [IX_Products_ArtisanId] ON [Products] ([ArtisanId]);
 
+CREATE UNIQUE INDEX [IX_Users_Email] ON [Users] ([Email]);
+
+CREATE UNIQUE INDEX [IX_Users_Username] ON [Users] ([Username]);
+
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250415220048_Init_DB', N'9.0.4');
+VALUES (N'20250416213200_Init_DB', N'9.0.4');
 
 COMMIT;
 GO

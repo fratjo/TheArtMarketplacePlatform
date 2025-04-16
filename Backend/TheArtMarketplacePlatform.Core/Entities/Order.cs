@@ -10,6 +10,8 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid? DeliveryPartnerId { get; set; }
         public Guid? CustomerId { get; set; }
+        public string DeliveryPartnerName { get; set; } = string.Empty;
+        public string ShippingAddress { get; set; } = string.Empty;
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -35,6 +37,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Guid? ProductId { get; set; }
 
         // Hard History
+        public string ArtisanName { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
         public string ProductDescription { get; set; } = string.Empty;
         public decimal ProductPrice { get; set; }

@@ -30,31 +30,16 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(u => u.Id);
-                entity.Property(u => u.Username).IsRequired().HasMaxLength(100);
-                entity.Property(u => u.Email)
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasAnnotation("RegularExpression", @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+                entity.Property(u => u.Username).IsRequired().HasMaxLength(100).HasAnnotation("RegularExpression", @"^[a-zA-Z0-9_]+$");
+                entity.HasIndex(u => u.Username).IsUnique();
+                entity.Property(u => u.Email).IsRequired().HasMaxLength(150).HasAnnotation("RegularExpression", @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+                entity.HasIndex(u => u.Email).IsUnique();
                 entity.Property(u => u.PasswordHash).IsRequired().HasMaxLength(256);
                 entity.Property(u => u.PasswordSalt).IsRequired().HasMaxLength(256);
                 entity.Property(u => u.Role).IsRequired().HasConversion<string>().HasDefaultValue(UserRole.Customer);
                 entity.Property(u => u.Status).IsRequired().HasConversion<string>().HasDefaultValue(UserStatus.Active);
-                entity.Property(u => u.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(u => u.CreatedAt).IsRequired().HasDefaultValueSql("GETDATE()");
 
-                entity.HasOne(u => u.ArtisanProfile)
-                    .WithOne(a => a.User)
-                    .HasForeignKey<ArtisanProfile>(a => a.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(u => u.CustomerProfile)
-                    .WithOne(c => c.User)
-                    .HasForeignKey<CustomerProfile>(c => c.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(u => u.DeliveryPartnerProfile)
-                    .WithOne(d => d.User)
-                    .HasForeignKey<DeliveryPartnerProfile>(d => d.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ArtisanProfile entity configuration
@@ -63,6 +48,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.HasKey(a => a.UserId);
                 entity.Property(a => a.Bio).IsRequired().HasMaxLength(500);
                 entity.Property(a => a.City).IsRequired().HasMaxLength(100);
+
+                entity.HasOne(a => a.User)
+                    .WithOne(u => u.ArtisanProfile)
+                    .HasForeignKey<ArtisanProfile>(a => a.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasMany(a => a.Products)
                     .WithOne(p => p.Artisan)
@@ -74,16 +64,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
             modelBuilder.Entity<CustomerProfile>(entity =>
             {
                 entity.HasKey(c => c.UserId);
-                entity.Property(c => c.ShippingAddress).IsRequired().HasMaxLength(250);
+                entity.Property(c => c.ShippingAddress).IsRequired().HasMaxLength(256);
 
-                entity.HasMany(c => c.Orders)
-                    .WithOne(o => o.Customer)
-                    .HasForeignKey(o => o.CustomerId)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasMany(c => c.ProductReviews)
-                    .WithOne(pr => pr.Customer)
-                    .HasForeignKey(pr => pr.CustomerId)
+                entity.HasOne(c => c.User)
+                    .WithOne(u => u.CustomerProfile)
+                    .HasForeignKey<CustomerProfile>(c => c.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -91,6 +76,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
             modelBuilder.Entity<DeliveryPartnerProfile>(entity =>
             {
                 entity.HasKey(d => d.UserId);
+
+                entity.HasOne(d => d.User)
+                    .WithOne(u => u.DeliveryPartnerProfile)
+                    .HasForeignKey<DeliveryPartnerProfile>(d => d.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Product entity configuration
@@ -119,16 +109,6 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                     .WithMany(a => a.Products)
                     .HasForeignKey(p => p.ArtisanId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(p => p.OrderProducts)
-                    .WithOne(op => op.Product)
-                    .HasForeignKey(op => op.ProductId)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasMany(p => p.ProductReviews)
-                    .WithOne(pr => pr.Product)
-                    .HasForeignKey(pr => pr.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ProductReview entity configuration
@@ -149,18 +129,20 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.HasOne(pr => pr.Product)
                     .WithMany(p => p.ProductReviews)
                     .HasForeignKey(pr => pr.ProductId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(pr => pr.Customer)
                     .WithMany(c => c.ProductReviews)
                     .HasForeignKey(pr => pr.CustomerId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             // Order entity configuration
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.HasKey(o => o.Id);
+                entity.Property(o => o.DeliveryPartnerName).IsRequired().HasMaxLength(100);
+                entity.Property(o => o.ShippingAddress).IsRequired().HasMaxLength(256);
                 entity.Property(o => o.Status).IsRequired().HasConversion<string>().HasDefaultValue(OrderStatus.Pending);
                 entity.Property(o => o.CreatedAt).HasDefaultValueSql("GETDATE()");
 
@@ -173,16 +155,6 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                     .WithMany(c => c.Orders)
                     .HasForeignKey(o => o.CustomerId)
                     .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasMany(o => o.OrderProducts)
-                    .WithOne(op => op.Order)
-                    .HasForeignKey(op => op.OrderId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(o => o.DeliveryStatusUpdates)
-                    .WithOne(dsu => dsu.Order)
-                    .HasForeignKey(dsu => dsu.OrderId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // OrderProduct entity configuration
@@ -191,6 +163,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.HasKey(op => op.Id);
 
                 entity.Property(op => op.OrderId).IsRequired();
+                entity.Property(op => op.ArtisanName).IsRequired().HasMaxLength(100);
                 entity.Property(op => op.ProductName).IsRequired().HasMaxLength(100);
                 entity.Property(op => op.ProductDescription).IsRequired().HasMaxLength(500);
                 entity.Property(op => op.ProductPrice).IsRequired().HasColumnType("decimal(10,2)");

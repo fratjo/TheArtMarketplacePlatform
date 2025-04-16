@@ -12,7 +12,7 @@ using TheArtMarketplacePlatform.DataAccessLayer;
 namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 {
     [DbContext(typeof(TheArtMarketplacePlatformDbContext))]
-    [Migration("20250415220048_Init_DB")]
+    [Migration("20250416213200_Init_DB")]
     partial class Init_DB
     {
         /// <inheritdoc />
@@ -52,8 +52,8 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("UserId");
 
@@ -114,6 +114,16 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Property<Guid?>("DeliveryPartnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("DeliveryPartnerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -134,6 +144,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ArtisanName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
@@ -321,9 +336,16 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasAnnotation("RegularExpression", "^[a-zA-Z0-9_]+$");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -427,12 +449,12 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.HasOne("TheArtMarketplacePlatform.Core.Entities.CustomerProfile", "Customer")
                         .WithMany("ProductReviews")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("TheArtMarketplacePlatform.Core.Entities.Product", "Product")
                         .WithMany("ProductReviews")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Customer");
 
