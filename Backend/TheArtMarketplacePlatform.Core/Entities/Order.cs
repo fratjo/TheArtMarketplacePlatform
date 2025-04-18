@@ -14,6 +14,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public string ShippingAddress { get; set; } = string.Empty;
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public DeliveryPartnerProfile? DeliveryPartner { get; set; }
         public CustomerProfile? Customer { get; set; } = null!;
@@ -36,7 +37,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Guid OrderId { get; set; }
         public Guid? ProductId { get; set; }
 
-        // Hard History
+        // Hard History // Prevent data loss or modification
         public string ArtisanName { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
         public string ProductDescription { get; set; } = string.Empty;

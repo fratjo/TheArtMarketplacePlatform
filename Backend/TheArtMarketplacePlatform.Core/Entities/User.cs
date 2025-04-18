@@ -12,9 +12,12 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string PasswordSalt { get; set; } = string.Empty;
-        public UserRole Role { get; set; } = UserRole.Customer;
         public UserStatus Status { get; set; } = UserStatus.Active;
+        public UserRole Role { get; set; } = UserRole.Customer;
+        public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime? DeletedAt { get; set; } = null;
 
         public ArtisanProfile? ArtisanProfile { get; set; }
         public CustomerProfile? CustomerProfile { get; set; }
@@ -41,6 +44,8 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Guid UserId { get; set; }
         public string Bio { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public User User { get; set; } = null!;
         public ICollection<Product> Products { get; set; } = null!;
@@ -51,6 +56,8 @@ namespace TheArtMarketplacePlatform.Core.Entities
     {
         public Guid UserId { get; set; }
         public string ShippingAddress { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public User User { get; set; } = null!;
         public ICollection<Order> Orders { get; set; } = null!;
@@ -60,6 +67,8 @@ namespace TheArtMarketplacePlatform.Core.Entities
     public class DeliveryPartnerProfile
     {
         public Guid UserId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public User User { get; set; } = null!;
         public ICollection<Order> Orders { get; set; } = null!;

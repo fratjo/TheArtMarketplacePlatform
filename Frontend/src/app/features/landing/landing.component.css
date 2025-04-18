@@ -1,0 +1,38 @@
+main {
+  height: calc(100vh - 64px);
+}
+
+#left {
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+#right {
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+#center {
+  height: 100%;
+  max-width: 450px;
+}
+
+a.btn {
+  color: #fff;
+  background-color: #d06e1d;
+}
+
+a.btn:hover {
+  background-color: #f88224;
+}
+
+p a {
+  color: #f88224;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}

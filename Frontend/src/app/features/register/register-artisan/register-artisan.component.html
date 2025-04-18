@@ -1,0 +1,186 @@
+<div class="d-flex flex-row" id="login">
+  <section
+    class="col"
+    id="left"
+    style="
+      background-image: url('register_artisan.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      height: 100%;
+    "
+  ></section>
+  <section
+    class="col d-flex flex-column justify-content-center align-items-center gap-3"
+    id="right"
+  >
+    <h1>Welcome Artisan</h1>
+
+    <p>Ready to share your oeuvre with the world ?</p>
+
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      class="w-100 gap-1 d-flex flex-column p-4"
+    >
+      <div>
+        <label for="username">Username: </label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              registerForm.get('username')?.invalid &&
+              registerForm.get('username')?.touched
+          }"
+        />
+        @if ( registerForm.get('username')?.touched) { @if (
+        registerForm.get('username')?.hasError('required')) {
+        <div class="text-danger">Username is required.</div>
+        } @if ( registerForm.get('username')?.hasError('usernameExists') ) {
+        <div class="text-danger">Username already exists.</div>
+        } }
+      </div>
+      <div>
+        <label for="email">Email: </label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              registerForm.get('email')?.invalid &&
+              registerForm.get('email')?.touched
+          }"
+        />
+        @if ( registerForm.get('email')?.touched ) { @if (
+        registerForm.get('email')?.hasError('required') ) {
+        <div class="text-danger">Email is required.</div>
+        } @if ( registerForm.get('email')?.hasError('email') ) {
+        <div class="text-danger">Invalid email format.</div>
+        } @if ( registerForm.get('email')?.hasError('emailExists') ) {
+        <div class="text-danger">Email already exists.</div>
+        } }
+      </div>
+      <div>
+        <label for="bio">Bio: </label>
+        <textarea
+          rows="3"
+          id="bio"
+          formControlName="bio"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              registerForm.get('bio')?.invalid &&
+              registerForm.get('bio')?.touched
+          }"
+        ></textarea>
+        @if ( registerForm.get('bio')?.touched &&
+        registerForm.get('bio')?.hasError('required') ) {
+        <div class="text-danger">Bio is required.</div>
+        }
+      </div>
+      <div>
+        <label for="city">City: </label>
+        <input
+          id="city"
+          type="text"
+          formControlName="city"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              registerForm.get('city')?.invalid &&
+              registerForm.get('city')?.touched
+          }"
+        />
+        @if ( registerForm.get('city')?.touched &&
+        registerForm.get('city')?.hasError('required') ) {
+        <div class="text-danger">City is required.</div>
+        }
+      </div>
+      <div id="passwords" class="d-flex flex-row gap-2">
+        <div class="col">
+          <label for="password">Password: </label>
+          <div class="input-group">
+            <input
+              id="password"
+              type="{{ showPassword ? 'text' : 'password' }}"
+              formControlName="password"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('password')?.invalid &&
+                  registerForm.get('password')?.touched
+              }"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary icon"
+              (click)="showPassword = !showPassword"
+            >
+              <i
+                class="{{ showPassword ? 'bi bi-eye-slash' : 'bi bi-eye' }}"
+              ></i>
+            </button>
+          </div>
+          @if ( registerForm.get('password')?.touched) { @if (
+          registerForm.get('password')?.hasError('minlength') ) {
+          <div class="text-danger">
+            Password must be at least 6 characters long.
+          </div>
+          } @if ( registerForm.get('password')?.hasError('required') ) {
+          <div class="text-danger">Password is required.</div>
+          } @if ( registerForm.get('password')?.hasError('pattern') ) {
+          <div class="text-danger">
+            Password must contain at least one uppercase letter, one lowercase
+            letter, one number, and one special character.
+          </div>
+          } @if ( registerForm.get('password')?.hasError('notMatch') ) {
+          <div class="text-danger">Passwords do not match.</div>
+          } }
+        </div>
+        <div class="col">
+          <label for="confirmPassword">Confirm Password: </label>
+          <div class="input-group">
+            <input
+              id="confirmPassword"
+              type="{{ showConfirmPassword ? 'text' : 'password' }}"
+              formControlName="confirmPassword"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('confirmPassword')?.invalid &&
+                  registerForm.get('confirmPassword')?.touched
+              }"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary icon"
+              (click)="showConfirmPassword = !showConfirmPassword"
+            >
+              <i
+                class="{{
+                  showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'
+                }}"
+              ></i>
+            </button>
+          </div>
+          @if ( registerForm.get('confirmPassword')?.touched) { @if (
+          registerForm.get('confirmPassword')?.hasError('required') ) {
+          <div class="text-danger">Password is required.</div>
+          } @if ( registerForm.errors?.['notMatch'] ) {
+          <div class="text-danger">Passwords do not match.</div>
+          } }
+        </div>
+      </div>
+
+      <button class="btn mt-2" type="submit" [disabled]="registerForm.invalid">
+        Register and share your work
+      </button>
+    </form>
+
+    <!-- <p>Don't have an account ? <a [routerLink]="['/register']">Register</a></p> -->
+  </section>
+</div>

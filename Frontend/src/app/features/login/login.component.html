@@ -1,0 +1,70 @@
+<div class="d-flex flex-row" id="login">
+  <section
+    class="col d-flex flex-column justify-content-center align-items-center gap-3"
+    id="left"
+  >
+    <h1>Welcome Back</h1>
+
+    <p>Please enter your credentials.</p>
+
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="w-50 gap-3 d-flex flex-column"
+    >
+      <div>
+        <label for="email">Email: </label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+          }"
+        />
+        @if ( loginForm.get('email')?.touched ) { @if (
+        loginForm.get('email')?.hasError('required') ) {
+        <div class="text-danger">Email is required.</div>
+        } @if ( loginForm.get('email')?.hasError('email') ) {
+        <div class="text-danger">Invalid email format.</div>
+        }}
+      </div>
+      <div>
+        <label for="password">Password: </label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              loginForm.get('password')?.invalid &&
+              loginForm.get('password')?.touched
+          }"
+        />
+        @if ( loginForm.get('password')?.touched &&
+        loginForm.get('password')?.hasError('required') ) {
+        <div class="text-danger">Password is required.</div>
+        }
+      </div>
+
+      <button class="btn" type="submit" [disabled]="loginForm.invalid">
+        Sign In
+      </button>
+    </form>
+
+    <p>Don't have an account ? <a [routerLink]="['/register']">Register</a></p>
+  </section>
+  <section
+    class="col"
+    id="right"
+    style="
+      background-image: url('login_joconde.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      height: 100%;
+    "
+  ></section>
+</div>

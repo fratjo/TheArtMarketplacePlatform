@@ -1,0 +1,11 @@
+a {
+  padding: 5px 20px;
+}
+
+a:hover {
+  background-color: #d1d1d1;
+}
+
+nav {
+  padding: 10px;
+}

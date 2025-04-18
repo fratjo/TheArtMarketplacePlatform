@@ -37,6 +37,16 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.HasKey("UserId");
 
                     b.ToTable("ArtisanProfiles");
@@ -47,10 +57,20 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("UserId");
 
@@ -61,6 +81,16 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("UserId");
 
@@ -127,6 +157,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("Pending");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -189,16 +224,16 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Property<Guid>("ArtisanId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Art");
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -209,6 +244,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -229,14 +269,47 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("OutOfStock");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ArtisanId");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products", t =>
                         {
                             t.HasCheckConstraint("CK_Product_QuantityLeft", "QuantityLeft >= 0");
                         });
+                });
+
+            modelBuilder.Entity("TheArtMarketplacePlatform.Core.Entities.ProductCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("TheArtMarketplacePlatform.Core.Entities.ProductReview", b =>
@@ -266,7 +339,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ProductId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Rating")
@@ -302,11 +375,19 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasAnnotation("RegularExpression", "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("IsDeleted")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(1)")
+                        .HasDefaultValue("0");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -330,11 +411,15 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("Active");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasAnnotation("RegularExpression", "^[a-zA-Z0-9_]+$");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -434,7 +519,14 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TheArtMarketplacePlatform.Core.Entities.ProductCategory", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Artisan");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("TheArtMarketplacePlatform.Core.Entities.ProductReview", b =>
@@ -446,12 +538,13 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.HasOne("TheArtMarketplacePlatform.Core.Entities.CustomerProfile", "Customer")
                         .WithMany("ProductReviews")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("TheArtMarketplacePlatform.Core.Entities.Product", "Product")
                         .WithMany("ProductReviews")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Customer");
 
@@ -489,6 +582,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     b.Navigation("OrderProducts");
 
                     b.Navigation("ProductReviews");
+                });
+
+            modelBuilder.Entity("TheArtMarketplacePlatform.Core.Entities.ProductCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("TheArtMarketplacePlatform.Core.Entities.User", b =>

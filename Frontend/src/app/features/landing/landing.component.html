@@ -1,0 +1,53 @@
+<div class="d-flex flex-column">
+  <main class="d-flex flex-row">
+    <section
+      class="col"
+      style="background-image: url('hero_artisan.png')"
+      id="left"
+    ></section>
+    <section
+      class="col d-flex flex-column p-2 align-items-center justify-content-center"
+      id="center"
+    >
+      <div>
+        <h1 class="text-center">The Art Marketplace</h1>
+        <p class="text-center">
+          The Art Marketplace is a platform that connects artisans and delivery
+          people to provide a seamless experience for both parties.
+        </p>
+
+        <p class="text-center">
+          Already have an account ? <a [routerLink]="['/login']">Login</a>
+        </p>
+      </div>
+
+      <div class="d-flex flex-column align-items-center w-100 p-2 gap-3">
+        <a
+          class="btn w-100"
+          id="become_customer"
+          [routerLink]="['/register-customer']"
+        >
+          Become a Customer
+        </a>
+        <a
+          class="btn w-100"
+          id="become_artisan"
+          [routerLink]="['/register-artisan']"
+          >Become an Artisan</a
+        >
+        <a
+          class="btn w-100"
+          id="become_deliverypartner"
+          [routerLink]="['/register-delivery-partner']"
+        >
+          Become a Delivery Partner
+        </a>
+      </div>
+    </section>
+    <section
+      class="col"
+      style="background-image: url('hero_delivery.png')"
+      id="right"
+    ></section>
+  </main>
+</div>

@@ -14,25 +14,28 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int QuantityLeft { get; set; } = 0;
-        public ProductCategory Category { get; set; } = ProductCategory.Art;
+        public Guid? CategoryId { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.OutOfStock;
-        public bool IsAvailable { get; set; } = false; // Used to hide product from the marketplace // Temporary soft delete
+        public bool IsAvailable { get; set; } = true;
+        public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime? DeletedAt { get; set; } = null;
 
         public ArtisanProfile Artisan { get; set; } = null!;
         public ICollection<OrderProduct> OrderProducts { get; set; } = null!;
         public ICollection<ProductReview> ProductReviews { get; set; } = null!;
+        public ProductCategory? Category { get; set; }
     }
 
-    public enum ProductCategory
+    public class ProductCategory
     {
-        Art,
-        Craft,
-        Design,
-        Photography,
-        Sculpture,
-        Painting,
-        DigitalArt
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Name { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        public ICollection<Product> Products { get; set; } = null!;
     }
 
     public enum ProductStatus
@@ -44,16 +47,12 @@ namespace TheArtMarketplacePlatform.Core.Entities
     public class ProductReview
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid? ProductId { get; set; }
-
-        // Customer 
+        public Guid ProductId { get; set; }
         public Guid? CustomerId { get; set; }
         public int Rating { get; set; }
         public string CustomerComment { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        // Artisan
         public string ArtisanResponse { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
 
         public Product Product { get; set; } = null!;

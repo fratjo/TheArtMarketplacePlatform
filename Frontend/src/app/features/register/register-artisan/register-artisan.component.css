@@ -1,0 +1,35 @@
+#login {
+  height: calc(100vh - 64px);
+}
+
+p a {
+  color: #f88224;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+button.btn {
+  color: #fff;
+  background-color: #d06e1d;
+}
+
+button.btn:hover {
+  background-color: #f88224;
+}
+
+button.icon {
+  color: #000;
+  background-color: #fff;
+}
+
+button.icon:hover {
+  color: #000;
+  background-color: #fff;
+}
+
+#left {
+  height: 100%;
+}

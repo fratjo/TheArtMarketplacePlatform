@@ -10,4 +10,9 @@
       <ProjectReference Include="..\TheArtMarketplacePlatform.Core\TheArtMarketplacePlatform.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
+    </ItemGroup>
+
 </Project>
