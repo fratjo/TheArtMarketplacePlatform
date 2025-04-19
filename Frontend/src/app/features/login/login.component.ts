@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -18,7 +18,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class LoginComponent {
   public loginForm!: FormGroup;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.loginForm = new FormGroup({
       email: new FormControl('', {
         validators: [Validators.required, Validators.email],
@@ -37,7 +37,8 @@ export class LoginComponent {
       this.authService.login(loginData).subscribe({
         next: (response) => {
           console.log('Login successful', response);
-          // Handle successful login, e.g., redirect to dashboard
+          // save token
+          this.authService.saveToken(response.token);
         },
         error: (error) => {
           console.error('Login failed', error);
@@ -45,7 +46,9 @@ export class LoginComponent {
         },
         complete: () => {
           console.log('Login request completed');
-          // Optionally, you can reset the form or perform other actions
+
+          // redirtect to dashboard
+          window.location.href = '/dashboard';
         },
       });
     } else {

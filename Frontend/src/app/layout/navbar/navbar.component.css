@@ -6,6 +6,10 @@ a:hover {
   background-color: #d1d1d1;
 }
 
+#title:hover {
+  background-color: transparent;
+}
+
 nav {
   padding: 10px;
 }

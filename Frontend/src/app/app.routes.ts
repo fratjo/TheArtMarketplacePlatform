@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
+import { LoggedInGuard } from './core/guards/logged-in.guard';
 
 export const routes: Routes = [
   {
     path: '',
+    canActivate: [LoggedInGuard],
     loadComponent: () =>
       import('./features/landing/landing.component').then(
         (c) => c.LandingComponent
@@ -10,29 +13,55 @@ export const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate: [LoggedInGuard],
     loadComponent: () =>
       import('./features/login/login.component').then((c) => c.LoginComponent),
   },
   {
-    path: 'register-artisan',
+    path: 'register',
+    canActivate: [LoggedInGuard],
     loadComponent: () =>
-      import(
-        './features/register/register-artisan/register-artisan.component'
-      ).then((c) => c.RegisterArtisanComponent),
+      import('./features/register/register.component').then(
+        (c) => c.RegisterComponent
+      ),
   },
   {
-    path: 'register-customer',
+    path: 'dashboard',
     loadComponent: () =>
-      import(
-        './features/register/register-customer/register-customer.component'
-      ).then((c) => c.RegisterCustomerComponent),
+      import('./features/dashboard/dashboard.component').then(
+        (c) => c.DashboardComponent
+      ),
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'artisan',
+        loadComponent: () =>
+          import(
+            './features/artisan/artisan-dashboard/artisan-dashboard.component'
+          ).then((c) => c.ArtisanDashboardComponent),
+      },
+      {
+        path: 'customer',
+        loadComponent: () =>
+          import(
+            './features/customer/customer-dashboard/customer-dashboard.component'
+          ).then((c) => c.CustomerDashboardComponent),
+      },
+      {
+        path: 'delivery-partner',
+        loadComponent: () =>
+          import(
+            './features/delivery-partner/delivery-partner-dashboard/delivery-partner-dashboard.component'
+          ).then((c) => c.DeliveryPartnerDashboardComponent),
+      },
+    ],
   },
   {
-    path: 'register-delivery-partner',
+    path: 'unauthorized',
     loadComponent: () =>
-      import(
-        './features/register/register-delivery-partner/register-delivery-partner.component'
-      ).then((c) => c.RegisterDeliveryPartnerComponent),
+      import('./features/unauthorized/unauthorized.component').then(
+        (c) => c.UnauthorizedComponent
+      ),
   },
   {
     path: '**',
