@@ -8,6 +8,7 @@ import {
 import { BehaviorSubject, filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { AsyncPipe } from '@angular/common';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-navbar',
@@ -20,7 +21,11 @@ export class NavbarComponent implements OnInit {
   currentUrl: string = '';
   isLoggedIn$!: BehaviorSubject<boolean>;
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private toastService: ToastService
+  ) {
     this.isLoggedIn$ = this.authService.isLoggedIn$;
   }
 
@@ -35,5 +40,10 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/']);
+    this.toastService.show({
+      text: 'Logout successful',
+      classname: 'bg-success text-light',
+      delay: 2000,
+    });
   }
 }

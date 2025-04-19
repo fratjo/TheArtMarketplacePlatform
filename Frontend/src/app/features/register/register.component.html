@@ -6,7 +6,7 @@
     style="background-size: cover; background-repeat: no-repeat; height: 100%"
   ></section>
   <section
-    class="col d-flex flex-column align-items-center gap-2 overflow-scroll overflow-x-hidden"
+    class="col d-flex flex-column align-items-center gap-2 overflow-scroll overflow-x-hidden h-100"
     id="right"
   >
     <h1 class="mt-5">
@@ -29,6 +29,9 @@
         id="role"
         class="form-select w-50 align-self-center"
         (change)="onRoleChange($event)"
+        [ngClass]="{
+          'is-invalid': selectedRole === 'none'
+        }"
       >
         <option value="none" disabled selected>Select your role</option>
         <option value="artisan">Artisan</option>
@@ -40,9 +43,9 @@
     <form
       [formGroup]="registerForm"
       (ngSubmit)="onSubmit($event)"
-      class="w-100 gap-1 d-flex flex-column px-4 py-2"
+      class="w-100 gap-1 d-flex flex-column px-4 py-2 flex-grow-1 h-100"
     >
-      <div>
+      <div style="min-height: 82px">
         <label for="username">Username: </label>
         <input
           id="username"
@@ -63,7 +66,7 @@
         <div class="text-danger">Username already exists.</div>
         } }
       </div>
-      <div>
+      <div style="min-height: 82px">
         <label for="email">Email: </label>
         <input
           id="email"
@@ -87,7 +90,7 @@
         } }
       </div>
       <div id="passwords" class="d-flex flex-row gap-2">
-        <div class="col">
+        <div class="col" style="min-height: 82px">
           <label for="password">Password: </label>
           <div class="input-group">
             <input
@@ -116,32 +119,38 @@
           @if ( passwordFocus) { @if (
           registerForm.get('password')?.hasError('missingLowercase') ) {
           <div class="text-danger">
-            <i class="bi bi-x-lg"></i> Lowercase character
+            <i class="bi bi-x-lg"></i> Lowercase character [a-z]
           </div>
           } @else {
           <div class="text-success">
-            <i class="bi bi-check-lg"></i> Lowercase character
+            <i class="bi bi-check-lg"></i> Lowercase character [a-z]
           </div>
           } @if ( registerForm.get('password')?.hasError('missingUppercase') ) {
           <div class="text-danger">
-            <i class="bi bi-x-lg"></i> Uppercase character
+            <i class="bi bi-x-lg"></i> Uppercase character [A-Z]
           </div>
           } @else {
           <div class="text-success">
-            <i class="bi bi-check-lg"></i> Uppercase character
+            <i class="bi bi-check-lg"></i> Uppercase character [A-Z]
           </div>
           } @if ( registerForm.get('password')?.hasError('missingNumber') ) {
-          <div class="text-danger"><i class="bi bi-x-lg"></i> Number</div>
+          <div class="text-danger"><i class="bi bi-x-lg"></i> Number [0-9]</div>
           } @else {
-          <div class="text-success"><i class="bi bi-check-lg"></i> Number</div>
+          <div class="text-success">
+            <i class="bi bi-check-lg"></i> Number [0-9]
+          </div>
           } @if (
           registerForm.get('password')?.hasError('missingSpecialCharacter') ) {
           <div class="text-danger">
-            <i class="bi bi-x-lg"></i> Special character
+            <i class="bi bi-x-lg"></i> Special character [{{
+              specialCharacters
+            }}]
           </div>
           } @else {
           <div class="text-success">
-            <i class="bi bi-check-lg"></i> Special character
+            <i class="bi bi-check-lg"></i> Special character [{{
+              specialCharacters
+            }}]
           </div>
           } @if ( registerForm.get('password')?.hasError('tooShort') ) {
           <div class="text-danger">
@@ -162,7 +171,7 @@
           <div class="text-danger">Invalid password format.</div>
           }}
         </div>
-        <div class="col">
+        <div class="col" style="min-height: 82px">
           <label for="confirmPassword">Confirm Password: </label>
           <div class="input-group">
             <input
@@ -198,7 +207,7 @@
       </div>
       @if ( selectedRole === 'artisan' ) {
 
-      <div>
+      <div style="min-height: 120px">
         <label for="bio">Bio: </label>
         <textarea
           rows="3"
@@ -216,7 +225,7 @@
         <div class="text-danger">Bio is required.</div>
         }
       </div>
-      <div>
+      <div style="min-height: 82px">
         <label for="city">City: </label>
         <input
           id="city"
@@ -235,7 +244,7 @@
         }
       </div>
       } @if ( selectedRole === 'customer' ) {
-      <div>
+      <div style="min-height: 82px">
         <label for="shippingaddress">Address: </label>
         <input
           id="shippingaddress"
@@ -255,14 +264,23 @@
       </div>
       } @if ( selectedRole === 'delivery_partner' ) {}
 
-      <button class="btn mt-2" type="submit" [disabled]="registerForm.invalid">
-        Register @if ( selectedRole === 'artisan' ) { and share your work }
-        @else if ( selectedRole === 'customer' ) { and start shopping } @else if
-        ( selectedRole === 'delivery_partner' ) { and start delivering }
-      </button>
-      <p class="text-center mt-1">
-        Already have an account ? <a [routerLink]="['/login']">Login</a>
-      </p>
+      <div
+        class="d-flex flex-column gap-2 justify-self-end w-100 flex-grow-1 h-100 justify-content-end"
+      >
+        <button
+          class="btn mt-2"
+          type="submit"
+          [disabled]="registerForm.invalid"
+        >
+          Register @if ( selectedRole === 'artisan' ) { and share your work }
+          @else if ( selectedRole === 'customer' && true) { and start shopping }
+          @else if ( selectedRole === 'delivery_partner' ) { and start
+          delivering }
+        </button>
+        <p class="text-center mt-1">
+          Already have an account ? <a [routerLink]="['/login']">Login</a>
+        </p>
+      </div>
     </form>
   </section>
 </div>

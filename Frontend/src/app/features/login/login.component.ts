@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,11 @@ export class LoginComponent {
   public loginForm!: FormGroup;
   public showPassword: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastService: ToastService
+  ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', {
         validators: [Validators.required, Validators.email],
@@ -44,10 +49,14 @@ export class LoginComponent {
         error: (error) => {
           console.error('Login failed', error);
           // Handle login error, e.g., show error message
+          this.toastService.show({
+            text: `Login failed:  ${error.error.title}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
         },
         complete: () => {
           console.log('Login request completed');
-
           // redirtect to dashboard
           window.location.href = '/dashboard';
         },

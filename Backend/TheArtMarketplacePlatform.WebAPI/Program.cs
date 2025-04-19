@@ -8,6 +8,7 @@ using TheArtMarketplacePlatform.BusinessLayer.Services;
 using TheArtMarketplacePlatform.BusinessLayer.Validators;
 using TheArtMarketplacePlatform.Core.Interfaces;
 using TheArtMarketplacePlatform.DataAccessLayer.Repositories;
+using TheArtMarketplacePlatform.WebAPI.ExceptionHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +25,18 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
+// Validators
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-
 builder.Services
     .AddValidatorsFromAssemblyContaining<RegisterArtisanValidator>()
     .AddValidatorsFromAssemblyContaining<RegisterCustomerValidator>()
     .AddValidatorsFromAssemblyContaining<RegisterDeliveryPartnerValidator>();
+
+// Handlers
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<InvalidCredentialsExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -69,6 +76,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 app.UseHttpsRedirection();
 

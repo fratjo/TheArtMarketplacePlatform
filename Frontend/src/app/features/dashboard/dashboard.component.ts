@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
       case 'customer':
         this.router.navigate(['/dashboard/customer']);
         break;
-      case 'delivery_partner':
+      case 'deliverypartner':
         this.router.navigate(['/dashboard/delivery-partner']);
         break;
       default:

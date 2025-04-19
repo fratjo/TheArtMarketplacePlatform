@@ -22,8 +22,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .MinimumLength(6)
-                .WithMessage("Password must be at least 6 characters long.");
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")
+                .WithMessage("Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
 
             RuleFor(x => x.ConfirmPassword)
                 .Equal(x => x.Password)
@@ -55,8 +55,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .MinimumLength(6)
-                .WithMessage("Password must be at least 6 characters long.");
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")
+                .WithMessage("Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
 
             RuleFor(x => x.ConfirmPassword)
                 .Equal(x => x.Password)
@@ -82,8 +82,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .MinimumLength(6)
-                .WithMessage("Password must be at least 6 characters long.");
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")
+                .WithMessage("Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
 
             RuleFor(x => x.ConfirmPassword)
                 .Equal(x => x.Password)

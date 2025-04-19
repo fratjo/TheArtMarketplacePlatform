@@ -7,21 +7,21 @@
     ></section>
     <section
       class="col d-flex flex-column p-2 align-items-center justify-content-center"
+      style="min-width: 500px"
       id="center"
     >
-      <div>
+      <div class="d-flex flex-column align-items-center w-100 p-2 gap-3">
         <h1 class="text-center">The Art Marketplace</h1>
         <p class="text-center">
           The Art Marketplace is a platform that connects artisans and delivery
           people to provide a seamless experience for both parties.
         </p>
+      </div>
 
+      <div class="d-flex flex-column align-items-center w-100 p-2">
         <p class="text-center">
           Already have an account ? <a [routerLink]="['/login']">Login</a>
         </p>
-      </div>
-
-      <div class="d-flex flex-column align-items-center w-100 p-2 gap-3">
         <a class="btn w-100" id="become_artisan" [routerLink]="['/register']"
           >Register to The Art Marketplace</a
         >

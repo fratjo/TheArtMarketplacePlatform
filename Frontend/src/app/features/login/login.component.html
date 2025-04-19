@@ -10,9 +10,9 @@
     <form
       [formGroup]="loginForm"
       (ngSubmit)="onSubmit()"
-      class="w-50 gap-3 d-flex flex-column"
+      class="w-50 gap-1 d-flex flex-column"
     >
-      <div>
+      <div style="min-height: 82px">
         <label for="email">Email: </label>
         <input
           id="email"
@@ -31,7 +31,7 @@
         <div class="text-danger">Invalid email format.</div>
         }}
       </div>
-      <div>
+      <div style="min-height: 82px">
         <label for="password">Password: </label>
         <div class="input-group">
           <input

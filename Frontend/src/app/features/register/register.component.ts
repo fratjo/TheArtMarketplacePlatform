@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   AbstractControl,
-  AsyncValidatorFn,
   FormControl,
   FormGroup,
   FormsModule,
@@ -10,7 +9,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import {
   hasLowercase,
@@ -19,6 +17,7 @@ import {
   hasSpecialCharacter,
   hasUppercase,
 } from './password.validators';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -32,8 +31,12 @@ export class RegisterComponent {
   public showPassword: boolean = false;
   public showConfirmPassword: boolean = false;
   public selectedRole: string = 'none';
+  public specialCharacters: string = '@$!%*?&';
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private toastService: ToastService
+  ) {
     this.registerForm = new FormGroup(
       {
         username: new FormControl('', {
@@ -57,7 +60,7 @@ export class RegisterComponent {
         }),
         confirmPassword: new FormControl('', {
           validators: [Validators.required],
-          updateOn: 'blur',
+          updateOn: 'change',
         }),
         bio: new FormControl('', {
           updateOn: 'blur',
@@ -135,11 +138,16 @@ export class RegisterComponent {
       },
       error: (error) => {
         console.error('Registration failed', error);
+        this.toastService.show({
+          text: `Register failed:  ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
       },
       complete: () => {
         console.log('Registration request completed');
-        // redirect to user dashboard
-        // this.router.navigate(['/user-dashboard']);
+        // redirtect to dashboard
+        window.location.href = '/dashboard';
       },
     });
   }
@@ -154,10 +162,16 @@ export class RegisterComponent {
       error: (error) => {
         console.error('Registration failed', error);
         // Handle registration error, e.g., show error message
+        this.toastService.show({
+          text: `Register failed:  ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
       },
       complete: () => {
         console.log('Registration request completed');
-        // Optionally, you can reset the form or perform other actions
+        // redirtect to dashboard
+        window.location.href = '/dashboard';
       },
     });
   }
@@ -173,10 +187,16 @@ export class RegisterComponent {
       error: (error) => {
         console.error('Registration failed', error);
         // Handle registration error, e.g., show error message
+        this.toastService.show({
+          text: `Register failed:  ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
       },
       complete: () => {
         console.log('Registration request completed');
-        // Optionally, you can reset the form or perform other actions
+        // redirtect to dashboard
+        window.location.href = '/dashboard';
       },
     });
   }

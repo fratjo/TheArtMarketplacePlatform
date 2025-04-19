@@ -29,3 +29,8 @@ button.icon:hover {
   color: #000;
   background-color: #fff;
 }
+
+.text-danger,
+.text-success {
+  font-size: 0.8rem;
+}
