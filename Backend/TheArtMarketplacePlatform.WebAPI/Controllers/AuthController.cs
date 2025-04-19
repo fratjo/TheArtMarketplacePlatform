@@ -13,20 +13,20 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
     [Route("api/auth")]
     public class AuthController(IAuthService _authService) : ControllerBase
     {
-        // api/auth/email/{email}
-        [HttpGet("email/{email}")]
+        // api/auth/email
+        [HttpGet("email")]
         public async Task<IActionResult> CheckEmailExists([FromQuery] string email)
         {
             var exists = await _authService.CheckEmailExistsAsync(email);
-            return exists ? Ok(new { Exists = true }) : NotFound(new { Exists = false });
+            return Ok(new { Exists = exists });
         }
 
-        // api/auth/username/{username}
-        [HttpGet("username/{username}")]
+        // api/auth/username
+        [HttpGet("username")]
         public async Task<IActionResult> CheckUsernameExists([FromQuery] string username)
         {
             var exists = await _authService.CheckUsernameExistsAsync(username);
-            return exists ? Ok(new { Exists = true }) : NotFound(new { Exists = false });
+            return Ok(new { Exists = exists });
         }
 
         // api/auth/register/artisan

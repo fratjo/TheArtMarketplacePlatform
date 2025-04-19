@@ -33,3 +33,8 @@ button.icon:hover {
 #left {
   height: 100%;
 }
+
+.text-danger,
+.text-success {
+  font-size: 0.8rem;
+}

@@ -17,16 +17,17 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class LoginComponent {
   public loginForm!: FormGroup;
+  public showPassword: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {
     this.loginForm = new FormGroup({
       email: new FormControl('', {
         validators: [Validators.required, Validators.email],
-        updateOn: 'blur',
+        updateOn: 'change',
       }),
       password: new FormControl('', {
         validators: [Validators.required],
-        updateOn: 'blur',
+        updateOn: 'change',
       }),
     });
   }

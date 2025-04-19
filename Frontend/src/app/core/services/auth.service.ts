@@ -3,11 +3,12 @@ import { Injectable } from '@angular/core';
 import {
   ArtisanRegistration,
   AuthResponse,
+  CheckExist,
   CustomerRegistration,
   DeliveryPartnerRegistration,
   Login,
 } from '../models/auth.interface';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -90,13 +91,19 @@ export class AuthService {
   }
 
   checkIfUsernameExist(username: string) {
-    return this.http.get<boolean>(`${this.apiUrl}/username`, {
-      params: { username },
-    });
+    return this.http
+      .get<CheckExist>(`${this.apiUrl}/username`, {
+        params: { username },
+      })
+      .pipe(
+        tap((response) => {
+          console.log('Username existence check response:', response);
+        })
+      );
   }
 
   checkIfEmailExist(email: string) {
-    return this.http.get<boolean>(`${this.apiUrl}/email`, {
+    return this.http.get<CheckExist>(`${this.apiUrl}/email`, {
       params: { email },
     });
   }

@@ -19,3 +19,13 @@ button.btn {
 button.btn:hover {
   background-color: #f88224;
 }
+
+button.icon {
+  color: #000;
+  background-color: #fff;
+}
+
+button.icon:hover {
+  color: #000;
+  background-color: #fff;
+}

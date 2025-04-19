@@ -30,3 +30,7 @@ export interface DeliveryPartnerRegistration {
 export interface AuthResponse {
   token: string;
 }
+
+export interface CheckExist {
+  exists: boolean;
+}

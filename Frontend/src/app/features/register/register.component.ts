@@ -12,7 +12,13 @@ import {
 import { RouterLink } from '@angular/router';
 import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
-import { NgModule } from '@angular/core';
+import {
+  hasLowercase,
+  hasMinimumLength,
+  hasNumber,
+  hasSpecialCharacter,
+  hasUppercase,
+} from './password.validators';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +28,7 @@ import { NgModule } from '@angular/core';
 })
 export class RegisterComponent {
   public registerForm!: FormGroup;
+  public passwordFocus: boolean = false;
   public showPassword: boolean = false;
   public showConfirmPassword: boolean = false;
   public selectedRole: string = 'none';
@@ -31,21 +38,22 @@ export class RegisterComponent {
       {
         username: new FormControl('', {
           validators: [Validators.required],
-          asyncValidators: [this.checkIfUsernameExist()],
           updateOn: 'blur',
         }),
         email: new FormControl('', {
           validators: [Validators.required, Validators.email],
-          asyncValidators: [this.checkIfEmailExist()],
           updateOn: 'blur',
         }),
         password: new FormControl('', {
           validators: [
             Validators.required,
-            Validators.minLength(6),
-            Validators.pattern(/(?=.*[0-9])(?=.*[a-zA-Z])/),
+            hasLowercase,
+            hasUppercase,
+            hasNumber,
+            hasSpecialCharacter,
+            hasMinimumLength,
           ],
-          updateOn: 'blur',
+          updateOn: 'change',
         }),
         confirmPassword: new FormControl('', {
           validators: [Validators.required],
@@ -95,7 +103,8 @@ export class RegisterComponent {
     bioControl?.updateValueAndValidity();
   }
 
-  onSubmit() {
+  onSubmit(event: any) {
+    event.preventDefault(); // Empêche le rechargement de la page
     if (this.registerForm.valid) {
       switch (this.selectedRole) {
         case 'artisan':
@@ -183,59 +192,36 @@ export class RegisterComponent {
     return null;
   }
 
-  checkIfEmailExist(): AsyncValidatorFn {
-    return (control: AbstractControl) => {
-      const email = control.value;
-
-      if (!email) {
-        return of(null); // No validation if email is empty
-      }
-
-      // Retourne un Observable après un délai pour éviter des appels excessifs
-      return of(email).pipe(
-        debounceTime(300), // Ajoute un délai pour limiter les appels
-        switchMap((emailValue) =>
-          this.authService.checkIfEmailExist(emailValue).pipe(
-            map((emailExists: boolean) => {
-              return emailExists ? { emailExists: true } : null;
-            }),
-            catchError((error) => {
-              console.error("Erreur lors de la vérification de l'email", error);
-              return of(null); // Retourne null en cas d'erreur
-            })
-          )
-        )
-      );
-    };
+  checkIfEmailExist() {
+    this.authService
+      .checkIfEmailExist(this.registerForm.get('email')?.value)
+      .subscribe({
+        next: (response) => {
+          console.log('Email exists:', response);
+          if (response.exists) {
+            this.registerForm.get('email')?.setErrors({ emailExists: true });
+          } else {
+            this.registerForm.get('email')?.setErrors(null);
+          }
+        },
+      });
   }
 
-  checkIfUsernameExist(): AsyncValidatorFn {
-    return (control: AbstractControl) => {
-      const username = control.value;
-
-      if (!username) {
-        return of(null); // No validation if username is empty
-      }
-
-      // Retourne un Observable après un délai pour éviter des appels excessifs
-      return of(username).pipe(
-        debounceTime(300), // Ajoute un délai pour limiter les appels
-        switchMap((usernameValue) =>
-          this.authService.checkIfUsernameExist(usernameValue).pipe(
-            map((usernameExists: boolean) => {
-              return usernameExists ? { usernameExists: true } : null;
-            }),
-            catchError((error) => {
-              console.error(
-                'Erreur lors de la vérification du username',
-                error
-              );
-              return of(null); // Retourne null en cas d'erreur
-            })
-          )
-        )
-      );
-    };
+  async checkIfUsernameExist() {
+    this.authService
+      .checkIfUsernameExist(this.registerForm.get('username')?.value)
+      .subscribe({
+        next: (response) => {
+          console.log('Username exists:', response);
+          if (response.exists) {
+            this.registerForm
+              .get('username')
+              ?.setErrors({ usernameExists: true });
+          } else {
+            this.registerForm.get('username')?.setErrors(null);
+          }
+        },
+      });
   }
 
   onRoleChange(event: any) {

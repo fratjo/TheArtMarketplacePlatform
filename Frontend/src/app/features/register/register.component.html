@@ -6,7 +6,7 @@
     style="background-size: cover; background-repeat: no-repeat; height: 100%"
   ></section>
   <section
-    class="col d-flex flex-column align-items-center gap-3 overflow-scroll overflow-x-hidden"
+    class="col d-flex flex-column align-items-center gap-2 overflow-scroll overflow-x-hidden"
     id="right"
   >
     <h1 class="mt-5">
@@ -39,8 +39,8 @@
 
     <form
       [formGroup]="registerForm"
-      (ngSubmit)="onSubmit()"
-      class="w-100 gap-1 d-flex flex-column p-4"
+      (ngSubmit)="onSubmit($event)"
+      class="w-100 gap-1 d-flex flex-column px-4 py-2"
     >
       <div>
         <label for="username">Username: </label>
@@ -54,6 +54,7 @@
               registerForm.get('username')?.invalid &&
               registerForm.get('username')?.touched
           }"
+          (blur)="checkIfUsernameExist()"
         />
         @if ( registerForm.get('username')?.touched) { @if (
         registerForm.get('username')?.hasError('required')) {
@@ -74,6 +75,7 @@
               registerForm.get('email')?.invalid &&
               registerForm.get('email')?.touched
           }"
+          (blur)="checkIfEmailExist()"
         />
         @if ( registerForm.get('email')?.touched ) { @if (
         registerForm.get('email')?.hasError('required') ) {
@@ -98,6 +100,8 @@
                   registerForm.get('password')?.invalid &&
                   registerForm.get('password')?.touched
               }"
+              (focus)="passwordFocus = true"
+              (blur)="passwordFocus = false"
             />
             <button
               type="button"
@@ -109,21 +113,54 @@
               ></i>
             </button>
           </div>
-          @if ( registerForm.get('password')?.touched) { @if (
-          registerForm.get('password')?.hasError('minlength') ) {
+          @if ( passwordFocus) { @if (
+          registerForm.get('password')?.hasError('missingLowercase') ) {
           <div class="text-danger">
-            Password must be at least 6 characters long.
+            <i class="bi bi-x-lg"></i> Lowercase character
           </div>
-          } @if ( registerForm.get('password')?.hasError('required') ) {
+          } @else {
+          <div class="text-success">
+            <i class="bi bi-check-lg"></i> Lowercase character
+          </div>
+          } @if ( registerForm.get('password')?.hasError('missingUppercase') ) {
+          <div class="text-danger">
+            <i class="bi bi-x-lg"></i> Uppercase character
+          </div>
+          } @else {
+          <div class="text-success">
+            <i class="bi bi-check-lg"></i> Uppercase character
+          </div>
+          } @if ( registerForm.get('password')?.hasError('missingNumber') ) {
+          <div class="text-danger"><i class="bi bi-x-lg"></i> Number</div>
+          } @else {
+          <div class="text-success"><i class="bi bi-check-lg"></i> Number</div>
+          } @if (
+          registerForm.get('password')?.hasError('missingSpecialCharacter') ) {
+          <div class="text-danger">
+            <i class="bi bi-x-lg"></i> Special character
+          </div>
+          } @else {
+          <div class="text-success">
+            <i class="bi bi-check-lg"></i> Special character
+          </div>
+          } @if ( registerForm.get('password')?.hasError('tooShort') ) {
+          <div class="text-danger">
+            <i class="bi bi-x-lg"></i> Minimum 6 characters
+          </div>
+          } @else {
+          <div class="text-success">
+            <i class="bi bi-check-lg"></i> Minimum 6 characters
+          </div>
+          } } @else if (registerForm.get('password')?.touched && !passwordFocus)
+          { @if ( registerForm.get('password')?.hasError('required') ) {
           <div class="text-danger">Password is required.</div>
-          } @if ( registerForm.get('password')?.hasError('pattern') ) {
-          <div class="text-danger">
-            Password must contain at least one uppercase letter, one lowercase
-            letter, one number, and one special character.
-          </div>
-          } @if ( registerForm.get('password')?.hasError('notMatch') ) {
-          <div class="text-danger">Passwords do not match.</div>
-          } }
+          } @else if (registerForm.get('password')?.hasError('missingLowercase')
+          || registerForm.get('password')?.hasError('missingUppercase')
+          ||registerForm.get('password')?.hasError('missingNumber')
+          ||registerForm.get('password')?.hasError('missingSpecialCharacter')
+          ||registerForm.get('password')?.hasError('tooShort')) {
+          <div class="text-danger">Invalid password format.</div>
+          }}
         </div>
         <div class="col">
           <label for="confirmPassword">Confirm Password: </label>
