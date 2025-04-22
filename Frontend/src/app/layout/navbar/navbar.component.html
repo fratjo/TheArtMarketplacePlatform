@@ -6,16 +6,16 @@
       >
       @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'artisan' ) {
       <a class="btn" href="/dashboard">Dashboard</a>
-      <a class="btn" href="/dashboard">My Products</a>
-      <a class="btn" href="/dashboard">Orders</a>
+      <a class="btn" href="/products">My Products</a>
+      <a class="btn" href="/orders">Orders</a>
       } @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'customer' ) {
       <a class="btn" href="/dashboard">Dashboard</a>
-      <a class="btn" href="/dashboard">Product</a>
-      <a class="btn" href="/dashboard">My Orders</a>
+      <a class="btn" href="/products">Product</a>
+      <a class="btn" href="/orders">My Orders</a>
       } @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'deliverypartner'
       ) {
       <a class="btn" href="/dashboard">Dashboard</a>
-      <a class="btn" href="/dashboard">Deliveries</a>
+      <a class="btn" href="/deliveries">Deliveries</a>
       }
     </div>
     <form class="d-flex">

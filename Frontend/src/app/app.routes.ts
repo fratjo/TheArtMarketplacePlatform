@@ -57,6 +57,29 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'products',
+    loadComponent: () =>
+      import('./features/products/products.component').then(
+        (c) => c.ProductsComponent
+      ),
+    children: [
+      {
+        path: 'my-products',
+        loadComponent: () =>
+          import(
+            './features/artisan/products/my-products/my-products.component'
+          ).then((c) => c.MyProductsComponent),
+      },
+      {
+        path: 'product-catalog',
+        loadComponent: () =>
+          import(
+            './features/products/product-catalog/product-catalog.component'
+          ).then((c) => c.ProductCatalogComponent),
+      },
+    ],
+  },
+  {
     path: 'unauthorized',
     loadComponent: () =>
       import('./features/unauthorized/unauthorized.component').then(
