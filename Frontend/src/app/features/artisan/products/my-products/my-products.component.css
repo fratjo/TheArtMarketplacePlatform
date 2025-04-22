@@ -1,0 +1,27 @@
+#add-product-btn {
+  background-color: #d06e1d;
+  color: #fff;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+#add-product-btn:hover {
+  background-color: #f88224;
+}
+
+input#search {
+  border: none;
+}
+
+input#search:focus {
+  outline: none;
+}
+
+.bi.bi-caret-up-fill,
+.bi.bi-caret-down-fill {
+  height: 8px;
+  width: 8px;
+  font-size: 8px;
+}
