@@ -1,12 +1,28 @@
 <nav class="navbar navbar-light sticky-top shadow-sm">
   <div class="container-fluid">
-    <a id="title" class="navbar-brand" [routerLink]="['/']"
-      >The Art Marketplace</a
-    >
+    <div>
+      <a id="title" class="navbar-brand" [routerLink]="['/']"
+        >The Art Marketplace</a
+      >
+      @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'artisan' ) {
+      <a class="btn" href="/dashboard">Dashboard</a>
+      <a class="btn" href="/dashboard">My Products</a>
+      <a class="btn" href="/dashboard">Orders</a>
+      } @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'customer' ) {
+      <a class="btn" href="/dashboard">Dashboard</a>
+      <a class="btn" href="/dashboard">Product</a>
+      <a class="btn" href="/dashboard">My Orders</a>
+      } @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'deliverypartner'
+      ) {
+      <a class="btn" href="/dashboard">Dashboard</a>
+      <a class="btn" href="/dashboard">Deliveries</a>
+      }
+    </div>
     <form class="d-flex">
       @if ( (isLoggedIn$ | async) === false ) {
-      <a class="btn" [routerLink]="['/login']">Login</a>
+      <a class="btn" href="/login">Login</a>
       } @if ( isLoggedIn$ | async ) {
+      <a class="btn" href="/dashboard">Profile</a>
       <a class="btn" (click)="logout()">Logout</a>
       }
     </form>

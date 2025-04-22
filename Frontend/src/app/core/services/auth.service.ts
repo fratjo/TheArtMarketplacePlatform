@@ -18,6 +18,10 @@ export class AuthService {
     this.isLoggedIn()
   );
 
+  public userRole$: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(this.getUserRole());
+
   private apiUrl = 'http://localhost:5140/api/auth'; // Replace with your API URL
 
   constructor(private http: HttpClient) {}

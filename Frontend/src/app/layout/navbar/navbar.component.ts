@@ -20,6 +20,7 @@ import { ToastService } from '../../core/services/toast.service';
 export class NavbarComponent implements OnInit {
   currentUrl: string = '';
   isLoggedIn$!: BehaviorSubject<boolean>;
+  userRole$!: BehaviorSubject<string | null>;
 
   constructor(
     private router: Router,
@@ -27,6 +28,7 @@ export class NavbarComponent implements OnInit {
     private toastService: ToastService
   ) {
     this.isLoggedIn$ = this.authService.isLoggedIn$;
+    this.userRole$ = this.authService.userRole$;
   }
 
   ngOnInit() {
