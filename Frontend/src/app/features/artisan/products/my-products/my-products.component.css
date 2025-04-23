@@ -1,13 +1,15 @@
 #add-product-btn {
-  background-color: #d06e1d;
-  color: #fff;
-  border: none;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #f88224;
   padding: 5px 15px;
   border-radius: 25px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 #add-product-btn:hover {
+  color: #fff;
   background-color: #f88224;
 }
 
@@ -24,4 +26,33 @@ input#search:focus {
   height: 8px;
   width: 8px;
   font-size: 8px;
+}
+
+#my-products-container {
+  margin-top: 30px;
+}
+
+.filter-combo {
+  position: relative;
+}
+
+.filter-combo label {
+  position: absolute;
+  font-size: 12px;
+  top: -10px;
+  left: 6px;
+  background-color: #fff;
+  padding: 1px 5px;
+}
+
+.filter-combo select {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.filter-combo select:focus {
+  border-color: none;
+  outline: none;
+  box-shadow: none;
 }

@@ -21,10 +21,11 @@ import {
 import { ProductService } from '../../../../core/services/product.service';
 import { Product, Products } from '../../../../core/models/product.interface';
 import { FormsModule } from '@angular/forms';
+import { SingleSliderComponent } from '../../../../shared/components/single-slider/single-slider.component';
 
 @Component({
   selector: 'app-my-products',
-  imports: [AsyncPipe, CommonModule, FormsModule],
+  imports: [AsyncPipe, CommonModule, FormsModule, SingleSliderComponent],
   templateUrl: './my-products.component.html',
   styleUrl: './my-products.component.css',
 })
@@ -39,6 +40,7 @@ export class MyProductsComponent implements OnInit {
     status: 'asc',
     quantity: 'asc',
     availability: 'asc',
+    rating: 'asc',
   };
   filters = {
     name: '',
@@ -49,6 +51,7 @@ export class MyProductsComponent implements OnInit {
     quantityMin: 0,
     quantityMax: 100,
     availability: '',
+    rating: 0,
   };
 
   categories!: string[];
@@ -59,6 +62,15 @@ export class MyProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.products$ = this.productService.getProducts$();
+    this.categories = this.productService.categories$.getValue();
+
+    this.filters.priceMax = this.productService
+      .getProductHighestPrice$()
+      .getValue();
+
+    this.filters.quantityMax = this.productService
+      .getProductHightestQuantity$()
+      .getValue();
 
     this.filteredProducts$ = this.products$.pipe(
       combineLatestWith(this.filters$, this.search$),
@@ -77,6 +89,13 @@ export class MyProductsComponent implements OnInit {
         return filtered;
       })
     );
+
+    console.log(this.filters);
+  }
+
+  onRatingSliderChange(event: number) {
+    this.filters.rating = event;
+    this.applyFilters();
   }
 
   applyFilters() {

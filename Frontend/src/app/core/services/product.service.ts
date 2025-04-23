@@ -16,6 +16,7 @@ export class ProductService {
       quantity: 10,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.5,
     },
     {
       id: 2,
@@ -26,6 +27,7 @@ export class ProductService {
       quantity: 0,
       status: 'Out of Stock',
       availability: 'Available',
+      rating: 4.0,
     },
     {
       id: 3,
@@ -36,6 +38,7 @@ export class ProductService {
       quantity: 5,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.8,
     },
     {
       id: 4,
@@ -46,6 +49,7 @@ export class ProductService {
       quantity: 20,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.3,
     },
     {
       id: 5,
@@ -56,6 +60,7 @@ export class ProductService {
       quantity: 15,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.7,
     },
     {
       id: 6,
@@ -66,6 +71,7 @@ export class ProductService {
       quantity: 8,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.6,
     },
     {
       id: 7,
@@ -76,6 +82,7 @@ export class ProductService {
       quantity: 3,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.4,
     },
     {
       id: 8,
@@ -86,6 +93,7 @@ export class ProductService {
       quantity: 2,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.2,
     },
     {
       id: 9,
@@ -96,6 +104,7 @@ export class ProductService {
       quantity: 25,
       status: 'In Stock',
       availability: 'Not Available',
+      rating: 4.1,
     },
     {
       id: 10,
@@ -106,6 +115,7 @@ export class ProductService {
       quantity: 1,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.9,
     },
     {
       id: 11,
@@ -116,6 +126,7 @@ export class ProductService {
       quantity: 12,
       status: 'In Stock',
       availability: 'Not Available',
+      rating: 4.0,
     },
     {
       id: 12,
@@ -126,6 +137,7 @@ export class ProductService {
       quantity: 7,
       status: 'In Stock',
       availability: 'Available',
+      rating: 4.8,
     },
     {
       id: 13,
@@ -136,6 +148,7 @@ export class ProductService {
       quantity: 18,
       status: 'In Stock',
       availability: 'Not Available',
+      rating: 4.6,
     },
   ];
 
@@ -145,6 +158,18 @@ export class ProductService {
 
   getProducts$() {
     return new BehaviorSubject<Products>(this.products);
+  }
+
+  getProductHighestPrice$() {
+    return new BehaviorSubject<number>(
+      Math.max(...this.products.map((product) => product.price))
+    );
+  }
+
+  getProductHightestQuantity$() {
+    return new BehaviorSubject<number>(
+      Math.max(...this.products.map((product) => product.quantity))
+    );
   }
 
   filterProducts(
@@ -158,11 +183,10 @@ export class ProductService {
       quantityMin?: number;
       quantityMax?: number;
       availability?: string;
+      rating?: number;
     }
   ): Products {
     return products.filter((product) => {
-      console.log('Filtering products with filters:', filters);
-
       const matchesName =
         !filters.name ||
         product.name.toLowerCase().includes(filters.name.toLowerCase());
@@ -173,11 +197,14 @@ export class ProductService {
       const matchesMaxPrice =
         filters.priceMax == null || product.price <= filters.priceMax;
       const matchesStatus =
-        !filters.status || product.status === filters.status;
+        !filters.status ||
+        product.status.toLowerCase() === filters.status.toLowerCase();
       const matchesQuantityMin =
         filters.quantityMin == null || product.quantity >= filters.quantityMin;
       const matchesQuantityMax =
         filters.quantityMax == null || product.quantity <= filters.quantityMax;
+      const matchesRating =
+        filters.rating == null || product.rating >= filters.rating;
       const matchesAvailability =
         !filters.availability ||
         product.availability.toLowerCase() ===
@@ -191,7 +218,8 @@ export class ProductService {
         matchesStatus &&
         matchesQuantityMin &&
         matchesQuantityMax &&
-        matchesAvailability
+        matchesAvailability &&
+        matchesRating
       );
     });
   }
