@@ -14,7 +14,22 @@
     <div
       class="d-flex flex-row justify-content-between align-items-center w-100"
     >
-      <div class="d-flex flex-row gap-3"></div>
+      <div class="d-flex flex-row gap-3">
+        <div class="d-flex flex-row gap-1 align-items-center">
+          <label for="status">Availability: </label>
+          <select
+            name="status"
+            id="status"
+            class="form-select form-select-sm"
+            [(ngModel)]="filters.availability"
+            (ngModelChange)="applyFilters()"
+          >
+            <option value="">All</option>
+            <option value="available">Available</option>
+            <option value="not available">Not Available</option>
+          </select>
+        </div>
+      </div>
       <div class="d-flex flex-row justify-content-between align-items-center">
         <div
           class="d-flex align-items-center border border-1 rounded-3 shadow-xs bg-white px-2 py-1"
@@ -32,9 +47,10 @@
       </div>
     </div>
   </div>
-  <table class="table table-striped table-hover">
+  <table class="table table-hover table-sm">
     <thead>
       <tr>
+        <th scope="col"><input type="checkbox" name="" id="" /></th>
         <th scope="col">Image</th>
         <th role="button" (dblclick)="sortBy('name')" style="user-select: none">
           <div class="d-flex flex-row gap-1 align-items-center">
@@ -84,12 +100,41 @@
             </div>
           </div>
         </th>
+        <th
+          role="button"
+          (dblclick)="sortBy('quantity')"
+          style="user-select: none"
+        >
+          <div class="d-flex flex-row gap-1 align-items-center">
+            Quantity
+            <div class="d-flex flex-column gap-0 d-inline-flex">
+              <i class="bi bi-caret-up-fill justify-self-end"></i>
+              <i class="bi bi-caret-down-fill justify-self-start"></i>
+            </div>
+          </div>
+        </th>
+        <th
+          role="button"
+          (dblclick)="sortBy('availability')"
+          style="user-select: none"
+        >
+          <div class="d-flex flex-row gap-1 align-items-center">
+            Availability
+            <div class="d-flex flex-column gap-0 d-inline-flex">
+              <i class="bi bi-caret-up-fill justify-self-end"></i>
+              <i class="bi bi-caret-down-fill justify-self-start"></i>
+            </div>
+          </div>
+        </th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      @for (product of products$ | async ; track product.id) {
+      @for (product of filteredProducts$ | async ; track product.id) {
       <tr>
+        <td class="align-middle">
+          <input type="checkbox" name="" id="" />
+        </td>
         <td>
           <img
             [src]="product.image"
@@ -108,11 +153,13 @@
             "
           />
         </td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.category }}</td>
-        <td>{{ product.status }}</td>
-        <td>
+        <td class="align-middle">{{ product.name }}</td>
+        <td class="align-middle">{{ product.price }}</td>
+        <td class="align-middle">{{ product.category }}</td>
+        <td class="align-middle">{{ product.status }}</td>
+        <td class="align-middle">{{ product.quantity }}</td>
+        <td class="align-middle">{{ product.availability }}</td>
+        <td class="align-middle">
           <button class="btn btn-sm btn-outline-primary">✏️</button>
           <button class="btn btn-sm btn-outline-danger">🗑️</button>
         </td>

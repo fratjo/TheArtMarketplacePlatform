@@ -1,75 +1,103 @@
-import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import {
+  Component,
+  effect,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  BehaviorSubject,
+  combineLatest,
+  combineLatestAll,
+  combineLatestWith,
+  debounce,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  Subject,
+} from 'rxjs';
+import { ProductService } from '../../../../core/services/product.service';
+import { Product, Products } from '../../../../core/models/product.interface';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-my-products',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, CommonModule, FormsModule],
   templateUrl: './my-products.component.html',
   styleUrl: './my-products.component.css',
 })
-export class MyProductsComponent {
-  products = [
-    {
-      id: 1,
-      name: 'Handmade Vase',
-      price: 25.99,
-      image: 'assets/images/vase.jpg',
-      category: 'Decor',
-      status: 'Available',
-    },
-    {
-      id: 2,
-      name: 'Wooden Chair',
-      price: 120.0,
-      image: 'assets/images/chair.jpg',
-      category: 'Furniture',
-      status: 'Out of Stock',
-    },
-    {
-      id: 3,
-      name: 'Knitted Scarf',
-      price: 15.5,
-      image: 'assets/images/scarf.jpg',
-      category: 'Clothing',
-      status: 'Available',
-    },
-  ];
-
-  products$ = new BehaviorSubject<any[]>(this.products);
-
-  sorting: any = {
+export class MyProductsComponent implements OnInit {
+  products$!: BehaviorSubject<Products>;
+  filters$ = new BehaviorSubject<any>({});
+  search$ = new BehaviorSubject<string>('');
+  sorting: { [key: string]: 'asc' | 'desc' } = {
     name: 'asc',
     price: 'asc',
     category: 'asc',
     status: 'asc',
+    quantity: 'asc',
+    availability: 'asc',
+  };
+  filters = {
+    name: '',
+    category: '',
+    status: '',
+    priceMin: 0,
+    priceMax: 1000,
+    quantityMin: 0,
+    quantityMax: 100,
+    availability: '',
   };
 
-  sortBy(property: keyof (typeof this.products)[0]) {
-    const direction = this.sorting[property] === 'asc' ? 1 : -1;
-    this.products$.next(
-      this.products.sort((a, b) => {
-        if (a[property] < b[property]) {
-          return -1 * direction;
+  categories!: string[];
+
+  filteredProducts$!: Observable<Products>;
+
+  constructor(private productService: ProductService) {}
+
+  ngOnInit(): void {
+    this.products$ = this.productService.getProducts$();
+
+    this.filteredProducts$ = this.products$.pipe(
+      combineLatestWith(this.filters$, this.search$),
+      map(([products, filters, searchTerm]) => {
+        let filtered = this.productService.filterProducts(products, filters);
+
+        if (searchTerm) {
+          filtered = filtered.filter((p) =>
+            [p.name, p.category, p.status, p.availability]
+              .join(' ')
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
+          );
         }
-        if (a[property] > b[property]) {
-          return 1 * direction;
-        }
-        return 0;
+
+        return filtered;
       })
     );
-    this.sorting[property] = this.sorting[property] === 'asc' ? 'desc' : 'asc';
+  }
+
+  applyFilters() {
+    this.filters$.next({ ...this.filters });
+  }
+
+  sortBy(property: keyof Product) {
+    const direction = this.sorting[property] === 'asc' ? 1 : -1;
+    this.sorting[property] = direction === 1 ? 'desc' : 'asc';
+
+    this.filteredProducts$ = this.filteredProducts$.pipe(
+      map((products) =>
+        [...products].sort((a, b) =>
+          a[property]! < b[property]! ? -1 * direction : 1 * direction
+        )
+      )
+    );
   }
 
   search(event: Event) {
-    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
-    const filteredProducts = this.products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchTerm) ||
-        product.category.toLowerCase().includes(searchTerm) ||
-        product.status.toLowerCase().includes(searchTerm)
-    );
-    this.products$.next(filteredProducts);
-    console.log('Filtered products:', filteredProducts);
+    const input = event.target as HTMLInputElement;
+    this.search$.next(input.value);
   }
 }
