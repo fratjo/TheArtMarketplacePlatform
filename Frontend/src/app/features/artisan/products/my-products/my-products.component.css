@@ -39,7 +39,7 @@ input#search:focus {
 .filter-combo label {
   position: absolute;
   font-size: 12px;
-  top: -10px;
+  top: 0px;
   left: 6px;
   background-color: #fff;
   padding: 1px 5px;

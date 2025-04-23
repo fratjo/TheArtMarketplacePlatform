@@ -1,0 +1,31 @@
+::ng-deep ngx-slider {
+  width: 150px !important;
+}
+
+::ng-deep .ngx-slider-bar {
+  width: 150px !important; /* Largeur de la barre */
+  height: 8px !important; /* Hauteur de la barre */
+  border-radius: 4px !important; /* Coins arrondis */
+}
+
+::ng-deep .ngx-slider-pointer {
+  background-color: #f88224 !important; /* Couleur du pointeur */
+  border: none !important; /* Bordure du pointeur */
+  width: 16px !important; /* Largeur du pointeur */
+  height: 16px !important; /* Hauteur du pointeur */
+  border-radius: 50% !important; /* Pointeur circulaire */
+  transform: translateY(10px) !important; /* Décalage vertical */
+}
+
+::ng-deep .ngx-slider-active {
+  border: none !important; /* Bordure de la partie active */
+  outline: none !important; /* Aucune bordure */
+}
+
+::ng-deep .ngx-slider-pointer::after {
+  display: none !important; /* Supprime le texte du pointeur */
+}
+
+::ng-deep .ngx-slider-span {
+  font-size: 14px !important; /* Taille du texte */
+}

@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   Output,
+  ViewEncapsulation,
 } from '@angular/core';
 import { NgxSliderModule, Options } from '@angular-slider/ngx-slider';
 
@@ -12,22 +13,7 @@ import { NgxSliderModule, Options } from '@angular-slider/ngx-slider';
   imports: [NgxSliderModule],
   template:
     '<ngx-slider [(value)]="value" [options]="options" (valueChange)="onValueChange()"></ngx-slider>',
-  styles: [
-    `
-      ngx-slider {
-        width: 150px;
-      }
-
-      .ngx-slider-span {
-        background-color: red;
-        font-size: 12px;
-      }
-
-      .ngx-slider-pointer {
-        background-color: blue;
-      }
-    `,
-  ],
+  styleUrl: './single-slider.component.css',
 })
 export class SingleSliderComponent implements OnChanges {
   // Input for floor and ceiling values
