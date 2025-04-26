@@ -1,1 +1,74 @@
-<p>product-form works!</p>
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label>Name</label>
+    <input
+      class="form-control"
+      formControlName="name"
+      placeholder="Entrez le nom du produit"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Description</label>
+    <textarea
+      class="form-control"
+      formControlName="description"
+      placeholder="Décrivez le produit"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Price</label>
+    <input
+      type="number"
+      class="form-control"
+      formControlName="price"
+      placeholder="Prix en €"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Category</label>
+    <input
+      class="form-control"
+      formControlName="category"
+      placeholder="Catégorie (ex: peinture, bijou...)"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Image</label>
+    <input
+      type="text"
+      class="form-control"
+      formControlName="imageUrl"
+      placeholder="Lien vers une image"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select class="form-control" formControlName="availability">
+      <option value="available" selected>Available</option>
+      <option value="not available">Not Available</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Quantity</label>
+    <input
+      type="number"
+      class="form-control"
+      formControlName="quantityLeft"
+      placeholder="Quantité en stock"
+    />
+  </div>
+
+  <button
+    type="submit"
+    class="btn btn-primary mt-3"
+    [disabled]="productForm.invalid"
+  >
+    {{ product ? "Update" : "Create" }} le produit
+  </button>
+</form>

@@ -16,7 +16,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public int QuantityLeft { get; set; } = 0;
         public Guid? CategoryId { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.OutOfStock;
-        public bool IsAvailable { get; set; } = true;
+        public ProductAvailability Availability { get; set; } = ProductAvailability.Available;
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
@@ -40,8 +40,14 @@ namespace TheArtMarketplacePlatform.Core.Entities
 
     public enum ProductStatus
     {
-        Available,
+        InStock,
         OutOfStock
+    }
+
+    public enum ProductAvailability
+    {
+        Available,
+        Unavailable
     }
 
     public class ProductReview

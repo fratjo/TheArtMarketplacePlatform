@@ -1,0 +1,6 @@
+<div class="container mt-5">
+  <h2>{{ isEditMode ? "Edit product" : "Add Product" }}</h2>
+
+  <app-product-form [product]="product" (save)="onSave($event)">
+  </app-product-form>
+</div>

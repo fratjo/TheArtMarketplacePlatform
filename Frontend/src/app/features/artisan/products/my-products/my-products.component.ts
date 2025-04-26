@@ -1,31 +1,22 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import {
-  Component,
-  effect,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  combineLatestAll,
-  combineLatestWith,
-  debounce,
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  Observable,
-  Subject,
-} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
 import { ProductService } from '../../../../core/services/product.service';
 import { Product, Products } from '../../../../core/models/product.interface';
 import { FormsModule } from '@angular/forms';
 import { SingleSliderComponent } from '../../../../shared/components/single-slider/single-slider.component';
+import { Router, RouterLink } from '@angular/router';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-my-products',
-  imports: [AsyncPipe, CommonModule, FormsModule, SingleSliderComponent],
+  imports: [
+    AsyncPipe,
+    CommonModule,
+    FormsModule,
+    SingleSliderComponent,
+    RouterLink,
+  ],
   templateUrl: './my-products.component.html',
   styleUrl: './my-products.component.css',
 })
@@ -46,10 +37,6 @@ export class MyProductsComponent implements OnInit {
     name: '',
     category: '',
     status: '',
-    priceMin: 0,
-    priceMax: 1000,
-    quantityMin: 0,
-    quantityMax: 100,
     availability: '',
     rating: 0,
   };
@@ -58,19 +45,25 @@ export class MyProductsComponent implements OnInit {
 
   filteredProducts$!: Observable<Products>;
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private toastService: ToastService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.products$ = this.productService.getProducts$();
-    this.categories = this.productService.categories$.getValue();
-
-    this.filters.priceMax = this.productService
-      .getProductHighestPrice$()
-      .getValue();
-
-    this.filters.quantityMax = this.productService
-      .getProductHightestQuantity$()
-      .getValue();
+    this.productService.getProducts().subscribe({
+      error: (error) => {
+        console.error('Error fetching products:', error);
+        this.toastService.show({
+          text: `Error fetching products: ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
+    this.products$ = this.productService.products$;
+    // this.productService.categories$.getValue();
 
     this.filteredProducts$ = this.products$.pipe(
       combineLatestWith(this.filters$, this.search$),
@@ -89,8 +82,6 @@ export class MyProductsComponent implements OnInit {
         return filtered;
       })
     );
-
-    console.log(this.filters);
   }
 
   onRatingSliderChange(event: number) {
@@ -118,5 +109,34 @@ export class MyProductsComponent implements OnInit {
   search(event: Event) {
     const input = event.target as HTMLInputElement;
     this.search$.next(input.value);
+  }
+
+  onEdit(id: string) {
+    this.router.navigate([`/products/${id}/edit`]);
+  }
+
+  onDelete(id: string) {
+    //   console.log('Delete product with id:', id);
+    //   this.productService.deleteProduct(id).subscribe({
+    //     next: () => {
+    //       console.log('Product deleted successfully');
+    //       this.toastService.show({
+    //         text: 'Product deleted successfully',
+    //         classname: 'bg-success text-light',
+    //         delay: 3000,
+    //       });
+    //     },
+    //     error: (error) => {
+    //       console.error('Error deleting product:', error);
+    //       this.toastService.show({
+    //         text: `Error deleting product: ${error.error.title}`,
+    //         classname: 'bg-danger text-light',
+    //         delay: 5000,
+    //       });
+    //     },
+    //     complete: () => {
+    //       this.products$ = this.productService.getProducts$();
+    //     },
+    //   });
   }
 }

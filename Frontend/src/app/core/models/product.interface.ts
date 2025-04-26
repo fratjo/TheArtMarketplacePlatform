@@ -1,14 +1,19 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   price: number;
   image: string;
-  category: string;
+  category: Category;
   rating: number;
-  quantity: number;
+  quantityLeft: number;
   status: string;
   availability: string;
 }
 
 export type Products = Product[];
+
+export interface Category {
+  id: string;
+  name: string;
+}

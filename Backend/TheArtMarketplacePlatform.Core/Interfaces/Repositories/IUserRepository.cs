@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheArtMarketplacePlatform.Core.Entities;
 
-namespace TheArtMarketplacePlatform.Core.Interfaces
+namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
 {
     public interface IUserRepository
     {

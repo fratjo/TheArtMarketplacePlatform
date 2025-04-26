@@ -22,7 +22,7 @@ export class AuthService {
     string | null
   >(this.getUserRole());
 
-  private apiUrl = 'http://localhost:5140/api/auth'; // Replace with your API URL
+  private apiUrl = 'http://localhost:5140/api/auth';
 
   constructor(private http: HttpClient) {}
 
@@ -74,6 +74,16 @@ export class AuthService {
     return !!this.getToken();
   }
 
+  isTokenExpired() {
+    const token = this.getToken();
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1])); // Décoder le payload du token
+      const expirationDate = new Date(payload.exp * 1000); // Convertir l'expiration en millisecondes
+      return expirationDate < new Date(); // Vérifier si le token est expiré
+    }
+    return true; // Si pas de token, considéré comme expiré
+  }
+
   getUserRole() {
     const token = this.getToken();
     if (token) {
@@ -86,6 +96,22 @@ export class AuthService {
             ] as string
           ).toLocaleLowerCase() || null
         );
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  getUserId() {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1])); // Décoder le payload du token
+        return payload[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+        ] as string;
       } catch (error) {
         console.error('Error decoding token:', error);
         return null;

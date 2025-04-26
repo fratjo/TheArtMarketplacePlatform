@@ -14,7 +14,7 @@
   width: 16px !important; /* Largeur du pointeur */
   height: 16px !important; /* Hauteur du pointeur */
   border-radius: 50% !important; /* Pointeur circulaire */
-  transform: translateY(10px) !important; /* Décalage vertical */
+  transform: translateY(0px) !important; /* Décalage vertical */
 }
 
 ::ng-deep .ngx-slider-active {
@@ -27,5 +27,6 @@
 }
 
 ::ng-deep .ngx-slider-span {
-  font-size: 14px !important; /* Taille du texte */
+  font-size: 12px !important; /* Taille du texte */
+  padding: 5px !important;
 }

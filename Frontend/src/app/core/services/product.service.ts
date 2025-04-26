@@ -1,188 +1,72 @@
 import { Injectable } from '@angular/core';
-import { Products } from '../models/product.interface';
-import { BehaviorSubject } from 'rxjs';
+import { Product, Products } from '../models/product.interface';
+import { BehaviorSubject, tap } from 'rxjs';
+import { AuthService } from './auth.service';
+import { HttpClient } from '@angular/common/http';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  products: Products = [
-    {
-      id: 1,
-      name: 'Handmade Vase',
-      price: 25.99,
-      image: 'assets/images/vase.jpg',
-      category: 'Decor',
-      quantity: 10,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.5,
-    },
-    {
-      id: 2,
-      name: 'Wooden Chair',
-      price: 120.0,
-      image: 'assets/images/chair.jpg',
-      category: 'Furniture',
-      quantity: 0,
-      status: 'Out of Stock',
-      availability: 'Available',
-      rating: 4.0,
-    },
-    {
-      id: 3,
-      name: 'Knitted Scarf',
-      price: 15.5,
-      image: 'assets/images/scarf.jpg',
-      category: 'Clothing',
-      quantity: 5,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.8,
-    },
-    {
-      id: 4,
-      name: 'Ceramic Plate',
-      price: 12.99,
-      image: 'assets/images/plate.jpg',
-      category: 'Kitchenware',
-      quantity: 20,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.3,
-    },
-    {
-      id: 5,
-      name: 'Leather Wallet',
-      price: 45.0,
-      image: 'assets/images/wallet.jpg',
-      category: 'Accessories',
-      quantity: 15,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.7,
-    },
-    {
-      id: 6,
-      name: 'Bamboo Basket',
-      price: 30.0,
-      image: 'assets/images/basket.jpg',
-      category: 'Decor',
-      quantity: 8,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.6,
-    },
-    {
-      id: 7,
-      name: 'Wool Blanket',
-      price: 60.0,
-      image: 'assets/images/blanket.jpg',
-      category: 'Bedding',
-      quantity: 3,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.4,
-    },
-    {
-      id: 8,
-      name: 'Glass Lamp',
-      price: 80.0,
-      image: 'assets/images/lamp.jpg',
-      category: 'Lighting',
-      quantity: 2,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.2,
-    },
-    {
-      id: 9,
-      name: 'Cotton Towel',
-      price: 10.0,
-      image: 'assets/images/towel.jpg',
-      category: 'Bathroom',
-      quantity: 25,
-      status: 'In Stock',
-      availability: 'Not Available',
-      rating: 4.1,
-    },
-    {
-      id: 10,
-      name: 'Metal Shelf',
-      price: 150.0,
-      image: 'assets/images/shelf.jpg',
-      category: 'Furniture',
-      quantity: 1,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.9,
-    },
-    {
-      id: 11,
-      name: 'Handmade Mug',
-      price: 18.0,
-      image: 'assets/images/mug.jpg',
-      category: 'Kitchenware',
-      quantity: 12,
-      status: 'In Stock',
-      availability: 'Not Available',
-      rating: 4.0,
-    },
-    {
-      id: 12,
-      name: 'Silk Pillowcase',
-      price: 35.0,
-      image: 'assets/images/pillowcase.jpg',
-      category: 'Bedding',
-      quantity: 7,
-      status: 'In Stock',
-      availability: 'Available',
-      rating: 4.8,
-    },
-    {
-      id: 13,
-      name: 'Wooden Frame',
-      price: 22.0,
-      image: 'assets/images/frame.jpg',
-      category: 'Decor',
-      quantity: 18,
-      status: 'In Stock',
-      availability: 'Not Available',
-      rating: 4.6,
-    },
-  ];
+  private apiUrl = 'http://localhost:5140/api/artisans';
+  products$ = new BehaviorSubject<Products>([]);
 
-  categories$ = new BehaviorSubject<string[]>(
-    Array.from(new Set(this.products.map((product) => product.category)))
-  );
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
-  getProducts$() {
-    return new BehaviorSubject<Products>(this.products);
+  getProducts() {
+    // get user role
+    const userRole = this.authService.userRole$.getValue();
+    // get user id
+    const userId = this.authService.getUserId();
+
+    switch (userRole) {
+      case 'artisan':
+        return this.http
+          .get<Products>(`${this.apiUrl}/${userId}/products`)
+          .pipe(
+            tap((products) => {
+              console.log('Products:', products);
+
+              this.products$.next(products);
+            })
+          );
+        break;
+      case 'customer':
+      default:
+        throw new Error('Invalid user role');
+    }
   }
 
-  getProductHighestPrice$() {
-    return new BehaviorSubject<number>(
-      Math.max(...this.products.map((product) => product.price))
-    );
+  getProductById(id: string) {
+    return this.http
+      .get<Product>(`${this.apiUrl}/products/${id}`)
+      .pipe(tap((product) => {}));
   }
 
-  getProductHightestQuantity$() {
-    return new BehaviorSubject<number>(
-      Math.max(...this.products.map((product) => product.quantity))
-    );
+  createProduct(product: Product) {
+    const userId = this.authService.getUserId();
+    return this.http
+      .post<Product>(`${this.apiUrl}/${userId}/products`, product)
+      .pipe(
+        tap((newProduct) => {
+          const currentProducts = this.products$.getValue();
+          this.products$.next([...currentProducts, newProduct]);
+        })
+      );
   }
+
+  updateProduct(id: string, updatedProduct: Product) {}
+
+  deleteProduct(id: string) {}
 
   filterProducts(
     products: Products,
     filters: {
       name?: string;
       category?: string;
-      priceMin?: number;
-      priceMax?: number;
       status?: string;
-      quantityMin?: number;
-      quantityMax?: number;
-      availability?: string;
+      availability?: boolean;
       rating?: number;
     }
   ): Products {
@@ -191,33 +75,19 @@ export class ProductService {
         !filters.name ||
         product.name.toLowerCase().includes(filters.name.toLowerCase());
       const matchesCategory =
-        !filters.category || product.category === filters.category;
-      const matchesMinPrice =
-        filters.priceMin == null || product.price >= filters.priceMin;
-      const matchesMaxPrice =
-        filters.priceMax == null || product.price <= filters.priceMax;
+        !filters.category || product.category.name === filters.category;
       const matchesStatus =
-        !filters.status ||
-        product.status.toLowerCase() === filters.status.toLowerCase();
-      const matchesQuantityMin =
-        filters.quantityMin == null || product.quantity >= filters.quantityMin;
-      const matchesQuantityMax =
-        filters.quantityMax == null || product.quantity <= filters.quantityMax;
+        !filters.status || product.status === filters.status;
       const matchesRating =
         filters.rating == null || product.rating >= filters.rating;
       const matchesAvailability =
         !filters.availability ||
-        product.availability.toLowerCase() ===
-          filters.availability.toLowerCase();
+        product.availability === filters.availability.toString();
 
       return (
         matchesName &&
         matchesCategory &&
-        matchesMinPrice &&
-        matchesMaxPrice &&
         matchesStatus &&
-        matchesQuantityMin &&
-        matchesQuantityMax &&
         matchesAvailability &&
         matchesRating
       );

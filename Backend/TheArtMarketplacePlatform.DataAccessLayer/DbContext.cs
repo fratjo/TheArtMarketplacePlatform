@@ -105,11 +105,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 // Check constraint for quantity left
                 entity.ToTable(t => t.HasCheckConstraint("CK_Product_QuantityLeft", "QuantityLeft >= 0"));
 
-                entity.Property(p => p.Status).IsRequired().HasConversion<string>().HasDefaultValue(ProductStatus.OutOfStock);
-                entity.Property(p => p.IsAvailable).IsRequired().HasDefaultValue(true);
+                entity.Property(p => p.Status).IsRequired().HasConversion<string>(); //.HasDefaultValue(ProductStatus.OutOfStock);
+                entity.Property(p => p.Availability).IsRequired().HasConversion<string>().HasDefaultValue(ProductAvailability.Available);
 
                 // Query filter for IsAvailable
-                entity.HasQueryFilter(p => p.IsAvailable);
+                // entity.HasQueryFilter(p => p.IsAvailable);
 
                 entity.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(false);
 

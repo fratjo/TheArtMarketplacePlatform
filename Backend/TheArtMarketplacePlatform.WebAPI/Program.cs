@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TheArtMarketplacePlatform.BusinessLayer.Services;
 using TheArtMarketplacePlatform.BusinessLayer.Validators;
-using TheArtMarketplacePlatform.Core.Interfaces;
+using TheArtMarketplacePlatform.Core.Interfaces.Services;
+using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
 using TheArtMarketplacePlatform.DataAccessLayer.Repositories;
 using TheArtMarketplacePlatform.WebAPI.ExceptionHandlers;
 
@@ -30,7 +31,10 @@ builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsi
 builder.Services
     .AddValidatorsFromAssemblyContaining<RegisterArtisanValidator>()
     .AddValidatorsFromAssemblyContaining<RegisterCustomerValidator>()
-    .AddValidatorsFromAssemblyContaining<RegisterDeliveryPartnerValidator>();
+    .AddValidatorsFromAssemblyContaining<RegisterDeliveryPartnerValidator>()
+    .AddValidatorsFromAssemblyContaining<ArtisanInsertProductValidator>()
+    .AddValidatorsFromAssemblyContaining<ArtisanUpdateProductValidator>()
+;
 
 // Handlers
 builder.Services.AddProblemDetails();
@@ -43,9 +47,11 @@ builder.Services.AddOpenApi();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // JWT
 builder.Services.AddAuthentication(options =>

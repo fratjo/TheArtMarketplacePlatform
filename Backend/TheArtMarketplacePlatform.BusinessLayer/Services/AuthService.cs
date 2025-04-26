@@ -7,7 +7,8 @@ using TheArtMarketplacePlatform.BusinessLayer.Exceptions;
 using TheArtMarketplacePlatform.BusinessLayer.Validators;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
-using TheArtMarketplacePlatform.Core.Interfaces;
+using TheArtMarketplacePlatform.Core.Interfaces.Services;
+using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {

@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using TheArtMarketplacePlatform.Core.Entities;
+using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
+
+namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
+{
+    public class ProductRepository : IProductRepository
+    {
+        private readonly TheArtMarketplacePlatformDbContext _dbContext;
+
+        public ProductRepository(TheArtMarketplacePlatformDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task AddAsync(Product product)
+        {
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task AddCategoryAsync(ProductCategory category)
+        {
+            await _dbContext.ProductCategories.AddAsync(category);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var product = await _dbContext.Products.FindAsync(id);
+            if (product != null)
+            {
+                _dbContext.Products.Remove(product);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<Guid?> DoesCategoryExistAsync(string name)
+        {
+            var category = await _dbContext.ProductCategories
+                .FirstOrDefaultAsync(c => c.Name == name);
+            return category?.Id;
+        }
+
+        public async Task<Guid?> DoesProductExistAsync(Guid productId)
+        {
+            var product = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Id == productId);
+            return product?.Id;
+        }
+
+        public async Task<IEnumerable<Product>> GetAllAsync()
+        {
+            return await _dbContext.Products
+                .Include(p => p.Artisan)
+                .Include(p => p.Category)
+                .Include(p => p.ProductReviews)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetByArtisanIdAsync(Guid artisanId)
+        {
+            return await _dbContext.Products
+                .Where(p => p.ArtisanId == artisanId)
+                .Include(p => p.Artisan)
+                .Include(p => p.Category)
+                .Include(p => p.ProductReviews)
+                .ToListAsync();
+        }
+
+        public async Task<Product?> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.Products.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(Product product)
+        {
+            _dbContext.Products.Update(product);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+}

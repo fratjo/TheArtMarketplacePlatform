@@ -45,7 +45,8 @@ input#search:focus {
   padding: 1px 5px;
 }
 
-.filter-combo select {
+.filter-combo select,
+.filter-combo app-single-slider {
   border: 1px solid #ccc;
   border-radius: 4px;
   outline: none;

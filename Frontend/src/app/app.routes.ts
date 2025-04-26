@@ -77,6 +77,27 @@ export const routes: Routes = [
             './features/products/product-catalog/product-catalog.component'
           ).then((c) => c.ProductCatalogComponent),
       },
+      {
+        path: ':id/details',
+        loadComponent: () =>
+          import(
+            './features/products/product-details/product-details.component'
+          ).then((c) => c.ProductDetailsComponent),
+      },
+      {
+        path: 'new',
+        loadComponent: () =>
+          import(
+            './features/artisan/products/product-form-page/product-form-page.component'
+          ).then((c) => c.ProductFormPageComponent),
+      },
+      {
+        path: ':id/edit',
+        loadComponent: () =>
+          import(
+            './features/artisan/products/product-form-page/product-form-page.component'
+          ).then((c) => c.ProductFormPageComponent),
+      },
     ],
   },
   {

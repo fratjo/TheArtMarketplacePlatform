@@ -6,7 +6,9 @@
     class="d-flex flex-row justify-content-between align-items-center mb-3 w-100"
   >
     <h3 class="text-center">My Products</h3>
-    <button id="add-product-btn">Add Product</button>
+    <button id="add-product-btn" [routerLink]="['/products/new']">
+      Add Product
+    </button>
   </div>
   <hr class="w-100 my-3" />
   <div
@@ -60,7 +62,7 @@
           </select>
         </div>
         <div>
-          <label for="rating">Rating: </label>
+          <label for="rating">Rating:</label>
           <app-single-slider
             id="rating"
             [floor]="0"
@@ -142,7 +144,7 @@
         </th>
         <th
           role="button"
-          (dblclick)="sortBy('quantity')"
+          (dblclick)="sortBy('quantityLeft')"
           style="user-select: none"
         >
           <div class="d-flex flex-row gap-1 align-items-center">
@@ -208,14 +210,28 @@
         </td>
         <td class="align-middle">{{ product.name }}</td>
         <td class="align-middle">{{ product.price }}</td>
-        <td class="align-middle">{{ product.category }}</td>
-        <td class="align-middle">{{ product.status }}</td>
-        <td class="align-middle">{{ product.quantity }}</td>
-        <td class="align-middle">{{ product.rating }}</td>
-        <td class="align-middle">{{ product.availability }}</td>
+        <td class="align-middle">{{ product.category.name }}</td>
         <td class="align-middle">
-          <button class="btn btn-sm btn-outline-primary">✏️</button>
-          <button class="btn btn-sm btn-outline-danger">🗑️</button>
+          {{ !product.status ? "In Stock" : "Out of Stock" }}
+        </td>
+        <td class="align-middle">{{ product.quantityLeft }}</td>
+        <td class="align-middle">{{ product.rating }}</td>
+        <td class="align-middle">
+          {{ product.availability ? "Available" : "Not Available" }}
+        </td>
+        <td class="align-middle">
+          <button
+            class="btn btn-sm btn-outline-primary"
+            (click)="onEdit(product.id)"
+          >
+            ✏️
+          </button>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="onDelete(product.id)"
+          >
+            🗑️
+          </button>
         </td>
       </tr>
       }

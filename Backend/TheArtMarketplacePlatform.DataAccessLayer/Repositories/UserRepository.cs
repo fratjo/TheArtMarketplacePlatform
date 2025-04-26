@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TheArtMarketplacePlatform.Core.Entities;
-using TheArtMarketplacePlatform.Core.Interfaces;
+using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
 
 namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
 {
