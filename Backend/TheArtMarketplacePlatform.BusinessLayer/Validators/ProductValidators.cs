@@ -37,11 +37,6 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
     {
         public ArtisanUpdateProductValidator()
         {
-
-            RuleFor(x => x.Id)
-                .NotEmpty()
-                .WithMessage("Product ID is required.");
-
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage("Product name is required.");

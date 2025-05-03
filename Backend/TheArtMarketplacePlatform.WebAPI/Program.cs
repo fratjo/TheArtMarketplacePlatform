@@ -10,6 +10,7 @@ using TheArtMarketplacePlatform.Core.Interfaces.Services;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
 using TheArtMarketplacePlatform.DataAccessLayer.Repositories;
 using TheArtMarketplacePlatform.WebAPI.ExceptionHandlers;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +97,8 @@ app.UseCors(policy =>
 {
     policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
 });
+
+app.UseStaticFiles();
 
 app.MapControllers();
 

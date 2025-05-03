@@ -3,7 +3,7 @@ export interface Product {
   name: string;
   description?: string;
   price: number;
-  image: string;
+  imageUrl: string;
   category: Category;
   rating: number;
   quantityLeft: number;
@@ -12,11 +12,13 @@ export interface Product {
 }
 
 export interface ProductForm {
+  id?: string;
   name: string;
   description?: string;
   price: number;
   category: string;
-  image?: string;
+  image?: File | string;
+  imageExtension?: string;
   status: string;
   quantityLeft: number;
 }

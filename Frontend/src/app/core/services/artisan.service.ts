@@ -8,6 +8,7 @@ import {
   Products,
 } from '../models/product.interface';
 import { AuthService } from './auth.service';
+import { Form } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +46,18 @@ export class ArtisanService {
     return this.http.get<Categories>(`${this.apiUrl}/categories`);
   }
 
-  createProduct(product: ProductForm) {
+  createProduct(data: FormData) {
+    const product: ProductForm = {
+      name: data.get('name') as string,
+      description: data.get('description') as string,
+      price: parseFloat(data.get('price') as string),
+      category: data.get('category') as string,
+      status: data.get('status') as string,
+      image: data.get('image') as File,
+      imageExtension: data.get('extension') as string,
+      quantityLeft: parseInt(data.get('quantityLeft') as string),
+    };
+
     const userId = this.authService.getUserId();
     return this.http
       .post<Product>(`${this.apiUrl}/${userId}/products`, product)
@@ -57,8 +69,18 @@ export class ArtisanService {
       );
   }
 
-  updateProduct(id: string, updatedProduct: ProductForm) {
-    console.log('updateProduct', updatedProduct);
+  updateProduct(id: string, data: FormData) {
+    const updatedProduct: ProductForm = {
+      // id: data.get('id') as string,
+      name: data.get('name') as string,
+      description: data.get('description') as string,
+      price: parseFloat(data.get('price') as string),
+      category: data.get('category') as string,
+      status: data.get('status') as string,
+      image: data.get('image') as File,
+      imageExtension: data.get('extension') as string,
+      quantityLeft: parseInt(data.get('quantityLeft') as string),
+    };
 
     const userId = this.authService.getUserId();
     return this.http

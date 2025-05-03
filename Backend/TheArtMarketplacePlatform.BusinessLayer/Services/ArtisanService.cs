@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
@@ -9,12 +10,34 @@ using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
-    public class ArtisanService(IProductRepository _productRepository) : IArtisanService
+    public class ArtisanService(IProductRepository _productRepository, IWebHostEnvironment _env) : IArtisanService
     {
         public async Task<Product> CreateProductAsync(Guid ArsitsanId, ArtisanInsertProductRequest request)
         {
             // check if category exists
             var categoryExists = await _productRepository.DoesCategoryExistAsync(request.Category);
+
+            string? uniqueImageName = null;
+
+            if (request.Image is not null && request.Image.Length != 0)
+            {
+                // Generate a unique name for the image
+                uniqueImageName = Guid.NewGuid().ToString() + "." + request.ImageExtension;
+
+                var webRootPath = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+                if (!Directory.Exists(webRootPath)) Directory.CreateDirectory(webRootPath);
+
+                // Save the image to the file system as static files
+                var imageFolder = Path.Combine(_env.WebRootPath, "images");
+                var imagePath = Path.Combine(imageFolder, uniqueImageName);
+
+                // Ensure the directory exists
+                if (!Directory.Exists(imageFolder)) Directory.CreateDirectory(imageFolder);
+
+                // Save the image to the file system
+                await File.WriteAllBytesAsync(imagePath, Convert.FromBase64String(request.Image));
+            }
 
             var product = new Product
             {
@@ -25,7 +48,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 CategoryId = categoryExists,
                 Status = request.QuantityLeft > 0 ? ProductStatus.InStock : ProductStatus.OutOfStock,
                 Availability = request.Availability == "available" ? ProductAvailability.Available : ProductAvailability.Unavailable,
-                ArtisanId = ArsitsanId
+                ArtisanId = ArsitsanId,
+                ImageUrl = request.Image is not null && request.Image.Length != 0 ? Path.Combine("images", uniqueImageName!) : null,
             };
 
             await _productRepository.AddAsync(product);
@@ -35,10 +59,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         public async Task<bool> DeleteProductAsync(Guid ArsitsanId, Guid id)
         {
             var product = await _productRepository.GetByIdAsync(id);
-            if (product == null || product.ArtisanId != ArsitsanId)
-            {
-                return false;
-            }
+            if (product == null || product.ArtisanId != ArsitsanId) return false;
+
 
             product.IsDeleted = true; // soft delete
             product.DeletedAt = DateTime.UtcNow;
@@ -49,10 +71,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync(Guid? id, string? search = null, string? category = null, string? status = null, string? availability = null, decimal? rating = null)
         {
-            if (id == null)
-            {
-                return await _productRepository.GetAllAsync();
-            }
+            if (id == null) return await _productRepository.GetAllAsync();
+
 
             var products = await _productRepository.GetByArtisanIdAsync(id.Value);
 
@@ -106,9 +126,26 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return product;
         }
 
-        public async Task<Product> UpdateProductAsync(Guid ArtisanId, ArtisanUpdateProductRequest request)
+        public async Task<byte[]?> GetProductImageAsync(Guid id)
         {
-            var product = await _productRepository.GetByIdAsync(request.Id);
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null || string.IsNullOrEmpty(product.ImageUrl))
+            {
+                return null;
+            }
+
+            var imagePath = Path.Combine(_env.WebRootPath, product.ImageUrl);
+            if (!File.Exists(imagePath))
+            {
+                return null;
+            }
+
+            return await File.ReadAllBytesAsync(imagePath);
+        }
+
+        public async Task<Product> UpdateProductAsync(Guid ArtisanId, Guid ProductId, ArtisanUpdateProductRequest request)
+        {
+            var product = await _productRepository.GetByIdAsync(ProductId);
             if (product == null)
             {
                 throw new Exception("Product not found");
@@ -117,6 +154,43 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             if (product.ArtisanId != ArtisanId)
             {
                 throw new Exception("You are not authorized to update this product");
+            }
+
+            if (request.Image is not null && request.Image.Length != 0)
+            {
+                // Generate a unique name for the new image
+                var uniqueImageName = Guid.NewGuid().ToString() + "." + request.ImageExtension;
+
+                var webRootPath = _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+                if (string.IsNullOrEmpty(webRootPath))
+                {
+                    throw new InvalidOperationException("WebRootPath is not configured. Ensure wwwroot exists or is properly set up.");
+                }
+
+                if (!Directory.Exists(webRootPath)) Directory.CreateDirectory(webRootPath);
+
+                // Save the new image to the file system
+                var imageFolder = Path.Combine(_env.WebRootPath, "images");
+                var newImagePath = Path.Combine(imageFolder, uniqueImageName);
+
+                // Ensure the directory exists
+                if (!Directory.Exists(imageFolder)) Directory.CreateDirectory(imageFolder);
+
+                await File.WriteAllBytesAsync(newImagePath, Convert.FromBase64String(request.Image));
+
+                // Delete the old image if it exists
+                if (!string.IsNullOrEmpty(product.ImageUrl))
+                {
+                    var oldImagePath = Path.Combine(_env.WebRootPath, product.ImageUrl);
+                    if (File.Exists(oldImagePath))
+                    {
+                        File.Delete(oldImagePath);
+                    }
+                }
+
+                // Update the product's image URL
+                product.ImageUrl = Path.Combine("images", uniqueImageName);
             }
 
             product.Name = request.Name;

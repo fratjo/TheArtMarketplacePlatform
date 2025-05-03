@@ -45,7 +45,7 @@ export class ProductFormPageComponent implements OnInit {
     });
   }
 
-  onSave(product: ProductForm) {
+  onSave(product: FormData) {
     if (this.isEditMode && this.productId) {
       this.artisanService.updateProduct(this.productId, product).subscribe({
         next: (response: any) => {

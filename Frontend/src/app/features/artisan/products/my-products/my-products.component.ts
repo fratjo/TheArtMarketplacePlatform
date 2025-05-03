@@ -17,6 +17,7 @@ import { SingleSliderComponent } from '../../../../shared/components/single-slid
 import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ArtisanService } from '../../../../core/services/artisan.service';
+import { environment } from '../../../../../../environment';
 
 @Component({
   selector: 'app-my-products',
@@ -97,6 +98,10 @@ export class MyProductsComponent implements OnInit {
         return this.artisanService.filterProducts(filters);
       })
     );
+  }
+
+  getImageUrl(imagePath: string): string {
+    return `${environment.apiUrl}/${imagePath}`;
   }
 
   onRatingSliderChange(value: number) {

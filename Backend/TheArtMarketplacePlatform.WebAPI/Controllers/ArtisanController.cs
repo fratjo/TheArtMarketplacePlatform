@@ -39,6 +39,17 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             return Ok(product);
         }
 
+        [HttpGet("products/{id}/image")]
+        public async Task<IActionResult> GetProductImage(Guid id)
+        {
+            var image = await _artisanService.GetProductImageAsync(id);
+            if (image == null)
+            {
+                return NotFound();
+            }
+            return File(image, "image/jpeg");
+        }
+
         [HttpGet("/api/artisans/categories")]
         public async Task<IActionResult> GetCategories()
         {
@@ -55,9 +66,9 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         }
 
         [HttpPut("products/{id}")]
-        public async Task<IActionResult> UpdateProduct(Guid artisanId, [FromBody] ArtisanUpdateProductRequest request)
+        public async Task<IActionResult> UpdateProduct(Guid artisanId, Guid id, [FromBody] ArtisanUpdateProductRequest request)
         {
-            var updatedProduct = await _artisanService.UpdateProductAsync(artisanId, request);
+            var updatedProduct = await _artisanService.UpdateProductAsync(artisanId, id, request);
             if (updatedProduct == null)
             {
                 return NotFound();
