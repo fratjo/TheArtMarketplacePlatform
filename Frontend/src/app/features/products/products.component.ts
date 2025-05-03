@@ -13,8 +13,6 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     const role = this.authService.getUserRole();
 
-    console.log('User role:', role);
-
     switch (role) {
       case 'artisan':
         this.router.navigate(['/products/my-products']);

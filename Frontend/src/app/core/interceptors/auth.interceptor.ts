@@ -8,6 +8,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const toastService = inject(ToastService);
 
   if (!authService.isLoggedIn() || authService.isTokenExpired()) {
+    if (!authService.isLoggedIn()) return next(req);
+
     authService.logout();
     toastService.show({
       text: 'Session expired. Please log in again.',

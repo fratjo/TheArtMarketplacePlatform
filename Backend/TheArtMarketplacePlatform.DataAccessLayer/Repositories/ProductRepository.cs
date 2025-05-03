@@ -62,6 +62,12 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync()
+        {
+            return await _dbContext.ProductCategories
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Product>> GetByArtisanIdAsync(Guid artisanId)
         {
             return await _dbContext.Products
@@ -74,7 +80,9 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            return await _dbContext.Products.FindAsync(id);
+            return await _dbContext.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task UpdateAsync(Product product)

@@ -1,12 +1,22 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
-import { ProductService } from '../../../../core/services/product.service';
-import { Product, Products } from '../../../../core/models/product.interface';
+import {
+  BehaviorSubject,
+  combineLatestWith,
+  map,
+  Observable,
+  switchMap,
+} from 'rxjs';
+import {
+  Categories,
+  Product,
+  Products,
+} from '../../../../core/models/product.interface';
 import { FormsModule } from '@angular/forms';
 import { SingleSliderComponent } from '../../../../shared/components/single-slider/single-slider.component';
 import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
+import { ArtisanService } from '../../../../core/services/artisan.service';
 
 @Component({
   selector: 'app-my-products',
@@ -21,38 +31,29 @@ import { ToastService } from '../../../../core/services/toast.service';
   styleUrl: './my-products.component.css',
 })
 export class MyProductsComponent implements OnInit {
-  products$!: BehaviorSubject<Products>;
-  filters$ = new BehaviorSubject<any>({});
-  search$ = new BehaviorSubject<string>('');
-  sorting: { [key: string]: 'asc' | 'desc' } = {
-    name: 'asc',
-    price: 'asc',
-    category: 'asc',
-    status: 'asc',
-    quantity: 'asc',
-    availability: 'asc',
-    rating: 'asc',
-  };
-  filters = {
-    name: '',
+  products$!: Observable<Products>;
+  categories$!: Observable<Categories>;
+  filters$ = new BehaviorSubject<any>({
+    search: '',
     category: '',
     status: '',
     availability: '',
     rating: 0,
-  };
-
-  categories!: string[];
-
-  filteredProducts$!: Observable<Products>;
+  });
+  search$ = new BehaviorSubject<string>('');
+  sorting$ = new BehaviorSubject<{
+    property: keyof Product;
+    direction: 'asc' | 'desc';
+  } | null>(null);
 
   constructor(
-    private productService: ProductService,
+    private artisanService: ArtisanService,
     private toastService: ToastService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe({
+    this.artisanService.getProducts().subscribe({
       error: (error) => {
         console.error('Error fetching products:', error);
         this.toastService.show({
@@ -62,53 +63,73 @@ export class MyProductsComponent implements OnInit {
         });
       },
     });
-    this.products$ = this.productService.products$;
-    // this.productService.categories$.getValue();
+    this.products$ = this.artisanService.products$;
+    // this.artisanService.categories$.getValue();
 
-    this.filteredProducts$ = this.products$.pipe(
-      combineLatestWith(this.filters$, this.search$),
-      map(([products, filters, searchTerm]) => {
-        let filtered = this.productService.filterProducts(products, filters);
+    this.artisanService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories$ = new BehaviorSubject<Categories>(categories);
+      },
+      error: (error) => {
+        console.error('Error fetching categories:', error);
+        this.toastService.show({
+          text: `Error fetching categories: ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
 
-        if (searchTerm) {
-          filtered = filtered.filter((p) =>
-            [p.name, p.category, p.status, p.availability]
-              .join(' ')
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())
-          );
+    // Combine les filtres et le tri pour envoyer au serveur
+    this.products$ = this.filters$.pipe(
+      combineLatestWith(this.sorting$),
+      switchMap(([filters, sorting]) => {
+        // Ajouter les critères de tri aux filtres
+        if (sorting) {
+          filters = {
+            ...filters,
+            sortProperty: sorting.property,
+            sortDirection: sorting.direction,
+          };
         }
 
-        return filtered;
+        // Envoyer les filtres au serveur
+        return this.artisanService.filterProducts(filters);
       })
     );
   }
 
-  onRatingSliderChange(event: number) {
-    this.filters.rating = event;
-    this.applyFilters();
+  onRatingSliderChange(value: number) {
+    const currentFilters = this.filters$.getValue();
+    this.filters$.next({ ...currentFilters, rating: value });
   }
 
-  applyFilters() {
-    this.filters$.next({ ...this.filters });
-  }
+  applyFilters(params: string = '', value: any = {}) {
+    const currentFilters = this.filters$.getValue();
 
-  sortBy(property: keyof Product) {
-    const direction = this.sorting[property] === 'asc' ? 1 : -1;
-    this.sorting[property] = direction === 1 ? 'desc' : 'asc';
-
-    this.filteredProducts$ = this.filteredProducts$.pipe(
-      map((products) =>
-        [...products].sort((a, b) =>
-          a[property]! < b[property]! ? -1 * direction : 1 * direction
-        )
-      )
-    );
+    this.filters$.next({
+      ...currentFilters,
+      [params]: value.$event as string,
+    });
   }
 
   search(event: Event) {
     const input = event.target as HTMLInputElement;
-    this.search$.next(input.value);
+    const currentFilters = this.filters$.getValue();
+    this.filters$.next({
+      ...currentFilters,
+      search: input.value,
+    });
+  }
+
+  sortBy(property: keyof Product) {
+    const currentSorting = this.sorting$.getValue();
+    const newDirection =
+      currentSorting?.property === property &&
+      currentSorting.direction === 'asc'
+        ? 'desc'
+        : 'asc';
+    this.sorting$.next({ property, direction: newDirection });
   }
 
   onEdit(id: string) {
@@ -116,27 +137,23 @@ export class MyProductsComponent implements OnInit {
   }
 
   onDelete(id: string) {
-    //   console.log('Delete product with id:', id);
-    //   this.productService.deleteProduct(id).subscribe({
-    //     next: () => {
-    //       console.log('Product deleted successfully');
-    //       this.toastService.show({
-    //         text: 'Product deleted successfully',
-    //         classname: 'bg-success text-light',
-    //         delay: 3000,
-    //       });
-    //     },
-    //     error: (error) => {
-    //       console.error('Error deleting product:', error);
-    //       this.toastService.show({
-    //         text: `Error deleting product: ${error.error.title}`,
-    //         classname: 'bg-danger text-light',
-    //         delay: 5000,
-    //       });
-    //     },
-    //     complete: () => {
-    //       this.products$ = this.productService.getProducts$();
-    //     },
-    //   });
+    this.artisanService.deleteProduct(id).subscribe({
+      next: () => {
+        this.toastService.show({
+          text: 'Product deleted successfully',
+          classname: 'bg-success text-light',
+          delay: 3000,
+        });
+        this.applyFilters(); // Rafraîchir les produits après suppression
+      },
+      error: (error) => {
+        console.error('Error deleting product:', error);
+        this.toastService.show({
+          text: `Error deleting product: ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
   }
 }

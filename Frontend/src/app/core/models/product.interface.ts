@@ -11,9 +11,20 @@ export interface Product {
   availability: string;
 }
 
-export type Products = Product[];
+export interface ProductForm {
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  image?: string;
+  status: string;
+  quantityLeft: number;
+}
 
+export type Products = Product[];
 export interface Category {
   id: string;
   name: string;
 }
+
+export type Categories = Category[];

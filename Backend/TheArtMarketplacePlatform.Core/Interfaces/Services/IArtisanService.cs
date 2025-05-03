@@ -7,10 +7,12 @@ using TheArtMarketplacePlatform.Core.Entities;
 
 namespace TheArtMarketplacePlatform.Core.Interfaces.Services
 {
-    public interface IProductService
+    public interface IArtisanService
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync(Guid? ArsitsanId);
+        Task<IEnumerable<Product>> GetAllProductsAsync(Guid? ArsitsanId, string? search = null,
+            string? category = null, string? status = null, string? availability = null, decimal? rating = null);
         Task<Product> GetProductByIdAsync(Guid id);
+        Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync();
         Task<Product> CreateProductAsync(Guid ArsitsanId, ArtisanInsertProductRequest request);
         Task<Product> UpdateProductAsync(Guid ArsitsanId, ArtisanUpdateProductRequest request);
         Task<bool> DeleteProductAsync(Guid ArsitsanId, Guid id);

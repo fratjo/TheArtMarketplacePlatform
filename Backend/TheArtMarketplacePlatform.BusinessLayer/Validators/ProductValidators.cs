@@ -58,7 +58,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
                 .NotEmpty()
                 .WithMessage("Category is required.");
 
-            RuleFor(x => x.IsAvailable)
+            RuleFor(x => x.Availability)
                 .NotNull()
                 .WithMessage("Availability status is required.");
         }

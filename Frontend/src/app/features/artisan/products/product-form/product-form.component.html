@@ -5,6 +5,10 @@
       class="form-control"
       formControlName="name"
       placeholder="Entrez le nom du produit"
+      [ngClass]="{
+        'is-invalid':
+          productForm.get('name')?.invalid && productForm.get('name')?.touched
+      }"
     />
   </div>
 
@@ -24,16 +28,32 @@
       class="form-control"
       formControlName="price"
       placeholder="Prix en €"
+      [ngClass]="{
+        'is-invalid':
+          productForm.get('price')?.invalid && productForm.get('price')?.touched
+      }"
     />
   </div>
 
   <div class="form-group">
     <label>Category</label>
-    <input
-      class="form-control"
+    <select
+      name="category"
+      id="category"
+      class="form-select form-select-sm"
       formControlName="category"
-      placeholder="Catégorie (ex: peinture, bijou...)"
-    />
+      [ngClass]="{
+        'is-invalid':
+          productForm.get('category')?.invalid &&
+          productForm.get('category')?.touched
+      }"
+    >
+      > @for (category of categories$ | async; track category) {
+      <option [value]="category.name.toLocaleLowerCase()">
+        {{ category.name }}
+      </option>
+      }
+    </select>
   </div>
 
   <div class="form-group">
@@ -48,8 +68,16 @@
 
   <div class="form-group">
     <label>Status</label>
-    <select class="form-control" formControlName="availability">
-      <option value="available" selected>Available</option>
+    <select
+      class="form-select form-select-sm"
+      formControlName="availability"
+      [ngClass]="{
+        'is-invalid':
+          productForm.get('availability')?.invalid &&
+          productForm.get('availability')?.touched
+      }"
+    >
+      <option value="available">Available</option>
       <option value="not available">Not Available</option>
     </select>
   </div>
@@ -61,6 +89,11 @@
       class="form-control"
       formControlName="quantityLeft"
       placeholder="Quantité en stock"
+      [ngClass]="{
+        'is-invalid':
+          productForm.get('quantityLeft')?.invalid &&
+          productForm.get('quantityLeft')?.touched
+      }"
     />
   </div>
 
@@ -69,6 +102,6 @@
     class="btn btn-primary mt-3"
     [disabled]="productForm.invalid"
   >
-    {{ product ? "Update" : "Create" }} le produit
+    {{ product ? "Update" : "Create" }} product
   </button>
 </form>

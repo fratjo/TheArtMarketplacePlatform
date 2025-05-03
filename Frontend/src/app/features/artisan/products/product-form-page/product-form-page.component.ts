@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Product } from '../../../../core/models/product.interface';
+import {
+  Product,
+  ProductForm,
+} from '../../../../core/models/product.interface';
 import { ProductService } from '../../../../core/services/product.service';
 import { ProductFormComponent } from '../product-form/product-form.component';
 import { ToastService } from '../../../../core/services/toast.service';
+import { ArtisanService } from '../../../../core/services/artisan.service';
 
 @Component({
   selector: 'app-product-form-page',
@@ -18,7 +22,7 @@ export class ProductFormPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private productService: ProductService,
+    private artisanService: ArtisanService,
     private toastService: ToastService
   ) {}
 
@@ -27,8 +31,11 @@ export class ProductFormPageComponent implements OnInit {
       this.productId = params.get('id');
       this.isEditMode = !!this.productId;
       if (this.isEditMode && this.productId) {
-        this.productService.getProductById(this.productId).subscribe({
-          next: (product: Product) => (this.product = product),
+        this.artisanService.getProductById(this.productId).subscribe({
+          next: (product: Product) => {
+            this.product = product;
+            console.log('Product fetched:', product);
+          },
           error: () => {
             // Gérer erreur (ex: id pas trouvé)
             this.router.navigate(['/products']);
@@ -38,28 +45,28 @@ export class ProductFormPageComponent implements OnInit {
     });
   }
 
-  onSave(product: Product) {
+  onSave(product: ProductForm) {
     if (this.isEditMode && this.productId) {
-      // this.productService.updateProduct(this.productId, product).subscribe({
-      //   next: (response: any) => {
-      //     this.toastService.show({
-      //       text: 'Product updated successfully',
-      //       classname: 'bg-success text-light',
-      //       delay: 3000,
-      //     });
-      //     this.router.navigate(['/products/my-products']);
-      //   },
-      //   error: (error: any) => {
-      //     console.error('Error updating product:', error);
-      //     this.toastService.show({
-      //       text: `Error updating product: ${error.error.title}`,
-      //       classname: 'bg-danger text-light',
-      //       delay: 5000,
-      //     });
-      //   },
-      // });
+      this.artisanService.updateProduct(this.productId, product).subscribe({
+        next: (response: any) => {
+          this.toastService.show({
+            text: 'Product updated successfully',
+            classname: 'bg-success text-light',
+            delay: 3000,
+          });
+          this.router.navigate(['/products/my-products']);
+        },
+        error: (error: any) => {
+          console.error('Error updating product:', error);
+          this.toastService.show({
+            text: `Error updating product: ${error.error.title}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
+        },
+      });
     } else {
-      this.productService.createProduct(product).subscribe({
+      this.artisanService.createProduct(product).subscribe({
         next: (response: any) => {
           this.toastService.show({
             text: 'Product created successfully',

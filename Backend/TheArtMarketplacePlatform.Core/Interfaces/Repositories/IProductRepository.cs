@@ -9,6 +9,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
     public interface IProductRepository
     {
         Task<IEnumerable<Product>> GetAllAsync();
+        Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync();
         Task<Product?> GetByIdAsync(Guid id);
         Task<IEnumerable<Product>> GetByArtisanIdAsync(Guid artisanId);
         Task AddAsync(Product product);

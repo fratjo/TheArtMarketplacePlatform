@@ -1,0 +1,265 @@
+{
+	"/": {
+		"view": "home",
+		"description": "Page d'accueil avec les produits en vedette.",
+		"guards": []
+	},
+	"/products": {
+		"view": "product_list",
+		"description": "Liste de tous les produits disponibles.",
+		"guards": ["roleGuard:customer_or_guest", "redirectGuard:artisan:/artisan/products"],
+		"children": {
+			"/:id": {
+				"view": "product_detail",
+				"description": "Détails d'un produit spécifique.",
+				"guards": ["roleGuard:customer_or_guest"],
+				"children": {
+					"/reviews": {
+						"view": "review_list",
+						"description": "Liste des reviews pour un produit spécifique.",
+						"guards": []
+					},
+					"/reviews/add": {
+						"view": "add_review",
+						"description": "Page pour ajouter une review pour un produit spécifique.",
+						"guards": ["authGuard", "roleGuard:customer", "receivedGuard"]
+					}
+				}
+			}
+		}
+	},
+	"/cart": {
+		"view": "cart",
+		"description": "Vue du panier avec les articles sélectionnés.",
+		"guards": []
+	},
+	"/login": {
+		"view": "login",
+		"description": "Page de connexion pour les utilisateurs.",
+		"guards": ["redirectGuard:/profile"]
+	},
+	"/register": {
+		"view": "register",
+		"description": "Page d'inscription pour les nouveaux utilisateurs.",
+		"guards": ["redirectGuard:/profile"]
+	},
+	"/reset-password": {
+		"view": "reset_password",
+		"description": "Page pour réinitialiser le mot de passe de l'utilisateur.",
+		"guards": []
+	},
+	"/checkout": {
+		"view": "checkout",
+		"description": "Processus de validation de commande.",
+		"guards": ["authGuard"]
+	},
+	"/profile": {
+		"view": "profile",
+		"description": "Page de profil utilisateur connecté avec les informations personnelles.",
+		"guards": ["authGuard"],
+		"children": {
+			"/edit": {
+				"view": "edit_profile",
+				"description": "Page pour éditer les informations personnelles de l'utilisateur.",
+				"guards": ["authGuard"]
+			},
+			"/orders": {
+				"view": "order_list",
+				"description": "Liste des commandes passées par l'utilisateur.",
+				"guards": ["authGuard"],
+				"children": {
+					"/:id": {
+						"view": "order_detail",
+						"description": "Détails d'une commande spécifique.",
+						"guards": ["authGuard"]
+					}
+				}
+			},
+			"/wishlist": {
+				"view": "wishlist",
+				"description": "Liste des produits ajoutés à la liste de souhaits par l'utilisateur.",
+				"guards": ["authGuard"],
+				"children": {
+					"/:id": {
+						"view": "wishlist_item_detail",
+						"description": "Détails d'un produit spécifique dans la liste de souhaits.",
+						"guards": ["authGuard"]
+					}
+				}
+			}
+		}
+	},
+	"/dashboard": {
+		"view": "customer_dashboard",
+		"description": "Tableau de bord pour les clients avec un aperçu des commandes et des informations personnelles.",
+		"guards": ["authGuard", "roleGuard:customer"]
+	},
+	"artisan": {
+		"/dashboard": {
+			"view": "artisan_dashboard",
+			"description": "Tableau de bord pour les artisans avec des outils pour gérer leurs produits.",
+			"guards": ["authGuard", "roleGuard:artisan"]
+		},
+		"/products": {
+			"view": "product_list",
+			"description": "Liste des produits gérés par l'artisan.",
+			"guards": ["authGuard", "roleGuard:artisan"],
+			"children": {
+				"/:id": {
+					"view": "product_detail",
+					"description": "Détails d'un produit spécifique géré par l'artisan.",
+					"guards": ["authGuard", "roleGuard:artisan"],
+					"children": {
+						"/edit": {
+							"view": "edit_product",
+							"description": "Page pour modifier un produit spécifique géré par l'artisan.",
+							"guards": ["authGuard", "roleGuard:artisan"]
+						},
+						"/reviews": {
+							"view": "review_list",
+							"description": "Liste des reviews pour un produit spécifique géré par l'artisan.",
+							"guards": ["authGuard", "roleGuard:artisan"],
+							"children": {
+								"/:reviewId/respond": {
+									"view": "respond_review",
+									"description": "Page pour répondre à une review spécifique d'un produit.",
+									"guards": ["authGuard", "roleGuard:artisan"]
+								}
+							}
+						}
+					}
+				},
+				"/new": {
+					"view": "create_product",
+					"description": "Page pour ajouter un nouveau produit géré par l'artisan.",
+					"guards": ["authGuard", "roleGuard:artisan"]
+				}
+			}
+		},
+		"/orders": {
+			"view": "order_list",
+			"description": "Liste des commandes reçues par l'artisan.",
+			"guards": ["authGuard", "roleGuard:artisan"],
+			"children": {
+				"/:id": {
+					"view": "order_detail",
+					"description": "Détails d'une commande spécifique reçue par l'artisan.",
+					"guards": ["authGuard", "roleGuard:artisan"]
+				}
+			}
+		},
+		"/profile": {
+			"view": "profile",
+			"description": "Page de profil pour l'artisan avec les informations personnelles.",
+			"guards": ["authGuard", "roleGuard:artisan"],
+			"children": {
+				"/edit": {
+					"view": "edit_profile",
+					"description": "Page pour éditer les informations personnelles de l'artisan.",
+					"guards": ["authGuard", "roleGuard:artisan"]
+				}
+			}
+		}
+	},
+	"delivery_partner": {
+		"/dashboard": {
+			"view": "delivery_dashboard",
+			"description": "Tableau de bord pour les partenaires de livraison avec des informations sur les livraisons en cours.",
+			"guards": ["authGuard", "roleGuard:delivery_partner"]
+		},
+		"/deliveries": {
+			"view": "delivery_list",
+			"description": "Liste des livraisons assignées au partenaire.",
+			"guards": ["authGuard", "roleGuard:delivery_partner"],
+			"children": {
+				"/:id": {
+					"view": "delivery_detail",
+					"description": "Détails d'une livraison spécifique.",
+					"guards": ["authGuard", "roleGuard:delivery_partner"]
+				}
+			}
+		},
+		"/profile": {
+			"view": "profile",
+			"description": "Page de profil pour le partenaire de livraison avec les informations personnelles.",
+			"guards": ["authGuard", "roleGuard:delivery_partner"],
+			"children": {
+				"/edit": {
+					"view": "edit_profile",
+					"description": "Page pour éditer les informations personnelles du partenaire de livraison.",
+					"guards": ["authGuard", "roleGuard:delivery_partner"]
+				}
+			}
+		}
+	},
+	"admin": {
+		"/dashboard": {
+			"view": "admin_dashboard",
+			"description": "Tableau de bord pour les administrateurs avec des outils de gestion.",
+			"guards": ["authGuard", "roleGuard:admin"]
+		},
+		"/users": {
+			"view": "user_list",
+			"description": "Liste de tous les utilisateurs du système.",
+			"guards": ["authGuard", "roleGuard:admin"],
+			"children": {
+				"/:id": {
+					"view": "user_detail",
+					"description": "Détails d'un utilisateur spécifique.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				},
+				"/new": {
+					"view": "create_admin",
+					"description": "Page pour créer un nouveau compte administrateur.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				}
+			}
+		},
+		"/products": {
+			"view": "product_list",
+			"description": "Liste de tous les produits disponibles.",
+			"guards": ["authGuard", "roleGuard:admin"],
+			"children": {
+				"/:id": {
+					"view": "product_detail",
+					"description": "Détails d'un produit spécifique.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				}
+			}
+		},
+		"/categories": {
+			"view": "category_list",
+			"description": "Liste de toutes les catégories de produits.",
+			"guards": ["authGuard", "roleGuard:admin"],
+			"children": {
+				"/:id": {
+					"view": "category_detail",
+					"description": "Détails d'une catégorie spécifique.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				},
+				"/new": {
+					"view": "create_category",
+					"description": "Page pour créer une nouvelle catégorie de produits.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				},
+				"/edit": {
+					"view": "edit_category",
+					"description": "Page pour modifier une catégorie existante.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				}
+			}
+		},
+		"/orders": {
+			"view": "order_list",
+			"description": "Liste de toutes les commandes passées.",
+			"guards": ["authGuard", "roleGuard:admin"],
+			"children": {
+				"/:id": {
+					"view": "order_detail",
+					"description": "Détails d'une commande spécifique.",
+					"guards": ["authGuard", "roleGuard:admin"]
+				}
+			}
+		}
+	}
+}

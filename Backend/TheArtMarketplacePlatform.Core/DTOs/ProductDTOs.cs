@@ -23,7 +23,7 @@ namespace TheArtMarketplacePlatform.Core.DTOs
         public decimal Price { get; set; }
         public int QuantityLeft { get; set; } = 0;
         public string Category { get; set; } = string.Empty;
-        public bool IsAvailable { get; set; } = true;
+        public string Availability { get; set; } = string.Empty;
     }
 
     public class ArtisanProductResponse

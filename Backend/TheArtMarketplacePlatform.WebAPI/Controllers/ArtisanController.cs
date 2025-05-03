@@ -12,21 +12,26 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
     [ApiController]
     [Authorize(Roles = "Artisan")]
     [Route("api/artisans/{artisanId:guid}")]
-    public class ArtisanController(IProductService _productService) : ControllerBase
+    public class ArtisanController(IArtisanService _artisanService) : ControllerBase
     {
         #region Products
 
         [HttpGet("products")]
-        public async Task<IActionResult> GetProducts([FromRoute] Guid artisanId)
+        public async Task<IActionResult> GetProducts([FromRoute] Guid artisanId,
+            [FromQuery] string? search = null,
+            [FromQuery] string? category = null,
+            [FromQuery] string? status = null,
+            [FromQuery] string? availability = null,
+            [FromQuery] decimal? rating = null)
         {
-            var products = await _productService.GetAllProductsAsync(artisanId);
+            var products = await _artisanService.GetAllProductsAsync(artisanId, search, category, status, availability, rating);
             return Ok(products);
         }
 
         [HttpGet("products/{id}")]
         public async Task<IActionResult> GetProductById(Guid id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
+            var product = await _artisanService.GetProductByIdAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -34,17 +39,25 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             return Ok(product);
         }
 
+        [HttpGet("/api/artisans/categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _artisanService.GetAllCategoriesAsync();
+            return Ok(categories);
+        }
+
+
         [HttpPost("products")]
         public async Task<IActionResult> CreateProduct([FromRoute] Guid artisanId, [FromBody] ArtisanInsertProductRequest request)
         {
-            var createdProduct = await _productService.CreateProductAsync(artisanId, request);
+            var createdProduct = await _artisanService.CreateProductAsync(artisanId, request);
             return Created();
         }
 
         [HttpPut("products/{id}")]
         public async Task<IActionResult> UpdateProduct(Guid artisanId, [FromBody] ArtisanUpdateProductRequest request)
         {
-            var updatedProduct = await _productService.UpdateProductAsync(artisanId, request);
+            var updatedProduct = await _artisanService.UpdateProductAsync(artisanId, request);
             if (updatedProduct == null)
             {
                 return NotFound();
@@ -55,7 +68,7 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpDelete("products/{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] Guid artisanId, Guid id)
         {
-            var result = await _productService.DeleteProductAsync(artisanId, id);
+            var result = await _artisanService.DeleteProductAsync(artisanId, id);
             if (!result)
             {
                 return NotFound();

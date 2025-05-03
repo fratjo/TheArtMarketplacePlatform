@@ -24,12 +24,15 @@
             name="category"
             id="category"
             class="form-select form-select-sm"
-            [(ngModel)]="filters.category"
-            (ngModelChange)="applyFilters()"
+            [ngModel]="(filters$ | async)?.category"
+            (ngModelChange)="applyFilters('category', { $event })"
           >
+            >
             <option value="">All</option>
-            @for (category of categories; track category) {
-            <option [value]="category">{{ category }}</option>
+            @for (category of categories$ | async; track category) {
+            <option [value]="category.name.toLocaleLowerCase()">
+              {{ category.name }}
+            </option>
             }
           </select>
         </div>
@@ -39,12 +42,12 @@
             name="availability"
             id="availability"
             class="form-select form-select-sm"
-            [(ngModel)]="filters.availability"
-            (ngModelChange)="applyFilters()"
+            [ngModel]="(filters$ | async)?.availability"
+            (ngModelChange)="applyFilters( 'availability', { $event })"
           >
             <option value="">All</option>
             <option value="available">Available</option>
-            <option value="not available">Not Available</option>
+            <option value="unavailable">Unvailable</option>
           </select>
         </div>
         <div class="d-flex flex-row gap-1 align-items-center filter-combo">
@@ -53,12 +56,12 @@
             name="status"
             id="status"
             class="form-select form-select-sm"
-            [(ngModel)]="filters.status"
-            (ngModelChange)="applyFilters()"
+            [ngModel]="(filters$ | async)?.status"
+            (ngModelChange)="applyFilters( 'status', { $event })"
           >
             <option value="">All</option>
-            <option value="in stock">In Stock</option>
-            <option value="out of stock">Out of Stock</option>
+            <option value="instock">In Stock</option>
+            <option value="outofstock">Out of Stock</option>
           </select>
         </div>
         <div>
@@ -185,7 +188,7 @@
       </tr>
     </thead>
     <tbody style="overflow-y: scroll">
-      @for (product of filteredProducts$ | async ; track product.id) {
+      @for (product of products$ | async ; track product.id) {
       <tr>
         <td class="align-middle">
           <input type="checkbox" name="" id="" />
@@ -217,20 +220,14 @@
         <td class="align-middle">{{ product.quantityLeft }}</td>
         <td class="align-middle">{{ product.rating }}</td>
         <td class="align-middle">
-          {{ product.availability ? "Available" : "Not Available" }}
+          {{ product.availability ? "Unvailable" : "Available" }}
         </td>
         <td class="align-middle">
-          <button
-            class="btn btn-sm btn-outline-primary"
-            (click)="onEdit(product.id)"
-          >
-            ✏️
+          <button class="action-btn me-2" (click)="onEdit(product.id)">
+            Edit ✏️
           </button>
-          <button
-            class="btn btn-sm btn-outline-danger"
-            (click)="onDelete(product.id)"
-          >
-            🗑️
+          <button class="action-btn" (click)="onDelete(product.id)">
+            Delete 🗑️
           </button>
         </td>
       </tr>

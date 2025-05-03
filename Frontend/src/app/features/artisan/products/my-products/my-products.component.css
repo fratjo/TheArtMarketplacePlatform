@@ -57,3 +57,17 @@ input#search:focus {
   outline: none;
   box-shadow: none;
 }
+
+.action-btn {
+  border: 1px solid #f88224;
+  color: black;
+  padding: 5px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  color: #fff;
+  background-color: #f88224;
+}

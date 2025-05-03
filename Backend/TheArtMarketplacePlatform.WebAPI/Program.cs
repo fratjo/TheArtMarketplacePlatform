@@ -47,7 +47,7 @@ builder.Services.AddOpenApi();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IArtisanService, ArtisanService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
