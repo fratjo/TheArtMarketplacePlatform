@@ -4,10 +4,10 @@ import {
   Product,
   ProductForm,
 } from '../../../../core/models/product.interface';
-import { ProductService } from '../../../../core/services/product.service';
 import { ProductFormComponent } from '../product-form/product-form.component';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ArtisanService } from '../../../../core/services/artisan.service';
+import { NgModelGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-product-form-page',

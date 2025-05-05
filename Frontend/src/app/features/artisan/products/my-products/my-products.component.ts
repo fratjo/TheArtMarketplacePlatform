@@ -65,7 +65,6 @@ export class MyProductsComponent implements OnInit {
       },
     });
     this.products$ = this.artisanService.products$;
-    // this.artisanService.categories$.getValue();
 
     this.artisanService.getCategories().subscribe({
       next: (categories) => {
@@ -134,6 +133,7 @@ export class MyProductsComponent implements OnInit {
       currentSorting.direction === 'asc'
         ? 'desc'
         : 'asc';
+
     this.sorting$.next({ property, direction: newDirection });
   }
 

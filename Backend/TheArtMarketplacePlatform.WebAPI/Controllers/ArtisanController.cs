@@ -22,9 +22,11 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             [FromQuery] string? category = null,
             [FromQuery] string? status = null,
             [FromQuery] string? availability = null,
-            [FromQuery] decimal? rating = null)
+            [FromQuery] decimal? rating = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] string? sortOrder = null)
         {
-            var products = await _artisanService.GetAllProductsAsync(artisanId, search, category, status, availability, rating);
+            var products = await _artisanService.GetAllProductsAsync(artisanId, search, category, status, availability, rating, sortBy, sortOrder);
             return Ok(products);
         }
 

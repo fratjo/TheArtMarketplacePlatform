@@ -19,7 +19,7 @@ export interface ProductForm {
   category: string;
   image?: File | string;
   imageExtension?: string;
-  status: string;
+  availability: string;
   quantityLeft: number;
 }
 

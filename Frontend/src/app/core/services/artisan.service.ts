@@ -52,7 +52,7 @@ export class ArtisanService {
       description: data.get('description') as string,
       price: parseFloat(data.get('price') as string),
       category: data.get('category') as string,
-      status: data.get('status') as string,
+      availability: data.get('availability') as string,
       image: data.get('image') as File,
       imageExtension: data.get('extension') as string,
       quantityLeft: parseInt(data.get('quantityLeft') as string),
@@ -76,7 +76,7 @@ export class ArtisanService {
       description: data.get('description') as string,
       price: parseFloat(data.get('price') as string),
       category: data.get('category') as string,
-      status: data.get('status') as string,
+      availability: data.get('availability') as string,
       image: data.get('image') as File,
       imageExtension: data.get('extension') as string,
       quantityLeft: parseInt(data.get('quantityLeft') as string),
@@ -116,6 +116,8 @@ export class ArtisanService {
     status?: string;
     availability?: boolean;
     rating?: number;
+    sortProperty?: string;
+    sortDirection?: 'asc' | 'desc';
   }) {
     const userId = this.authService.getUserId();
 
@@ -135,6 +137,12 @@ export class ArtisanService {
     }
     if (filters.rating !== undefined) {
       params = params.set('rating', filters.rating.toString());
+    }
+    if (filters.sortProperty) {
+      params = params.set('sortBy', filters.sortProperty);
+    }
+    if (filters.sortDirection) {
+      params = params.set('sortOrder', filters.sortDirection);
     }
 
     // Envoyer la requête HTTP avec les paramètres

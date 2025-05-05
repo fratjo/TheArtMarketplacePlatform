@@ -17,3 +17,12 @@ nav {
   z-index: 1000;
   background-color: #fff;
 }
+
+.btn {
+  margin-right: 10px;
+}
+
+.active {
+  background-color: #d1d1d1;
+  border: none;
+}

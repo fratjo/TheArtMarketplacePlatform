@@ -21,7 +21,7 @@ export class ProductsComponent implements OnInit {
         this.router.navigate(['/unauthorized']);
         break;
       default:
-        this.router.navigate(['/products/product-catalog']);
+        this.router.navigate(['/products/catalog']);
         break;
     }
   }

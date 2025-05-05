@@ -10,7 +10,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
     public interface IArtisanService
     {
         Task<IEnumerable<Product>> GetAllProductsAsync(Guid? ArsitsanId, string? search = null,
-            string? category = null, string? status = null, string? availability = null, decimal? rating = null);
+            string? category = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null);
         Task<Product> GetProductByIdAsync(Guid id);
         Task<byte[]?> GetProductImageAsync(Guid id);
         Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync();

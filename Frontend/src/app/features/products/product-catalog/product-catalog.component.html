@@ -1,1 +1,40 @@
-<p>product-catalog works!</p>
+<div class="container">
+  <h1>Product Catalog</h1>
+  <div class="d-flex flex-row gap-2">
+    <div class="w-25">filters</div>
+    <div class="container">
+      <div
+        class="mb-3 d-flex flex-row gap-2 align-items-center justify-content-end"
+      >
+        <select id="sort" class="form-select w-25" (change)="sortBy($event)">
+          <option value="name asc">Name Asc</option>
+          <option value="name desc">Name Desc</option>
+          <option value="price asc">Price Asc</option>
+          <option value="price desc">Price Desc</option>
+        </select>
+      </div>
+      <div class="row">
+        @for (item of products$ | async; track $index) {
+        <div class="col">
+          <div class="product-card mb-3 w-100 d-flex flex-column">
+            <div class="card-header">
+              <img
+                [src]="getImageUrl(item.imageUrl)"
+                class="rounded"
+                alt="..."
+              />
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ item.name }}</h5>
+              <p>{{ item.category.name }}</p>
+              <p class="card-text fw-bold price">
+                {{ item.price | currency }}
+              </p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

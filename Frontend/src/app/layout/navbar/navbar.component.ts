@@ -4,6 +4,7 @@ import {
   NavigationEnd,
   Router,
   RouterLink,
+  RouterLinkActive,
 } from '@angular/router';
 import { BehaviorSubject, filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,7 +13,7 @@ import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, AsyncPipe],
+  imports: [RouterLink, AsyncPipe, RouterLinkActive],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
   standalone: true,

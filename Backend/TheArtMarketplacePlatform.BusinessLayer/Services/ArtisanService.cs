@@ -29,7 +29,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 if (!Directory.Exists(webRootPath)) Directory.CreateDirectory(webRootPath);
 
                 // Save the image to the file system as static files
-                var imageFolder = Path.Combine(_env.WebRootPath, "images");
+                var imageFolder = Path.Combine(_env.WebRootPath!, "images");
                 var imagePath = Path.Combine(imageFolder, uniqueImageName);
 
                 // Ensure the directory exists
@@ -69,10 +69,9 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return true;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync(Guid? id, string? search = null, string? category = null, string? status = null, string? availability = null, decimal? rating = null)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(Guid? id, string? search = null, string? category = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null)
         {
-            if (id == null) return await _productRepository.GetAllAsync();
-
+            if (id == null) throw new ArgumentNullException(nameof(id), "Artisan ID cannot be null");
 
             var products = await _productRepository.GetByArtisanIdAsync(id.Value);
 
@@ -105,6 +104,21 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             //         p.ProductReviews is not null &&
             //         (decimal)p.ProductReviews.Average(pr => pr.Rating) >= rating.Value);
             // }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                products = sortBy.ToLower() switch
+                {
+                    "name" => sortOrder == "desc" ? products.OrderByDescending(p => p.Name) : products.OrderBy(p => p.Name),
+                    "price" => sortOrder == "desc" ? products.OrderByDescending(p => p.Price) : products.OrderBy(p => p.Price),
+                    "category" => sortOrder == "desc" ? products.OrderByDescending(p => p.Category!.Name) : products.OrderBy(p => p.Category!.Name),
+                    "status" => sortOrder == "desc" ? products.OrderByDescending(p => p.Status) : products.OrderBy(p => p.Status),
+                    "quantityLeft" => sortOrder == "desc" ? products.OrderByDescending(p => p.QuantityLeft) : products.OrderBy(p => p.QuantityLeft),
+                    // "rating" => sortOrder == "desc" ? products.OrderByDescending(p => p.ProductReviews!.Average(pr => pr.Rating)) : products.OrderBy(p => p.ProductReviews!.Average(pr => pr.Rating)),
+                    "availability" => sortOrder == "desc" ? products.OrderByDescending(p => p.Availability) : products.OrderBy(p => p.Availability),
+                    _ => products
+                };
+            }
 
             return products;
         }
@@ -171,7 +185,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 if (!Directory.Exists(webRootPath)) Directory.CreateDirectory(webRootPath);
 
                 // Save the new image to the file system
-                var imageFolder = Path.Combine(_env.WebRootPath, "images");
+                var imageFolder = Path.Combine(_env.WebRootPath!, "images");
                 var newImagePath = Path.Combine(imageFolder, uniqueImageName);
 
                 // Ensure the directory exists
@@ -182,7 +196,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 // Delete the old image if it exists
                 if (!string.IsNullOrEmpty(product.ImageUrl))
                 {
-                    var oldImagePath = Path.Combine(_env.WebRootPath, product.ImageUrl);
+                    var oldImagePath = Path.Combine(_env.WebRootPath!, product.ImageUrl);
                     if (File.Exists(oldImagePath))
                     {
                         File.Delete(oldImagePath);
