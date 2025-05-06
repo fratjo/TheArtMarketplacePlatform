@@ -12,22 +12,25 @@ import {
   Products,
   Categories,
   Product,
+  ArtisanProducts,
 } from '../../../core/models/product.interface';
 import { environment } from '../../../../../environment';
-import { AsyncPipe, CurrencyPipe } from '@angular/common';
+import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-product-catalog',
-  imports: [AsyncPipe, CurrencyPipe],
+  imports: [AsyncPipe, CurrencyPipe, CommonModule],
   templateUrl: './product-catalog.component.html',
   styleUrl: './product-catalog.component.css',
 })
 export class ProductCatalogComponent implements OnInit {
   products$!: Observable<Products>;
   categories$!: Observable<Categories>;
+  artisans$!: Observable<ArtisanProducts>;
   filters$ = new BehaviorSubject<any>({
     search: '',
-    category: '',
+    artisans: [],
+    categories: [],
     status: '',
     availability: '',
     rating: 0,
@@ -37,6 +40,7 @@ export class ProductCatalogComponent implements OnInit {
     property: keyof Product;
     direction: 'asc' | 'desc';
   } | null>(null);
+  view = 'list'; // Default view
 
   constructor(
     private guestService: GuestService,
@@ -57,19 +61,33 @@ export class ProductCatalogComponent implements OnInit {
     });
     this.products$ = this.guestService.products$;
 
-    // this.guestService.getCategories().subscribe({
-    //   next: (categories) => {
-    //     this.categories$ = new BehaviorSubject<Categories>(categories);
-    //   },
-    //   error: (error) => {
-    //     console.error('Error fetching categories:', error);
-    //     this.toastService.show({
-    //       text: `Error fetching categories: ${error.error.title}`,
-    //       classname: 'bg-danger text-light',
-    //       delay: 5000,
-    //     });
-    //   },
-    // });
+    this.guestService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories$ = new BehaviorSubject<Categories>(categories);
+      },
+      error: (error) => {
+        console.error('Error fetching categories:', error);
+        this.toastService.show({
+          text: `Error fetching categories: ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
+
+    this.guestService.getArtisans().subscribe({
+      next: (artisans) => {
+        this.artisans$ = new BehaviorSubject<ArtisanProducts>(artisans);
+      },
+      error: (error) => {
+        console.error('Error fetching artisans:', error);
+        this.toastService.show({
+          text: `Error fetching artisans: ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
 
     // Combine les filtres et le tri pour envoyer au serveur
     this.products$ = this.filters$.pipe(
@@ -106,6 +124,42 @@ export class ProductCatalogComponent implements OnInit {
     this.filters$.next({
       ...currentFilters,
       [params]: value.$event as string,
+    });
+  }
+
+  onArtisanSelect(event: any) {
+    console.log('event:', event.target.value);
+
+    const currentFilters = this.filters$.getValue();
+    const selectedArtisans = event.target.value;
+
+    if (currentFilters.artisans.includes(selectedArtisans)) {
+      const index = currentFilters.artisans.indexOf(selectedArtisans);
+      currentFilters.artisans.splice(index, 1);
+    } else {
+      currentFilters.artisans.push(selectedArtisans);
+    }
+    this.filters$.next({
+      ...currentFilters,
+      artisans: currentFilters.artisans,
+    });
+  }
+
+  onCategorySelect(event: any) {
+    console.log('event:', event.target.value);
+
+    const currentFilters = this.filters$.getValue();
+    const selectedCategories = event.target.value;
+
+    if (currentFilters.categories.includes(selectedCategories)) {
+      const index = currentFilters.categories.indexOf(selectedCategories);
+      currentFilters.categories.splice(index, 1);
+    } else {
+      currentFilters.categories.push(selectedCategories);
+    }
+    this.filters$.next({
+      ...currentFilters,
+      categories: currentFilters.categories,
     });
   }
 

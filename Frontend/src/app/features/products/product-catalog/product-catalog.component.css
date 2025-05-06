@@ -28,10 +28,104 @@
 }
 
 .card-body {
-  flex-grow: 1;
+  height: 100px;
 }
 
 .price {
   justify-self: flex-end;
   align-self: flex-end;
+}
+
+.multiselect {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+
+  position: relative;
+
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.multiselect label {
+  padding-left: 5px;
+}
+
+.multiselect p {
+  position: absolute;
+  z-index: 100;
+  top: -14px;
+  left: 5px;
+  background-color: #fff;
+}
+
+input#search {
+  border: none;
+}
+
+input#search:focus {
+  outline: none;
+}
+
+.list-card {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 5px;
+  border-radius: 10px;
+  height: 250px;
+  background-color: #f0f0f0;
+}
+
+.list-card:hover {
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+
+.list-card img {
+  height: 100%;
+  width: 250px;
+  object-fit: cover;
+}
+
+.list-card .price {
+  justify-self: flex-end;
+  align-self: flex-end;
+}
+
+.list-card .card-body {
+  flex-grow: 1;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.btn-display-style {
+  padding: 5px 10px;
+  border-radius: 5px 0 0 5px;
+  color: #000;
+  border: none;
+}
+
+.btn-display-style:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.btn-display-style:focus {
+  outline: none;
+}
+
+button.btn-active {
+  background-color: #d06e1d;
+}
+
+.btn-display-style:hover {
+  cursor: pointer;
+  background-color: #f88224;
 }

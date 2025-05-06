@@ -9,14 +9,26 @@ using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
-    public class GuestService(IProductRepository productRepository, IWebHostEnvironment _env) : IGuestService
+    public class GuestService(IProductRepository productRepository, IUserRepository userRepository, IWebHostEnvironment _env) : IGuestService
     {
-        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? search = null, string? category = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null)
+        public Task<IEnumerable<User>> GetAllArtisansAsync()
+        {
+            var artisans = userRepository.GetAllArtisansAsync();
+            return artisans;
+        }
+
+        public async Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync()
+        {
+            var categories = await productRepository.GetAllCategoriesAsync();
+            return categories;
+        }
+
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? search = null, string? artisans = null, string? categories = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null)
         {
 
             var products = await productRepository.GetAllAsync();
 
-            products = products.Where(p => !p.IsDeleted); // Exclude soft-deleted products // only admin can see soft-deleted products and restore them
+            products = products.Where(p => !p.IsDeleted && p.Availability == ProductAvailability.Available);
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -27,9 +39,15 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                     p.Status.ToString().Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     p.Availability.ToString().Contains(search, StringComparison.OrdinalIgnoreCase));
             }
-            if (!string.IsNullOrEmpty(category))
+            if (!string.IsNullOrEmpty(artisans))
             {
-                products = products.Where(p => p.Category!.Name.Equals(category, StringComparison.OrdinalIgnoreCase));
+                var artisanList = artisans.Split(',').Select(a => a.Trim()).ToList();
+                products = products.Where(p => p.Artisan != null && artisanList.Contains(p.Artisan.User.Username, StringComparer.OrdinalIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(categories))
+            {
+                var categoryList = categories.Split(',').Select(c => c.Trim()).ToList();
+                products = products.Where(p => p.Category != null && categoryList.Contains(p.Category.Id.ToString(), StringComparer.OrdinalIgnoreCase));
             }
             if (!string.IsNullOrEmpty(status))
             {

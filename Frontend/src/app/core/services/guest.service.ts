@@ -1,7 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
-import { Product, Products } from '../models/product.interface';
+import {
+  ArtisanProducts,
+  Categories,
+  Product,
+  Products,
+} from '../models/product.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +31,18 @@ export class GuestService {
       .pipe(tap((product) => {}));
   }
 
+  getCategories() {
+    return this.http.get<Categories>(`${this.apiUrl}/categories`);
+  }
+
+  getArtisans() {
+    return this.http.get<ArtisanProducts>(`${this.apiUrl}/artisans`);
+  }
+
   filterProducts(filters: {
     search?: string;
-    category?: string;
+    artisans?: string[];
+    categories?: string[];
     status?: string;
     availability?: boolean;
     rating?: number;
@@ -40,8 +54,11 @@ export class GuestService {
     if (filters.search) {
       params = params.set('search', filters.search);
     }
-    if (filters.category) {
-      params = params.set('category', filters.category.toString());
+    if (filters.artisans) {
+      params = params.set('artisans', filters.artisans.join(','));
+    }
+    if (filters.categories) {
+      params = params.set('categories', filters.categories.join(','));
     }
     if (filters.status) {
       params = params.set('status', filters.status.toString());
@@ -58,6 +75,8 @@ export class GuestService {
     if (filters.sortDirection) {
       params = params.set('sortOrder', filters.sortDirection);
     }
+
+    console.log(params);
 
     // Envoyer la requête HTTP avec les paramètres
     return this.http.get<Products>(`${this.apiUrl}/products`, {

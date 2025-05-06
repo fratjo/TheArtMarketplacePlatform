@@ -46,6 +46,14 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                             .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
         }
 
+        public async Task<IEnumerable<User>> GetAllArtisansAsync()
+        {
+            return await _context.Users
+                            .Include(u => u.ArtisanProfile)
+                            .Where(u => u.Role == UserRole.Artisan)
+                            .ToListAsync();
+        }
+
         #endregion
     }
 }

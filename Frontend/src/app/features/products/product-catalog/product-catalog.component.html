@@ -1,7 +1,62 @@
 <div class="container">
   <h1>Product Catalog</h1>
   <div class="d-flex flex-row gap-2">
-    <div class="w-25">filters</div>
+    <div class="w-25 d-flex flex-column gap-3">
+      <div class="d-flex flex-row justify-content-between align-items-center">
+        <div
+          class="d-flex align-items-center border border-1 rounded-3 shadow-xs bg-white px-2 py-1"
+          style="width: 250px"
+        >
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            id="search"
+            class="px-2 w-100"
+            placeholder="Name, Category, Status..."
+            (input)="search($event)"
+          />
+        </div>
+      </div>
+      <div>
+        <label for="category">Artisan:</label>
+        <div class="multiselect">
+          <div>
+            @for (artisan of artisans$ | async; track $index) {
+            <div>
+              <input
+                type="checkbox"
+                [id]="'category-' + artisan.id"
+                [value]="artisan.id"
+              />
+              <label [for]="'category-' + artisan.id">{{
+                artisan.username
+              }}</label>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div>
+        <label for="category">Category:</label>
+        <div class="multiselect">
+          <div>
+            @for (category of categories$ | async; track $index) {
+            <div>
+              <input
+                type="checkbox"
+                [id]="'category-' + category.id"
+                [value]="category.id"
+                (change)="onCategorySelect($event)"
+              />
+              <label [for]="'category-' + category.id">{{
+                category.name
+              }}</label>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <div
         class="mb-3 d-flex flex-row gap-2 align-items-center justify-content-end"
@@ -12,11 +67,28 @@
           <option value="price asc">Price Asc</option>
           <option value="price desc">Price Desc</option>
         </select>
+        <div>
+          <button
+            class="btn-display-style"
+            (click)="view = 'grid'"
+            [ngClass]="{ 'btn-active': view === 'grid' }"
+          >
+            <i class="bi bi-grid"></i>
+          </button>
+          <button
+            class="btn-display-style"
+            (click)="view = 'list'"
+            [ngClass]="{ 'btn-active': view === 'list' }"
+          >
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
       </div>
+      @if(view === 'grid') {
       <div class="row">
         @for (item of products$ | async; track $index) {
-        <div class="col">
-          <div class="product-card mb-3 w-100 d-flex flex-column">
+        <div class="col col-12 col-md-6 col-lg-4 mb-3">
+          <div class="product-card d-flex flex-column">
             <div class="card-header">
               <img
                 [src]="getImageUrl(item.imageUrl)"
@@ -35,6 +107,25 @@
         </div>
         }
       </div>
+      } @else if (view === 'list') {
+      <div class="d-flex flex-column gap-3">
+        @for (item of products$ | async; track $index) {
+        <div class="list-card">
+          <img [src]="getImageUrl(item.imageUrl)" class="rounded" alt="..." />
+          <div class="d-flex flex-column gap-2 card-body">
+            <div>
+              <h5 class="card-title">{{ item.name }}</h5>
+              <p>{{ item.category.name }}</p>
+              <p class="card-text">{{ item.description }}</p>
+            </div>
+            <p class="card-text fw-bold price">
+              {{ item.price | currency }}
+            </p>
+          </div>
+        </div>
+        }
+      </div>
+      }
     </div>
   </div>
 </div>

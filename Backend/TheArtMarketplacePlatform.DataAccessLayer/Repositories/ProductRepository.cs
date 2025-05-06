@@ -72,7 +72,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
         {
             return await _dbContext.Products
                 .Where(p => p.ArtisanId == artisanId)
-                .Include(p => p.Artisan)
+                .Include(p => p.Artisan).ThenInclude(a => a.User)
                 .Include(p => p.Category)
                 .Include(p => p.ProductReviews)
                 .ToListAsync();
