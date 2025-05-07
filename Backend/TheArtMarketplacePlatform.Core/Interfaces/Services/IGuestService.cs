@@ -14,7 +14,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
             string? categories = null,
             string? status = null,
             string? availability = null,
-            decimal? rating = null,
+            string? rating = null,
             string? sortBy = null,
             string? sortOrder = null);
         Task<Product> GetProductByIdAsync(Guid id);

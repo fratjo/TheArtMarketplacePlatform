@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GuestService } from '../../../core/services/guest.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../core/services/toast.service';
 import {
   BehaviorSubject,
@@ -19,7 +19,7 @@ import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-product-catalog',
-  imports: [AsyncPipe, CurrencyPipe, CommonModule],
+  imports: [AsyncPipe, CurrencyPipe, CommonModule, RouterLink],
   templateUrl: './product-catalog.component.html',
   styleUrl: './product-catalog.component.css',
 })
@@ -33,14 +33,19 @@ export class ProductCatalogComponent implements OnInit {
     categories: [],
     status: '',
     availability: '',
-    rating: 0,
+    rating: [],
   });
   search$ = new BehaviorSubject<string>('');
   sorting$ = new BehaviorSubject<{
     property: keyof Product;
     direction: 'asc' | 'desc';
   } | null>(null);
-  view = 'list'; // Default view
+  view = localStorage.getItem('view') || 'grid';
+
+  onViewChange(view: string) {
+    this.view = view;
+    localStorage.setItem('view', view);
+  }
 
   constructor(
     private guestService: GuestService,
@@ -113,11 +118,6 @@ export class ProductCatalogComponent implements OnInit {
     return `${environment.apiUrl}/${imagePath}`;
   }
 
-  onRatingSliderChange(value: number) {
-    const currentFilters = this.filters$.getValue();
-    this.filters$.next({ ...currentFilters, rating: value });
-  }
-
   applyFilters(params: string = '', value: any = {}) {
     const currentFilters = this.filters$.getValue();
 
@@ -128,8 +128,6 @@ export class ProductCatalogComponent implements OnInit {
   }
 
   onArtisanSelect(event: any) {
-    console.log('event:', event.target.value);
-
     const currentFilters = this.filters$.getValue();
     const selectedArtisans = event.target.value;
 
@@ -146,8 +144,6 @@ export class ProductCatalogComponent implements OnInit {
   }
 
   onCategorySelect(event: any) {
-    console.log('event:', event.target.value);
-
     const currentFilters = this.filters$.getValue();
     const selectedCategories = event.target.value;
 
@@ -160,6 +156,22 @@ export class ProductCatalogComponent implements OnInit {
     this.filters$.next({
       ...currentFilters,
       categories: currentFilters.categories,
+    });
+  }
+
+  onRatingSelect(event: any) {
+    const currentFilters = this.filters$.getValue();
+    const selectedRating = event.target.value;
+
+    if (currentFilters.rating.includes(selectedRating)) {
+      const index = currentFilters.rating.indexOf(selectedRating);
+      currentFilters.rating.splice(index, 1);
+    } else {
+      currentFilters.rating.push(selectedRating);
+    }
+    this.filters$.next({
+      ...currentFilters,
+      rating: currentFilters.rating,
     });
   }
 

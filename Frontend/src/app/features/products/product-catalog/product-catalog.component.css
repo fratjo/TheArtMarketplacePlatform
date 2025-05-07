@@ -17,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 250px;
+  height: 240px;
   margin-bottom: 5px;
 }
 
@@ -61,6 +61,12 @@
   top: -14px;
   left: 5px;
   background-color: #fff;
+}
+
+.multiselect div div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 input#search {
@@ -122,10 +128,14 @@ input#search:focus {
 }
 
 button.btn-active {
-  background-color: #d06e1d;
+  background-color: #e0e0e0;
 }
 
 .btn-display-style:hover {
   cursor: pointer;
-  background-color: #f88224;
+  background-color: #e0e0e0;
+}
+
+i {
+  font-size: 0.8em;
 }

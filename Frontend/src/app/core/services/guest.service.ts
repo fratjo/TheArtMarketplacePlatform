@@ -45,7 +45,7 @@ export class GuestService {
     categories?: string[];
     status?: string;
     availability?: boolean;
-    rating?: number;
+    rating?: number[];
     sortProperty?: string;
     sortDirection?: 'asc' | 'desc';
   }) {
@@ -67,7 +67,7 @@ export class GuestService {
       params = params.set('availability', filters.availability.toString());
     }
     if (filters.rating !== undefined) {
-      params = params.set('rating', filters.rating.toString());
+      params = params.set('rating', filters.rating.join(','));
     }
     if (filters.sortProperty) {
       params = params.set('sortBy', filters.sortProperty);
@@ -75,8 +75,6 @@ export class GuestService {
     if (filters.sortDirection) {
       params = params.set('sortOrder', filters.sortDirection);
     }
-
-    console.log(params);
 
     // Envoyer la requête HTTP avec les paramètres
     return this.http.get<Products>(`${this.apiUrl}/products`, {

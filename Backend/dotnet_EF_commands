@@ -3,7 +3,7 @@ dotnet ef database drop --project ./TheArtMarketplacePlatform.DataAccessLayer --
 
 dotnet ef migrations remove --project ./TheArtMarketplacePlatform.DataAccessLayer --startup-project ./TheArtMarketplacePlatform.WebAPI
 
-dotnet ef migrations add AddImageUrl --project ./TheArtMarketplacePlatform.DataAccessLayer --startup-project ./TheArtMarketplacePlatform.WebAPI
+dotnet ef migrations add AddProductRating --project ./TheArtMarketplacePlatform.DataAccessLayer --startup-project ./TheArtMarketplacePlatform.WebAPI
 
 dotnet ef migrations script --output ./TheArtMarketplacePlatform.DataAccessLayer/Migrations/script.sql --project ./TheArtMarketplacePlatform.DataAccessLayer --startup-project ./TheArtMarketplacePlatform.WebAPI
 

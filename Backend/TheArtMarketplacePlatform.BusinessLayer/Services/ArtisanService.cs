@@ -98,12 +98,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             {
                 products = products.Where(p => p.Availability.ToString().Equals(availability, StringComparison.OrdinalIgnoreCase));
             }
-            // if (rating.HasValue)
-            // {
-            //     products = products.Where(p =>
-            //         p.ProductReviews is not null &&
-            //         (decimal)p.ProductReviews.Average(pr => pr.Rating) >= rating.Value);
-            // }
+            if (rating.HasValue)
+            {
+                products = products.Where(p => p.Rating.HasValue && p.Rating.Value >= rating.Value);
+            }
 
             if (!string.IsNullOrEmpty(sortBy))
             {
@@ -114,7 +112,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                     "category" => sortOrder == "desc" ? products.OrderByDescending(p => p.Category!.Name) : products.OrderBy(p => p.Category!.Name),
                     "status" => sortOrder == "desc" ? products.OrderByDescending(p => p.Status) : products.OrderBy(p => p.Status),
                     "quantityLeft" => sortOrder == "desc" ? products.OrderByDescending(p => p.QuantityLeft) : products.OrderBy(p => p.QuantityLeft),
-                    // "rating" => sortOrder == "desc" ? products.OrderByDescending(p => p.ProductReviews!.Average(pr => pr.Rating)) : products.OrderBy(p => p.ProductReviews!.Average(pr => pr.Rating)),
+                    "rating" => sortOrder == "desc" ? products.OrderByDescending(p => p.Rating) : products.OrderBy(p => p.Rating),
                     "availability" => sortOrder == "desc" ? products.OrderByDescending(p => p.Availability) : products.OrderBy(p => p.Availability),
                     _ => products
                 };

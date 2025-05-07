@@ -9,6 +9,8 @@ export interface Product {
   quantityLeft: number;
   status: string;
   availability: string;
+  reviews: Reviews;
+  artisan: ArtisanProduct;
 }
 
 export interface ProductForm {
@@ -37,3 +39,13 @@ export interface ArtisanProduct {
 }
 
 export type ArtisanProducts = ArtisanProduct[];
+
+export interface Review {
+  user: string;
+  rating: number;
+  comment: string;
+  authorComment: string;
+  createdAt: Date;
+}
+
+export type Reviews = Review[];

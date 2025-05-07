@@ -15,6 +15,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public string? ImageUrl { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int QuantityLeft { get; set; } = 0;
+        public decimal? Rating { get; set; } = null;
         public Guid? CategoryId { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.OutOfStock;
         public ProductAvailability Availability { get; set; } = ProductAvailability.Available;

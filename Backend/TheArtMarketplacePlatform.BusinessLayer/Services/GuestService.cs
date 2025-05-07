@@ -23,7 +23,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return categories;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? search = null, string? artisans = null, string? categories = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? search = null, string? artisans = null, string? categories = null, string? status = null, string? availability = null, string? rating = null, string? sortBy = null, string? sortOrder = null)
         {
 
             var products = await productRepository.GetAllAsync();
@@ -57,11 +57,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             {
                 products = products.Where(p => p.Availability.ToString().Equals(availability, StringComparison.OrdinalIgnoreCase));
             }
-            // if (rating.HasValue)
+            // if (!string.IsNullOrEmpty(rating))
             // {
-            //     products = products.Where(p =>
-            //         p.ProductReviews is not null &&
-            //         (decimal)p.ProductReviews.Average(pr => pr.Rating) >= rating.Value);
+            //     var ratingList = rating.Split(',').Select(r => r.Trim()).ToList();
+            //     products = products.Where(p => ratingList.Any(r => p.Rating % 1 >= Convert.ToInt32(r)));
             // }
 
             if (!string.IsNullOrEmpty(sortBy))
@@ -70,6 +69,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 {
                     "name" => sortOrder == "desc" ? products.OrderByDescending(p => p.Name) : products.OrderBy(p => p.Name),
                     "price" => sortOrder == "desc" ? products.OrderByDescending(p => p.Price) : products.OrderBy(p => p.Price),
+                    "rating" => sortOrder == "desc" ? products.OrderByDescending(p => p.Rating) : products.OrderBy(p => p.Rating),
                     _ => products
                 };
             }
@@ -80,10 +80,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         public async Task<Product> GetProductByIdAsync(Guid id)
         {
             var product = await productRepository.GetByIdAsync(id);
-            if (product == null)
-            {
-                throw new Exception("Product not found");
-            }
+            if (product == null) throw new Exception("Product not found");
 
             return product;
         }

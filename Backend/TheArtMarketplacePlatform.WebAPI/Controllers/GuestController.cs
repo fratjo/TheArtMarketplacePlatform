@@ -18,7 +18,7 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             [FromQuery] string? categories = null,
             [FromQuery] string? status = null,
             [FromQuery] string? availability = null,
-            [FromQuery] decimal? rating = null,
+            [FromQuery] string? rating = null,
             [FromQuery] string? sortBy = null,
             [FromQuery] string? sortOrder = null)
         {

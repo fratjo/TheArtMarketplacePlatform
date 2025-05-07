@@ -12,7 +12,7 @@
             type="text"
             id="search"
             class="px-2 w-100"
-            placeholder="Name, Category, Status..."
+            placeholder="Name, Category, ..."
             (input)="search($event)"
           />
         </div>
@@ -56,6 +56,73 @@
           </div>
         </div>
       </div>
+      <div>
+        <label for="category">Rating:</label>
+        <div class="multiselect">
+          <div>
+            <div>
+              <input
+                type="checkbox"
+                [id]="5"
+                [value]="5"
+                (change)="onRatingSelect($event)"
+              />
+              <label [for]="5"></label>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                [id]="4"
+                [value]="4"
+                (change)="onRatingSelect($event)"
+              />
+              <label [for]="4"></label>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                [id]="3"
+                [value]="3"
+                (change)="onRatingSelect($event)"
+              />
+              <label [for]="3"></label>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                [id]="2"
+                [value]="2"
+                (change)="onRatingSelect($event)"
+              />
+              <label [for]="2"></label>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                [id]="1"
+                [value]="1"
+                (change)="onRatingSelect($event)"
+              />
+              <label [for]="1"></label>
+              <i class="bi bi-star-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="container">
       <div
@@ -66,18 +133,20 @@
           <option value="name desc">Name Desc</option>
           <option value="price asc">Price Asc</option>
           <option value="price desc">Price Desc</option>
+          <option value="rating asc">Rating Asc</option>
+          <option value="rating desc">Rating Desc</option>
         </select>
         <div>
           <button
             class="btn-display-style"
-            (click)="view = 'grid'"
+            (click)="onViewChange('grid')"
             [ngClass]="{ 'btn-active': view === 'grid' }"
           >
             <i class="bi bi-grid"></i>
           </button>
           <button
             class="btn-display-style"
-            (click)="view = 'list'"
+            (click)="onViewChange('list')"
             [ngClass]="{ 'btn-active': view === 'list' }"
           >
             <i class="bi bi-list"></i>
@@ -88,7 +157,10 @@
       <div class="row">
         @for (item of products$ | async; track $index) {
         <div class="col col-12 col-md-6 col-lg-4 mb-3">
-          <div class="product-card d-flex flex-column">
+          <div
+            class="product-card d-flex flex-column"
+            routerLink="/products/{{ item.id }}/details"
+          >
             <div class="card-header">
               <img
                 [src]="getImageUrl(item.imageUrl)"
@@ -98,6 +170,48 @@
             </div>
             <div class="card-body d-flex flex-column">
               <h5 class="card-title">{{ item.name }}</h5>
+              <div class="product-rating" *ngIf="item.rating">
+                <!-- First -->
+                @if (item.rating) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 0 && item.rating < 1) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Second -->
+                @if (item.rating > 2) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating && item.rating < 2) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Third -->
+                @if (item.rating > 3) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 2 && item.rating < 3) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Fourth -->
+                @if (item.rating > 4) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 3 && item.rating < 4) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Fifth -->
+                @if (item.rating == 5) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 4 && item.rating < 5) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+              </div>
               <p>{{ item.category.name }}</p>
               <p class="card-text fw-bold price">
                 {{ item.price | currency }}
@@ -110,11 +224,53 @@
       } @else if (view === 'list') {
       <div class="d-flex flex-column gap-3">
         @for (item of products$ | async; track $index) {
-        <div class="list-card">
+        <div class="list-card" routerLink="/products/{{ item.id }}/details">
           <img [src]="getImageUrl(item.imageUrl)" class="rounded" alt="..." />
           <div class="d-flex flex-column gap-2 card-body">
             <div>
               <h5 class="card-title">{{ item.name }}</h5>
+              <div class="product-rating" *ngIf="item.rating">
+                <!-- First -->
+                @if (item.rating) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 0 && item.rating < 1) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Second -->
+                @if (item.rating > 2) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating && item.rating < 2) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Third -->
+                @if (item.rating > 3) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 2 && item.rating < 3) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Fourth -->
+                @if (item.rating > 4) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 3 && item.rating < 4) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+                <!-- Fifth -->
+                @if (item.rating == 5) {
+                <i class="bi bi-star-fill"></i>
+                } @else if (item.rating > 4 && item.rating < 5) {
+                <i class="bi bi-star-half"></i>
+                } @else {
+                <i class="bi bi-star"></i>
+                }
+              </div>
               <p>{{ item.category.name }}</p>
               <p class="card-text">{{ item.description }}</p>
             </div>
