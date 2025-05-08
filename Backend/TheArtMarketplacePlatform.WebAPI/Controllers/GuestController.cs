@@ -23,7 +23,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             [FromQuery] string? sortOrder = null)
         {
             var products = await guestService.GetAllProductsAsync(search, artisans, categories, status, availability, rating, sortBy, sortOrder);
-            if (products == null || !products.Any()) return NotFound();
             return Ok(products);
         }
 

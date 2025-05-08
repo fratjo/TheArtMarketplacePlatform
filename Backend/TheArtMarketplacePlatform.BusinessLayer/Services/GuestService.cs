@@ -57,11 +57,16 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             {
                 products = products.Where(p => p.Availability.ToString().Equals(availability, StringComparison.OrdinalIgnoreCase));
             }
-            // if (!string.IsNullOrEmpty(rating))
-            // {
-            //     var ratingList = rating.Split(',').Select(r => r.Trim()).ToList();
-            //     products = products.Where(p => ratingList.Any(r => p.Rating % 1 >= Convert.ToInt32(r)));
-            // }
+            if (!string.IsNullOrEmpty(rating))
+            {
+                var ratingList = rating.Split(',').Select(r => r.Trim()).ToList();
+                ratingList.ForEach(r => System.Console.WriteLine(r));
+                products = products.Where(p => ratingList.Any(r => Math.Round((decimal)p.Rating!) >= Convert.ToInt32(r)));
+                foreach (var p in products)
+                {
+                    Console.WriteLine(p.Rating);
+                }
+            }
 
             if (!string.IsNullOrEmpty(sortBy))
             {
