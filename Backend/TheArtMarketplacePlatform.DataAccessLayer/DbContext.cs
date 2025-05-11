@@ -168,7 +168,6 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.HasKey(o => o.Id);
-                entity.Property(o => o.DeliveryPartnerName).IsRequired().HasMaxLength(100);
                 entity.Property(o => o.ShippingAddress).IsRequired().HasMaxLength(256);
                 entity.Property(o => o.Status).IsRequired().HasConversion<string>().HasDefaultValue(OrderStatus.Pending);
                 entity.Property(o => o.CreatedAt).HasDefaultValueSql("GETDATE()");

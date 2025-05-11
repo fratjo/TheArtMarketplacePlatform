@@ -54,6 +54,15 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                             .ToListAsync();
         }
 
+        public Task<User?> GetUserByIdAsync(Guid id)
+        {
+            return _context.Users
+                            .Include(u => u.CustomerProfile)
+                            .Include(u => u.ArtisanProfile)
+                            .Include(u => u.DeliveryPartnerProfile)
+                            .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
         #endregion
     }
 }

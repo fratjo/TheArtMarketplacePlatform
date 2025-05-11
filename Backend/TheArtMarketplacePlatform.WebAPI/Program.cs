@@ -35,6 +35,7 @@ builder.Services
     .AddValidatorsFromAssemblyContaining<RegisterDeliveryPartnerValidator>()
     .AddValidatorsFromAssemblyContaining<ArtisanInsertProductValidator>()
     .AddValidatorsFromAssemblyContaining<ArtisanUpdateProductValidator>()
+    .AddValidatorsFromAssemblyContaining<CustomerInsertOrderValidators>()
 ;
 
 // Handlers
@@ -50,10 +51,12 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IGuestService, GuestService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IArtisanService, ArtisanService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // JWT
 builder.Services.AddAuthentication(options =>

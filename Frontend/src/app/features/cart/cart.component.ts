@@ -13,6 +13,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { CreateOrder } from '../../core/models/order.interface';
+import { CustomerService } from '../../core/services/customer.service';
 
 @Component({
   selector: 'app-cart',
@@ -39,6 +41,7 @@ export class CartComponent implements OnInit {
   showPassword: boolean = false;
 
   constructor(
+    private customerService: CustomerService,
     private guestService: GuestService,
     private toastService: ToastService,
     private authService: AuthService
@@ -168,10 +171,35 @@ export class CartComponent implements OnInit {
   }
 
   checkout() {
-    // Implement checkout logic here
-    console.log('Proceeding to checkout with items:', this.cartItems());
-    // Clear the cart after checkout
-    this.clearCart();
+    const order: CreateOrder = {
+      customerId: this.authService.getUserId() || '',
+      orderProducts: this.cartItems().map((item) => ({
+        productId: item.product?.id || '',
+        quantity: item.quantity,
+      })),
+    };
+    console.log('Order to be placed:', order);
+
+    this.customerService.createOrder(order).subscribe({
+      next: (response) => {
+        console.log('Order placed successfully', response);
+        this.toastService.show({
+          text: 'Order placed successfully!',
+          classname: 'bg-success text-light',
+          delay: 3000,
+        });
+        // Clear the cart after checkout
+        this.clearCart();
+      },
+      error: (error) => {
+        console.error('Error placing order', error);
+        this.toastService.show({
+          text: `Error placing order: ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
   }
 
   // Add methods to handle product catalog logic
