@@ -1,50 +1,124 @@
 <div class="container p-3">
   <h1>Shopping Cart</h1>
-  <table class="border table">
-    <thead>
-      <tr>
-        <th>Image</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Total Price</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for(item of cartItems(); track $index) {
-      <tr>
-        <td>
-          <img
-            [src]="getImageUrl(item.product!.imageUrl)"
-            alt="{{ item.product!.name }}"
-            width="50"
-            height="50"
-          />
-        </td>
-        <td>
-          <a href="/products/{{ item.product!.id }}/details">
-            {{ item.product!.name }}
-          </a>
-        </td>
-        <td>{{ item.product!.price | currency }}</td>
-        <td>
-          <button (click)="increaseQuantity(item.product!.id)">+</button>
-          {{ item.quantity }}
-          <button (click)="decreaseQuantity(item.product!.id)">-</button>
-        </td>
-        <td>{{ item.product!.price * item.quantity | currency }}</td>
-        <td>
-          <button (click)="removeFromCart(item.product!.id)">Remove</button>
-        </td>
-      </tr>
-      }
-      <tr>
-        <td colspan="4">Total Price</td>
-        <td>{{ totalPriceComputed() | currency }}</td>
-        <td><button (click)="clearCart()">Clear Cart</button></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="d-flex flex-row">
+    <table class="border table table-hover">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(item of cartItems(); track $index) {
+        <tr>
+          <td>
+            <img
+              [src]="getImageUrl(item.product!.imageUrl)"
+              alt="{{ item.product!.name }}"
+              width="50"
+              height="50"
+            />
+          </td>
+          <td>
+            <a href="/products/{{ item.product!.id }}/details">
+              {{ item.product!.name }}
+            </a>
+          </td>
+          <td>{{ item.product!.price | currency }}</td>
+          <td>
+            <button (click)="increaseQuantity(item.product!.id)">+</button>
+            {{ item.quantity }}
+            <button (click)="decreaseQuantity(item.product!.id)">-</button>
+          </td>
+          <td>{{ item.product!.price * item.quantity | currency }}</td>
+          <td>
+            <button (click)="removeFromCart(item.product!.id)">Remove</button>
+          </td>
+        </tr>
+        }
+        <tr>
+          <td colspan="4">Total Price</td>
+          <td>{{ totalPriceComputed() | currency }}</td>
+          <td><button (click)="clearCart()">Clear Cart</button></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="w-25">
+      <div class="summary p-3 border">
+        <h3>Cart Summary</h3>
+        <p>Total Items: {{ totalItemsComputed() }}</p>
+        <p>Total Price: {{ totalPriceComputed() | currency }}</p>
+        @if (isLoggedIn$ | async) {
+        <button *ngIf="cartItems().length > 0" (click)="checkout()">
+          Checkout
+        </button>
+        } @else {
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="onLogin()"
+          class="gap-1 d-flex flex-column"
+        >
+          <div style="min-height: 82px">
+            <label for="email">Email: </label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  loginForm.get('email')?.invalid &&
+                  loginForm.get('email')?.touched
+              }"
+            />
+            @if ( loginForm.get('email')?.touched ) { @if (
+            loginForm.get('email')?.hasError('required') ) {
+            <div class="text-danger">Email is required.</div>
+            } @if ( loginForm.get('email')?.hasError('email') ) {
+            <div class="text-danger">Invalid email format.</div>
+            }}
+          </div>
+          <div style="min-height: 82px">
+            <label for="password">Password: </label>
+            <div class="input-group">
+              <input
+                id="password"
+                type="{{ showPassword ? 'text' : 'password' }}"
+                formControlName="password"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid':
+                    loginForm.get('password')?.invalid &&
+                    loginForm.get('password')?.touched
+                }"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary icon"
+                (click)="showPassword = !showPassword"
+              >
+                <i
+                  class="{{ showPassword ? 'bi bi-eye-slash' : 'bi bi-eye' }}"
+                ></i>
+              </button>
+            </div>
+            @if ( loginForm.get('password')?.touched &&
+            loginForm.get('password')?.hasError('required') ) {
+            <div class="text-danger">Password is required.</div>
+            }
+          </div>
+
+          <button class="btn" type="submit" [disabled]="loginForm.invalid">
+            Sign In
+          </button>
+        </form>
+        }
+      </div>
+    </div>
+  </div>
 </div>

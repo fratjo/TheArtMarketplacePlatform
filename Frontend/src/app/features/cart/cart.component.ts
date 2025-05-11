@@ -2,14 +2,21 @@ import { Component, computed, OnInit, signal } from '@angular/core';
 import { Product } from '../../core/models/product.interface';
 import { GuestService } from '../../core/services/guest.service';
 import { BehaviorSubject } from 'rxjs';
-import { AsyncPipe, CurrencyPipe } from '@angular/common';
+import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 import { environment } from '../../../../environment';
 import { ToastService } from '../../core/services/toast.service';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-cart',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, AsyncPipe, ReactiveFormsModule, CommonModule],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
@@ -20,14 +27,36 @@ export class CartComponent implements OnInit {
       return total + (item.product?.price || 0) * item.quantity;
     }, 0);
   });
+  totalItemsComputed = computed(() => {
+    return this.cartItems().reduce((total, item) => {
+      return total + item.quantity;
+    }, 0);
+  });
+
+  isLoggedIn$ = new BehaviorSubject<boolean>(false);
+
+  loginForm!: FormGroup;
+  showPassword: boolean = false;
 
   constructor(
     private guestService: GuestService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.loadCartItems();
+    this.isLoggedIn$.next(this.authService.isLoggedIn());
+    this.loginForm = new FormGroup({
+      email: new FormControl('', {
+        validators: [Validators.required, Validators.email],
+        updateOn: 'change',
+      }),
+      password: new FormControl('', {
+        validators: [Validators.required],
+        updateOn: 'change',
+      }),
+    });
   }
 
   loadCartItems() {
@@ -148,5 +177,35 @@ export class CartComponent implements OnInit {
   // Add methods to handle product catalog logic
   getImageUrl(imagePath: string): string {
     return `${environment.apiUrl}/${imagePath}`;
+  }
+
+  onLogin() {
+    if (this.loginForm.invalid) {
+      this.toastService.show({
+        text: 'Please fill in all required fields.',
+        classname: 'bg-danger text-light',
+        delay: 3000,
+      });
+      return;
+    }
+
+    const loginData = this.loginForm.value;
+    this.authService.login(loginData).subscribe({
+      next: (response) => {
+        console.log('Login successful', response);
+        // save token
+        this.authService.saveToken(response.token);
+        window.location.href = '/cart';
+      },
+      error: (error) => {
+        console.error('Login failed', error);
+        // Handle login error, e.g., show error message
+        this.toastService.show({
+          text: `Login failed:  ${error.error.title}`,
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
+      },
+    });
   }
 }
