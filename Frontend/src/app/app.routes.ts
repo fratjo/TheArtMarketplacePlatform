@@ -57,48 +57,44 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'products',
+    path: 'cart',
     loadComponent: () =>
-      import('./features/products/products.component').then(
-        (c) => c.ProductsComponent
-      ),
-    children: [
-      {
-        path: 'my-products',
-        loadComponent: () =>
-          import(
-            './features/artisan/products/my-products/my-products.component'
-          ).then((c) => c.MyProductsComponent),
-      },
-      {
-        path: 'catalog',
-        loadComponent: () =>
-          import(
-            './features/products/product-catalog/product-catalog.component'
-          ).then((c) => c.ProductCatalogComponent),
-      },
-      {
-        path: ':id/details',
-        loadComponent: () =>
-          import(
-            './features/products/product-details/product-details.component'
-          ).then((c) => c.ProductDetailsComponent),
-      },
-      {
-        path: 'new',
-        loadComponent: () =>
-          import(
-            './features/artisan/products/product-form-page/product-form-page.component'
-          ).then((c) => c.ProductFormPageComponent),
-      },
-      {
-        path: ':id/edit',
-        loadComponent: () =>
-          import(
-            './features/artisan/products/product-form-page/product-form-page.component'
-          ).then((c) => c.ProductFormPageComponent),
-      },
-    ],
+      import('./features/cart/cart.component').then((c) => c.CartComponent),
+  },
+  {
+    path: 'products/:id/details',
+    loadComponent: () =>
+      import(
+        './features/products/product-details/product-details.component'
+      ).then((c) => c.ProductDetailsComponent),
+  },
+  {
+    path: 'products/my-products',
+    loadComponent: () =>
+      import(
+        './features/artisan/products/my-products/my-products.component'
+      ).then((c) => c.MyProductsComponent),
+  },
+  {
+    path: 'products/catalog',
+    loadComponent: () =>
+      import(
+        './features/products/product-catalog/product-catalog.component'
+      ).then((c) => c.ProductCatalogComponent),
+  },
+  {
+    path: 'products/new',
+    loadComponent: () =>
+      import(
+        './features/artisan/products/product-form-page/product-form-page.component'
+      ).then((c) => c.ProductFormPageComponent),
+  },
+  {
+    path: 'products/:id/edit',
+    loadComponent: () =>
+      import(
+        './features/artisan/products/product-form-page/product-form-page.component'
+      ).then((c) => c.ProductFormPageComponent),
   },
   {
     path: 'unauthorized',

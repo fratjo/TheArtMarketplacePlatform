@@ -1,0 +1,50 @@
+<div class="container p-3">
+  <h1>Shopping Cart</h1>
+  <table class="border table">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(item of cartItems(); track $index) {
+      <tr>
+        <td>
+          <img
+            [src]="getImageUrl(item.product!.imageUrl)"
+            alt="{{ item.product!.name }}"
+            width="50"
+            height="50"
+          />
+        </td>
+        <td>
+          <a href="/products/{{ item.product!.id }}/details">
+            {{ item.product!.name }}
+          </a>
+        </td>
+        <td>{{ item.product!.price | currency }}</td>
+        <td>
+          <button (click)="increaseQuantity(item.product!.id)">+</button>
+          {{ item.quantity }}
+          <button (click)="decreaseQuantity(item.product!.id)">-</button>
+        </td>
+        <td>{{ item.product!.price * item.quantity | currency }}</td>
+        <td>
+          <button (click)="removeFromCart(item.product!.id)">Remove</button>
+        </td>
+      </tr>
+      }
+      <tr>
+        <td colspan="4">Total Price</td>
+        <td>{{ totalPriceComputed() | currency }}</td>
+        <td><button (click)="clearCart()">Clear Cart</button></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

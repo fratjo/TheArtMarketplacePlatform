@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container p-3">
   <h1>Product Catalog</h1>
   <div class="d-flex flex-row gap-2">
     <div class="w-25 d-flex flex-column gap-3">
@@ -218,65 +218,99 @@
               </p>
             </div>
           </div>
+          <div
+            class="add-to-cart-card d-flex flex-row justify-content-between align-items-center border-top"
+          >
+            <div class="quantity">
+              <button (click)="increment(spanRef)">+</button>
+              <span #spanRef>1</span>
+              <button (click)="decrement(spanRef)">-</button>
+            </div>
+            <button
+              class="btn addToCart d-flex flex-row gap-2"
+              (click)="addToCart(item.id, spanRef)"
+            >
+              <p>Add to Cart</p>
+              <i class="bi bi-basket3"></i>
+            </button>
+          </div>
         </div>
         }
       </div>
       } @else if (view === 'list') {
       <div class="d-flex flex-column gap-3">
         @for (item of products$ | async; track $index) {
-        <div class="list-card" routerLink="/products/{{ item.id }}/details">
-          <img [src]="getImageUrl(item.imageUrl)" class="rounded" alt="..." />
-          <div class="d-flex flex-column gap-2 card-body">
-            <div>
-              <h5 class="card-title">{{ item.name }}</h5>
-              <div class="product-rating" *ngIf="item.rating">
-                <!-- First -->
-                @if (item.rating) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 0 && item.rating < 1) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Second -->
-                @if (item.rating > 2) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating && item.rating < 2) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Third -->
-                @if (item.rating > 3) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 2 && item.rating < 3) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Fourth -->
-                @if (item.rating > 4) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 3 && item.rating < 4) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Fifth -->
-                @if (item.rating == 5) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 4 && item.rating < 5) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
+        <div>
+          <div class="list-card" routerLink="/products/{{ item.id }}/details">
+            <img [src]="getImageUrl(item.imageUrl)" class="rounded" alt="..." />
+            <div class="d-flex flex-column gap-2 card-body">
+              <div>
+                <h5 class="card-title">{{ item.name }}</h5>
+                <div class="product-rating" *ngIf="item.rating">
+                  <!-- First -->
+                  @if (item.rating) {
+                  <i class="bi bi-star-fill"></i>
+                  } @else if (item.rating > 0 && item.rating < 1) {
+                  <i class="bi bi-star-half"></i>
+                  } @else {
+                  <i class="bi bi-star"></i>
+                  }
+                  <!-- Second -->
+                  @if (item.rating > 2) {
+                  <i class="bi bi-star-fill"></i>
+                  } @else if (item.rating && item.rating < 2) {
+                  <i class="bi bi-star-half"></i>
+                  } @else {
+                  <i class="bi bi-star"></i>
+                  }
+                  <!-- Third -->
+                  @if (item.rating > 3) {
+                  <i class="bi bi-star-fill"></i>
+                  } @else if (item.rating > 2 && item.rating < 3) {
+                  <i class="bi bi-star-half"></i>
+                  } @else {
+                  <i class="bi bi-star"></i>
+                  }
+                  <!-- Fourth -->
+                  @if (item.rating > 4) {
+                  <i class="bi bi-star-fill"></i>
+                  } @else if (item.rating > 3 && item.rating < 4) {
+                  <i class="bi bi-star-half"></i>
+                  } @else {
+                  <i class="bi bi-star"></i>
+                  }
+                  <!-- Fifth -->
+                  @if (item.rating == 5) {
+                  <i class="bi bi-star-fill"></i>
+                  } @else if (item.rating > 4 && item.rating < 5) {
+                  <i class="bi bi-star-half"></i>
+                  } @else {
+                  <i class="bi bi-star"></i>
+                  }
+                </div>
+                <p>{{ item.category.name }}</p>
+                <p class="card-text">{{ item.description }}</p>
               </div>
-              <p>{{ item.category.name }}</p>
-              <p class="card-text">{{ item.description }}</p>
+              <p class="card-text fw-bold price">
+                {{ item.price | currency }}
+              </p>
             </div>
-            <p class="card-text fw-bold price">
-              {{ item.price | currency }}
-            </p>
+          </div>
+          <div
+            class="add-to-cart-card d-flex flex-row justify-content-end align-items-center"
+          >
+            <div class="quantity">
+              <button (click)="increment(spanRef)">+</button>
+              <span #spanRef class="mx-1">1</span>
+              <button (click)="decrement(spanRef)">-</button>
+            </div>
+            <button
+              class="btn addToCart d-flex flex-row gap-2"
+              (click)="addToCart(item.id, spanRef)"
+            >
+              <p>Add to Cart</p>
+              <i class="bi bi-basket3"></i>
+            </button>
           </div>
         </div>
         }

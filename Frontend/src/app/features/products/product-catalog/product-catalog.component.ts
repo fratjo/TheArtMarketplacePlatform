@@ -193,4 +193,43 @@ export class ProductCatalogComponent implements OnInit {
 
     this.sorting$.next({ property, direction });
   }
+
+  addToCart(productId: string, spanRef: HTMLSpanElement) {
+    const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+    const existingItem = cart.find(
+      (item: { productId: string; quantity: number }) =>
+        item.productId === productId
+    );
+
+    const quantity = parseInt(spanRef.innerText, 10);
+
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.push({ productId, quantity: quantity });
+    }
+
+    spanRef.innerText = '1';
+
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    this.toastService.show({
+      text: 'Product added to cart!',
+      classname: 'bg-success text-light',
+      delay: 3000,
+    });
+
+    window.dispatchEvent(new Event('cart'));
+  }
+
+  increment(spanRef: HTMLSpanElement) {
+    let value = parseInt(spanRef.innerText, 10);
+    spanRef.innerText = (value + 1).toString();
+  }
+
+  decrement(spanRef: HTMLSpanElement) {
+    let value = parseInt(spanRef.innerText, 10);
+    if (value > 1) {
+      spanRef.innerText = (value - 1).toString();
+    }
+  }
 }

@@ -4,13 +4,12 @@
   justify-content: space-between;
   height: 370px;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
   background-color: #f0f0f0;
 }
 
 .product-card:hover {
   cursor: pointer;
-  background-color: #e0e0e0;
 }
 
 .card-header {
@@ -25,6 +24,23 @@
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+
+.add-to-cart-card {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 0 0 10px 10px;
+  padding: 10px;
+}
+
+.add-to-cart-card i {
+  font-size: 0.9em;
+}
+
+.add-to-cart-card p {
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
 }
 
 .card-body {
@@ -82,14 +98,13 @@ input#search:focus {
   flex-direction: row;
   gap: 10px;
   padding: 5px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
   height: 250px;
   background-color: #f0f0f0;
 }
 
 .list-card:hover {
   cursor: pointer;
-  background-color: #e0e0e0;
 }
 
 .list-card img {
@@ -138,4 +153,40 @@ button.btn-active {
 
 i {
   font-size: 0.8em;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+}
+
+.quantity:hover {
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+
+.quantity button {
+  border: none;
+  background-color: none;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+}
+
+.quantity button:hover {
+  cursor: pointer;
+  background-color: #d0d0d0;
+}
+
+button.addToCart {
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+
+button.addToCart:hover {
+  background-color: #d0d0d0;
 }

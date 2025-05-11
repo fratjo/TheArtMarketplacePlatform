@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -22,6 +22,7 @@ export class NavbarComponent implements OnInit {
   currentUrl: string = '';
   isLoggedIn$!: BehaviorSubject<boolean>;
   userRole$!: BehaviorSubject<string | null>;
+  cartQuantity = signal(0);
 
   constructor(
     private router: Router,
@@ -38,6 +39,26 @@ export class NavbarComponent implements OnInit {
       .subscribe((event: NavigationEnd) => {
         this.currentUrl = event.urlAfterRedirects;
       });
+
+    window.addEventListener('cart', (event) => {
+      this.getQuantity();
+    });
+    this.getQuantity();
+  }
+
+  getQuantity() {
+    const storedCart = sessionStorage.getItem('cart');
+    if (storedCart) {
+      const cartData = JSON.parse(storedCart);
+      const quantities = Object.values(cartData).map(
+        (item: any) => item.quantity
+      );
+      this.cartQuantity.set(
+        quantities.reduce((a: number, b: number) => a + b, 0)
+      );
+    } else {
+      this.cartQuantity.set(0);
+    }
   }
 
   logout() {

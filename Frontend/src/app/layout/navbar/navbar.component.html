@@ -1,6 +1,6 @@
 <nav class="navbar navbar-light sticky-top shadow-sm">
   <div class="container-fluid justify-content-between align-items-center">
-    <div>
+    <div class="d-flex align-items-center">
       <a id="title" class="navbar-brand" [routerLink]="['/']"
         >The Art Marketplace</a
       >
@@ -14,7 +14,7 @@
       >
       <a
         class="btn"
-        href="/products"
+        href="/products/my-products"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >My Products</a
@@ -37,7 +37,7 @@
       >
       <a
         class="btn"
-        href="/products"
+        href="/products/catalog"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >Product</a
@@ -57,14 +57,20 @@
       @else {
       <a
         class="btn"
-        href="/products"
+        href="/products/catalog"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >Products</a
       >
       }
     </div>
-    <form class="d-flex">
+    <form class="d-flex align-items-center">
+      <a [href]="'/cart'" class="btn position-relative">
+        Cart<i class="bi bi-basket3 mx-1"></i>
+        @if ( cartQuantity() > 0 ) {
+        <span class="badge bg-secondary">{{ cartQuantity() }}</span>
+        }
+      </a>
       @if ( (isLoggedIn$ | async) === false ) {
       <a class="btn" href="/login">Login</a>
       } @if ( isLoggedIn$ | async ) {
