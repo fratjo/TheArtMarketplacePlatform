@@ -17,6 +17,12 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return artisans;
         }
 
+        public Task<IEnumerable<User>> GetAllDeliveryPartnersAsync()
+        {
+            var deliveryPartners = userRepository.GetAllDeliveryPartnersAsync();
+            return deliveryPartners;
+        }
+
         public async Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync()
         {
             var categories = await productRepository.GetAllCategoriesAsync();

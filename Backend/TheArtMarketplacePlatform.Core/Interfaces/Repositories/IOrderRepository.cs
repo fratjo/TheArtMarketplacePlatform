@@ -11,5 +11,12 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
         Task CreateOrderAsync(Order order);
         Task CreateOrderProductAsync(OrderProduct orderProduct);
         Task SaveChangesAsync();
+        Task BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
+        Task<Order?> GetOrderByIdAsync(Guid orderId);
+        Task<List<Order>> GetOrdersByCustomerIdAsync(Guid customerId);
+        Task<List<Order>> GetOrdersByArtisanIdAsync(Guid artisanId, string? status = null, string? sortBy = null, string? sortOrder = null);
+        Task UpdateOrderAsync(Order order);
     }
 }

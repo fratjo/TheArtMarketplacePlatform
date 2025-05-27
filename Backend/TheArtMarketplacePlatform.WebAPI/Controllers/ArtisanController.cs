@@ -90,5 +90,41 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         }
 
         #endregion
+
+        #region Orders
+
+        [HttpGet("orders")]
+        public async Task<IActionResult> GetOrders([FromRoute] Guid artisanId,
+            [FromQuery] string? status = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] string? sortOrder = null)
+        {
+            var orders = await _artisanService.GetAllOrdersAsync(artisanId, status, sortBy, sortOrder);
+            return Ok(orders);
+        }
+
+        [HttpGet("orders/{id}")]
+        public async Task<IActionResult> GetOrderById(Guid artisanId, Guid id)
+        {
+            var order = await _artisanService.GetOrderByIdAsync(artisanId, id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return Ok(order);
+        }
+
+        [HttpPut("orders/{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(Guid artisanId, Guid id, [FromBody] ArtisanUpdateOrderStatusRequest request)
+        {
+            var updatedOrder = await _artisanService.UpdateOrderStatusAsync(artisanId, id, request.Status);
+            if (updatedOrder == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedOrder);
+        }
+
+        #endregion
     }
 }

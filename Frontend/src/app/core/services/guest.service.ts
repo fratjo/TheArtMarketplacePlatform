@@ -7,6 +7,7 @@ import {
   Product,
   Products,
 } from '../models/product.interface';
+import { DeliveryPartner } from '../models/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,10 @@ export class GuestService {
 
   getArtisans() {
     return this.http.get<ArtisanProducts>(`${this.apiUrl}/artisans`);
+  }
+
+  getDeliveryPartners() {
+    return this.http.get<DeliveryPartner[]>(`${this.apiUrl}/delivery-partners`);
   }
 
   filterProducts(filters: {

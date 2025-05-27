@@ -25,10 +25,10 @@
             <div>
               <input
                 type="checkbox"
-                [id]="'category-' + artisan.id"
-                [value]="artisan.id"
+                [id]="'category-' + artisan.userId"
+                [value]="artisan.userId"
               />
-              <label [for]="'category-' + artisan.id">{{
+              <label [for]="'category-' + artisan.userId">{{
                 artisan.username
               }}</label>
             </div>
@@ -221,8 +221,9 @@
           <div
             class="add-to-cart-card d-flex flex-row justify-content-between align-items-center border-top"
           >
+            @if(item.quantityLeft > 0) {
             <div class="quantity">
-              <button (click)="increment(spanRef)">+</button>
+              <button (click)="increment(spanRef, item)">+</button>
               <span #spanRef>1</span>
               <button (click)="decrement(spanRef)">-</button>
             </div>
@@ -233,6 +234,11 @@
               <p>Add to Cart</p>
               <i class="bi bi-basket3"></i>
             </button>
+            } @else {
+            <div class="out-of-stock text-danger">
+              <p>Out of Stock</p>
+            </div>
+            }
           </div>
         </div>
         }
@@ -297,11 +303,12 @@
             </div>
           </div>
           <div
-            class="add-to-cart-card d-flex flex-row justify-content-end align-items-center"
+            class="add-to-cart-card d-flex flex-row justify-content-end align-items-center border-top"
           >
+            @if(item.quantityLeft > 0) {
             <div class="quantity">
-              <button (click)="increment(spanRef)">+</button>
-              <span #spanRef class="mx-1">1</span>
+              <button (click)="increment(spanRef, item)">+</button>
+              <span #spanRef>1</span>
               <button (click)="decrement(spanRef)">-</button>
             </div>
             <button
@@ -311,6 +318,11 @@
               <p>Add to Cart</p>
               <i class="bi bi-basket3"></i>
             </button>
+            } @else {
+            <div class="out-of-stock text-danger">
+              <p>Out of Stock</p>
+            </div>
+            }
           </div>
         </div>
         }

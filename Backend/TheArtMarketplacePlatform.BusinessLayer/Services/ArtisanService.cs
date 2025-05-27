@@ -10,8 +10,9 @@ using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
-    public class ArtisanService(IProductRepository _productRepository, IWebHostEnvironment _env) : IArtisanService
+    public class ArtisanService(IProductRepository _productRepository, IOrderRepository _orderRepository, IWebHostEnvironment _env) : IArtisanService
     {
+        #region Products
         public async Task<Product> CreateProductAsync(Guid ArsitsanId, ArtisanInsertProductRequest request)
         {
             // check if category exists
@@ -217,5 +218,68 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             await _productRepository.UpdateAsync(product);
             return product;
         }
+        #endregion
+
+        #region Orders
+
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync(Guid ArtisanId, string? status = null, string? sortBy = null, string? sortOrder = null)
+        {
+            var orders = await _orderRepository.GetOrdersByArtisanIdAsync(ArtisanId);
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                orders = orders.Where(o => o.Status.ToString().Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                orders = sortBy.ToLower() switch
+                {
+                    "createdat" => sortOrder == "desc" ? orders.OrderByDescending(o => o.CreatedAt).ToList() : orders.OrderBy(o => o.CreatedAt).ToList(),
+                    "status" => sortOrder == "desc" ? orders.OrderByDescending(o => o.Status).ToList() : orders.OrderBy(o => o.Status).ToList(),
+                    _ => orders
+                };
+            }
+
+            return orders;
+        }
+        public async Task<Order> GetOrderByIdAsync(Guid ArtisanId, Guid id)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null || order.DeliveryPartnerId != ArtisanId)
+            {
+                throw new Exception("Order not found or you are not authorized to view this order");
+            }
+
+            return order;
+        }
+
+        public async Task<Order> UpdateOrderStatusAsync(Guid ArtisanId, Guid id, string status)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null || order.DeliveryPartnerId != ArtisanId)
+            {
+                throw new Exception("Order not found or you are not authorized to update this order");
+            }
+
+            if (!Enum.TryParse(status, true, out OrderStatus orderStatus))
+            {
+                throw new ArgumentException("Invalid order status", nameof(status));
+            }
+
+            if (status == "Pending" || status == "Cancelled" || status == "Delivered")
+            {
+                throw new InvalidOperationException("Cannot update order status to Pending, Cancelled, or Delivered directly.");
+            }
+
+            order.Status = orderStatus;
+            order.UpdatedAt = DateTime.UtcNow;
+
+            await _orderRepository.UpdateOrderAsync(order);
+            await _orderRepository.SaveChangesAsync();
+            return order;
+        }
+
+        #endregion
     }
 }

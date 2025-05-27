@@ -201,6 +201,13 @@ ALTER TABLE [Orders] ALTER COLUMN [DeliveryPartnerName] nvarchar(max) NOT NULL;
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES (N'20250511163241_AddOrderDLPName', N'9.0.4');
 
+ALTER TABLE [Orders] ADD [ArtisanId] uniqueidentifier NULL;
+
+ALTER TABLE [Orders] ADD [ArtisanName] nvarchar(max) NOT NULL DEFAULT N'';
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250527200144_OrderAddArtisan', N'9.0.4');
+
 COMMIT;
 GO
 

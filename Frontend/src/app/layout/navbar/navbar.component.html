@@ -14,7 +14,7 @@
       >
       <a
         class="btn"
-        href="/products/my-products"
+        href="artisan/products"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >My Products</a
@@ -44,7 +44,7 @@
       >
       <a
         class="btn"
-        href="/orders"
+        href="/customer/orders"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >My Orders</a
@@ -65,13 +65,16 @@
       }
     </div>
     <form class="d-flex align-items-center">
+      @if( ((isLoggedIn$ | async) && (userRole$ | async) === 'customer') ||
+      !(isLoggedIn$ | async) ) {
+
       <a [href]="'/cart'" class="btn position-relative">
         Cart<i class="bi bi-basket3 mx-1"></i>
         @if ( cartQuantity() > 0 ) {
         <span class="badge bg-secondary">{{ cartQuantity() }}</span>
         }
       </a>
-      @if ( (isLoggedIn$ | async) === false ) {
+      } @if ( (isLoggedIn$ | async) === false ) {
       <a class="btn" href="/login">Login</a>
       } @if ( isLoggedIn$ | async ) {
       <a class="btn" href="/dashboard">Profile</a>

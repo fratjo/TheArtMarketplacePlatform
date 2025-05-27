@@ -42,6 +42,14 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             return Ok(artisans);
         }
 
+        [HttpGet("delivery-partners")]
+        public async Task<IActionResult> GetAllDeliveryPartners()
+        {
+            var deliveryPartners = await guestService.GetAllDeliveryPartnersAsync();
+            if (deliveryPartners == null || !deliveryPartners.Any()) return NotFound();
+            return Ok(deliveryPartners);
+        }
+
         [HttpGet("categories")]
         public async Task<IActionResult> GetAllCategories()
         {

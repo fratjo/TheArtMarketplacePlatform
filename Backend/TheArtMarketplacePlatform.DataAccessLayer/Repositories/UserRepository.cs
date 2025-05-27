@@ -54,6 +54,14 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<User>> GetAllDeliveryPartnersAsync()
+        {
+            return await _context.Users
+                            .Include(u => u.DeliveryPartnerProfile)
+                            .Where(u => u.Role == UserRole.DeliveryPartner)
+                            .ToListAsync();
+        }
+
         public Task<User?> GetUserByIdAsync(Guid id)
         {
             return _context.Users

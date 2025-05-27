@@ -1,0 +1,45 @@
+<div
+  id="my-products-container"
+  class="d-flex flex-column justify-content-between align-items-center px-4 pt-4 h-100 container"
+>
+  <div
+    class="d-flex flex-row justify-content-between align-items-center mb-3 w-100"
+  >
+    <h3 class="text-center">Order # {{ orderId }}</h3>
+  </div>
+  <hr class="w-100 my-3" />
+  @if (order$ | async; as order) {
+  <table class="table table-striped w-100 border table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Artisan</th>
+        <th>Description</th>
+        <th>Unit Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (product of order.orderProducts; track product) {
+      <tr>
+        <td>{{ product.productName }}</td>
+        <td>{{ product.artisanName }}</td>
+        <td>
+          {{
+            product.productDescription!.length > 50
+              ? (product.productDescription | slice : 0 : 50) + "..."
+              : product.productDescription
+          }}
+        </td>
+        <td>{{ product.productPrice | currency : "EUR" }}</td>
+        <td>{{ product.quantity }}</td>
+        <td>
+          {{ product.productPrice * product.quantity | currency : "EUR" }}
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>

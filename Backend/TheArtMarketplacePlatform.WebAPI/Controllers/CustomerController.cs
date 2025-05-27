@@ -17,8 +17,22 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPost("orders")]
         public async Task<IActionResult> CreateOrder([FromBody] CustomerInsertOrderRequest orderDto)
         {
-            var result = await customerService.CreateOrderAsync(orderDto.CustomerId, orderDto.OrderProducts);
+            var result = await customerService.CreateOrderAsync(orderDto.CustomerId, orderDto.DeliveryPartnerId, orderDto.OrderProducts);
             return result ? Ok() : BadRequest("Failed to create order");
+        }
+
+        [HttpGet("{customerId}/orders")]
+        public async Task<IActionResult> GetOrders(Guid customerId)
+        {
+            var orders = await customerService.GetOrdersAsync(customerId);
+            return Ok(orders);
+        }
+
+        [HttpGet("{customerId}/orders/{orderId}")]
+        public async Task<IActionResult> GetOrder(Guid customerId, Guid orderId)
+        {
+            var order = await customerService.GetOrderAsync(customerId, orderId);
+            return order != null ? Ok(order) : NotFound("Order not found");
         }
     }
 }

@@ -171,35 +171,11 @@ export class CartComponent implements OnInit {
   }
 
   checkout() {
-    const order: CreateOrder = {
-      customerId: this.authService.getUserId() || '',
-      orderProducts: this.cartItems().map((item) => ({
-        productId: item.product?.id || '',
-        quantity: item.quantity,
-      })),
-    };
-    console.log('Order to be placed:', order);
-
-    this.customerService.createOrder(order).subscribe({
-      next: (response) => {
-        console.log('Order placed successfully', response);
-        this.toastService.show({
-          text: 'Order placed successfully!',
-          classname: 'bg-success text-light',
-          delay: 3000,
-        });
-        // Clear the cart after checkout
-        this.clearCart();
-      },
-      error: (error) => {
-        console.error('Error placing order', error);
-        this.toastService.show({
-          text: `Error placing order: ${error.error.title}`,
-          classname: 'bg-danger text-light',
-          delay: 5000,
-        });
-      },
-    });
+    // redirect to checkout page if logged in
+    if (this.authService.isLoggedIn()) {
+      window.location.href = '/checkout';
+      return;
+    }
   }
 
   // Add methods to handle product catalog logic

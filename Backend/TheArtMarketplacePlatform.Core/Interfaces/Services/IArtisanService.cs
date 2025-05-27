@@ -9,6 +9,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
 {
     public interface IArtisanService
     {
+        #region Products
         Task<IEnumerable<Product>> GetAllProductsAsync(Guid? ArsitsanId, string? search = null,
             string? category = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null);
         Task<Product> GetProductByIdAsync(Guid id);
@@ -17,5 +18,12 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
         Task<Product> CreateProductAsync(Guid ArsitsanId, ArtisanInsertProductRequest request);
         Task<Product> UpdateProductAsync(Guid ArsitsanId, Guid ProductId, ArtisanUpdateProductRequest request);
         Task<bool> DeleteProductAsync(Guid ArsitsanId, Guid id);
+        #endregion
+
+        #region Orders
+        Task<IEnumerable<Order>> GetAllOrdersAsync(Guid ArtisanId, string? status = null, string? sortBy = null, string? sortOrder = null);
+        Task<Order> GetOrderByIdAsync(Guid ArtisanId, Guid id);
+        Task<Order> UpdateOrderStatusAsync(Guid ArtisanId, Guid id, string status);
+        #endregion
     }
 }

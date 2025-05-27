@@ -1,0 +1,57 @@
+<div class="container p-3 w-100">
+  <h1>Checkout Resume</h1>
+  <div class="d-flex flex-col">
+    @for(group of getCheckoutResumeArray(); track $index) {
+    <div class="d-flex flex-row w-75 justify-content-between p-3 border mb-3">
+      <div>
+        <h3>{{ group.artisan.username }}</h3>
+      </div>
+      <div>
+        <table class="border table table-hover w-100">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(item of group.products; track $index) {
+            <tr>
+              <td>{{ item.product!.name }}</td>
+              <td>{{ item.product!.price | currency }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.product!.price * item.quantity | currency }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    }
+  </div>
+  <div class="mt-4">
+    <h4>Choose a Delivery Partner:</h4>
+    @for(partner of deliveryPartners$ | async; track $index) {
+    <label class="form-check-label">
+      <input
+        type="radio"
+        class="form-check-input"
+        name="deliveryPartner"
+        [value]="partner"
+        (change)="selectedDeliveryPartner = partner"
+        required
+      />
+      {{ partner.username }}
+    </label>
+    }
+  </div>
+  <button
+    class="btn btn-primary mt-3"
+    [disabled]="!selectedDeliveryPartner"
+    (click)="placeOrder()"
+  >
+    Place Order
+  </button>
+</div>

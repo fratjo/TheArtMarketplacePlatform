@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TheArtMarketplacePlatform.Core.DTOs;
+using TheArtMarketplacePlatform.Core.Entities;
 
 namespace TheArtMarketplacePlatform.Core.Interfaces.Services
 {
     public interface ICustomerService
     {
-        Task<bool> CreateOrderAsync(Guid customerId, List<CustomerInsertOrderProductDto> orderProducts);
+        Task<bool> CreateOrderAsync(Guid customerId, Guid deliveryPartnerId, List<CustomerInsertOrderProductDto> orderProducts);
+        Task<List<Order>> GetOrdersAsync(Guid customerId);
+        Task<Order?> GetOrderAsync(Guid customerId, Guid orderId);
     }
 }

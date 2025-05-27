@@ -115,6 +115,9 @@ export class ProductCatalogComponent implements OnInit {
 
   // Add methods to handle product catalog logic
   getImageUrl(imagePath: string): string {
+    if (!imagePath) {
+      return `/default_product.png`; // Fallback image
+    }
     return `${environment.apiUrl}/${imagePath}`;
   }
 
@@ -221,8 +224,16 @@ export class ProductCatalogComponent implements OnInit {
     window.dispatchEvent(new Event('cart'));
   }
 
-  increment(spanRef: HTMLSpanElement) {
+  increment(spanRef: HTMLSpanElement, item: Product) {
     let value = parseInt(spanRef.innerText, 10);
+    if (value >= item.quantityLeft) {
+      this.toastService.show({
+        text: 'Cannot add more than available quantity',
+        classname: 'bg-warning text-light',
+        delay: 3000,
+      });
+      return;
+    }
     spanRef.innerText = (value + 1).toString();
   }
 

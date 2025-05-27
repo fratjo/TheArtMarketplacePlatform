@@ -10,6 +10,8 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid? DeliveryPartnerId { get; set; }
         public Guid? CustomerId { get; set; }
+        public Guid? ArtisanId { get; set; }
+        public string ArtisanName { get; set; } = string.Empty;
         public string DeliveryPartnerName { get; set; } = string.Empty;
         public string ShippingAddress { get; set; } = string.Empty;
         public OrderStatus Status { get; set; } = OrderStatus.Pending;

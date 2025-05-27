@@ -55,6 +55,11 @@ export class MyProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.artisanService.getProducts().subscribe({
+      next: (products) => {
+        this.products$ = new BehaviorSubject<Products>(
+          products.sort((a, b) => a.name.localeCompare(b.name))
+        );
+      },
       error: (error) => {
         console.error('Error fetching products:', error);
         this.toastService.show({
@@ -64,7 +69,6 @@ export class MyProductsComponent implements OnInit {
         });
       },
     });
-    this.products$ = this.artisanService.products$;
 
     this.artisanService.getCategories().subscribe({
       next: (categories) => {

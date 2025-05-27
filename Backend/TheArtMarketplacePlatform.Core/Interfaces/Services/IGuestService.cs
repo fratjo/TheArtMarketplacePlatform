@@ -19,6 +19,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
             string? sortOrder = null);
         Task<Product> GetProductByIdAsync(Guid id);
         Task<IEnumerable<User>> GetAllArtisansAsync();
+        Task<IEnumerable<User>> GetAllDeliveryPartnersAsync();
         Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync();
     }
 }

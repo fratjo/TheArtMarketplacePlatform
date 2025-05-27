@@ -5,7 +5,7 @@ import { LoggedInGuard } from './core/guards/logged-in.guard';
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [LoggedInGuard],
+    canActivate: [],
     loadComponent: () =>
       import('./features/landing/landing.component').then(
         (c) => c.LandingComponent
@@ -26,75 +26,130 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'dashboard',
-    loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(
-        (c) => c.DashboardComponent
-      ),
-    canActivate: [AuthGuard],
+    path: 'artisan',
     children: [
       {
-        path: 'artisan',
+        path: 'products',
+        loadComponent: () =>
+          import(
+            './features/artisan/products/my-products/my-products.component'
+          ).then((c) => c.MyProductsComponent),
+      },
+      {
+        path: 'dashboard',
         loadComponent: () =>
           import(
             './features/artisan/artisan-dashboard/artisan-dashboard.component'
           ).then((c) => c.ArtisanDashboardComponent),
       },
       {
-        path: 'customer',
+        path: 'orders',
+        loadComponent: () =>
+          import('./features/artisan/orders/orders/orders.component').then(
+            (c) => c.OrdersComponent
+          ),
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import(
+            './features/artisan/orders/order-details/order-details.component'
+          ).then((c) => c.OrderDetailsComponent),
+      },
+    ],
+  },
+  {
+    path: 'customer',
+    children: [
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import(
+            './features/customer/orders/my-orders/my-orders.component'
+          ).then((c) => c.MyOrdersComponent),
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import(
+            './features/customer/orders/order-details/order-details.component'
+          ).then((c) => c.OrderDetailsComponent),
+      },
+      {
+        path: 'dashboard',
         loadComponent: () =>
           import(
             './features/customer/customer-dashboard/customer-dashboard.component'
           ).then((c) => c.CustomerDashboardComponent),
       },
-      {
-        path: 'delivery-partner',
-        loadComponent: () =>
-          import(
-            './features/delivery-partner/delivery-partner-dashboard/delivery-partner-dashboard.component'
-          ).then((c) => c.DeliveryPartnerDashboardComponent),
-      },
     ],
   },
+  // {
+  //   path: 'dashboard',
+  //   loadComponent: () =>
+  //     import('./features/dashboard/dashboard.component').then(
+  //       (c) => c.DashboardComponent
+  //     ),
+  //   canActivate: [AuthGuard],
+  //   children: [
+  //     {
+  //       path: 'delivery-partner',
+  //       loadComponent: () =>
+  //         import(
+  //           './features/delivery-partner/delivery-partner-dashboard/delivery-partner-dashboard.component'
+  //         ).then((c) => c.DeliveryPartnerDashboardComponent),
+  //     },
+  //   ],
+  // },
   {
     path: 'cart',
     loadComponent: () =>
       import('./features/cart/cart.component').then((c) => c.CartComponent),
   },
   {
-    path: 'products/:id/details',
+    path: 'checkout',
     loadComponent: () =>
-      import(
-        './features/products/product-details/product-details.component'
-      ).then((c) => c.ProductDetailsComponent),
+      import('./features/checkout/checkout.component').then(
+        (c) => c.CheckoutComponent
+      ),
   },
   {
-    path: 'products/my-products',
-    loadComponent: () =>
-      import(
-        './features/artisan/products/my-products/my-products.component'
-      ).then((c) => c.MyProductsComponent),
-  },
-  {
-    path: 'products/catalog',
-    loadComponent: () =>
-      import(
-        './features/products/product-catalog/product-catalog.component'
-      ).then((c) => c.ProductCatalogComponent),
-  },
-  {
-    path: 'products/new',
-    loadComponent: () =>
-      import(
-        './features/artisan/products/product-form-page/product-form-page.component'
-      ).then((c) => c.ProductFormPageComponent),
-  },
-  {
-    path: 'products/:id/edit',
-    loadComponent: () =>
-      import(
-        './features/artisan/products/product-form-page/product-form-page.component'
-      ).then((c) => c.ProductFormPageComponent),
+    path: 'products',
+    children: [
+      {
+        path: 'catalog',
+        loadComponent: () =>
+          import(
+            './features/products/product-catalog/product-catalog.component'
+          ).then((c) => c.ProductCatalogComponent),
+      },
+      {
+        path: 'new',
+        loadComponent: () =>
+          import(
+            './features/artisan/products/product-form-page/product-form-page.component'
+          ).then((c) => c.ProductFormPageComponent),
+      },
+      {
+        path: ':id',
+        children: [
+          {
+            path: 'details',
+            loadComponent: () =>
+              import(
+                './features/products/product-details/product-details.component'
+              ).then((c) => c.ProductDetailsComponent),
+          },
+          {
+            path: 'edit',
+            loadComponent: () =>
+              import(
+                './features/artisan/products/product-form-page/product-form-page.component'
+              ).then((c) => c.ProductFormPageComponent),
+          },
+        ],
+      },
+    ],
   },
   {
     path: 'unauthorized',

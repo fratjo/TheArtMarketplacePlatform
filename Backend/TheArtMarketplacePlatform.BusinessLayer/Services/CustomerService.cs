@@ -15,7 +15,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             IUserRepository userRepository
     ) : ICustomerService
     {
-        public async Task<bool> CreateOrderAsync(Guid customerId, List<CustomerInsertOrderProductDto> orderProducts)
+        public async Task<bool> CreateOrderAsync(Guid customerId, Guid deliveryPartnerId, List<CustomerInsertOrderProductDto> orderProducts)
         {
             if (orderProducts == null || !orderProducts.Any())
             {
@@ -29,68 +29,102 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 return false; // TODO handle user not found
             }
 
-            var order = new Order
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId,
-                ShippingAddress = user!.CustomerProfile!.ShippingAddress,
-                Status = OrderStatus.Pending,
-            };
+            // List to Dict 
+            var productByArtisan = orderProducts
+                .GroupBy(op => op.ArtisanId)
+                .ToDictionary(g => g.Key, g => g.ToList());
 
-            var orderProductEntities = new List<OrderProduct>();
-
-            // Process each order product sequentially
-            foreach (var orderProductDto in orderProducts)
-            {
-                var product = await productRepository.GetByIdAsync(orderProductDto.ProductId);
-                if (product is null)
-                {
-                    continue; // TODO handle product not found
-                }
-
-                var artisan = await userRepository.GetUserByIdAsync(product.ArtisanId);
-                if (artisan is null || artisan.ArtisanProfile is null)
-                {
-                    continue; // TODO handle artisan not found
-                }
-
-                if (orderProductDto.Quantity <= 0)
-                {
-                    continue; // TODO handle invalid quantity
-                }
-
-                var orderProductEntity = new OrderProduct
-                {
-                    Id = Guid.NewGuid(),
-                    OrderId = order.Id,
-                    ProductId = product.Id,
-                    ArtisanName = artisan.Username,
-                    ProductName = product.Name,
-                    ProductDescription = product.Description,
-                    ProductPrice = product.Price,
-                    Quantity = orderProductDto.Quantity,
-                };
-
-                orderProductEntities.Add(orderProductEntity);
-            }
+            // start transaction
+            await orderRepository.BeginTransactionAsync();
 
             try
             {
-                await orderRepository.CreateOrderAsync(order);
-
-                foreach (var orderProduct in orderProductEntities)
+                foreach (var group in productByArtisan)
                 {
-                    await orderRepository.CreateOrderProductAsync(orderProduct);
+                    var order = new Order
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerId = customerId,
+                        DeliveryPartnerId = deliveryPartnerId,
+                        ShippingAddress = user!.CustomerProfile!.ShippingAddress,
+                        Status = OrderStatus.Pending,
+                    };
+
+                    var orderProductEntities = new List<OrderProduct>();
+
+                    // Process each order product sequentially
+                    foreach (var orderProductDto in group.Value)
+                    {
+                        var product = await productRepository.GetByIdAsync(orderProductDto.ProductId);
+                        if (product is null)
+                        {
+                            continue; // TODO handle product not found
+                        }
+
+                        var artisan = await userRepository.GetUserByIdAsync(product.ArtisanId);
+                        if (artisan is null || artisan.ArtisanProfile is null)
+                        {
+                            continue; // TODO handle artisan not found
+                        }
+
+                        if (orderProductDto.Quantity <= 0)
+                        {
+                            continue; // TODO handle invalid quantity
+                        }
+
+                        if (orderProductDto.Quantity > product.QuantityLeft)
+                        {
+                            continue; // TODO handle insufficient stock
+                        }
+
+                        var orderProductEntity = new OrderProduct
+                        {
+                            Id = Guid.NewGuid(),
+                            OrderId = order.Id,
+                            ProductId = product.Id,
+                            ArtisanName = artisan.Username,
+                            ProductName = product.Name,
+                            ProductDescription = product.Description,
+                            ProductPrice = product.Price,
+                            Quantity = orderProductDto.Quantity,
+                        };
+
+                        orderProductEntities.Add(orderProductEntity);
+                    }
+
+                    await orderRepository.CreateOrderAsync(order);
+
+                    foreach (var orderProduct in orderProductEntities)
+                    {
+                        await orderRepository.CreateOrderProductAsync(orderProduct);
+                    }
                 }
-
-                await orderRepository.SaveChangesAsync();
-
-                return true;
+                await orderRepository.CommitTransactionAsync();
             }
             catch (Exception e)
             {
-                throw new Exception("Failed to create order", e);
+                await orderRepository.RollbackTransactionAsync();
+                throw new Exception("Transaction failed, rolling back", e); // TODO handle transaction failure
             }
+
+
+            return true; // Order created successfully
+        }
+
+        public async Task<Order?> GetOrderAsync(Guid customerId, Guid orderId)
+        {
+            var order = await orderRepository.GetOrderByIdAsync(orderId);
+            if (order is null) throw new Exception("Order not found"); // TODO handle order not found
+            if (order.CustomerId != customerId)
+            {
+                throw new Exception("Order does not belong to the customer"); // TODO handle order not belong to customer
+            }
+            return order;
+        }
+
+        public Task<List<Order>> GetOrdersAsync(Guid customerId)
+        {
+            return orderRepository.GetOrdersByCustomerIdAsync(customerId);
         }
     }
 }
