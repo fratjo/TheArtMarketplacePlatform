@@ -9,6 +9,7 @@ import {
 } from '../models/product.interface';
 import { AuthService } from './auth.service';
 import { Form } from '@angular/forms';
+import { Order, Orders } from '../models/order.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -149,5 +150,48 @@ export class ArtisanService {
     return this.http.get<Products>(`${this.apiUrl}/${userId}/products`, {
       params,
     });
+  }
+
+  getOrders(filters?: {
+    status?: string;
+    sortBy?: string | null;
+    sortOrder?: 'asc' | 'desc';
+  }) {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    if (!filters) {
+      filters = {};
+    }
+
+    let params = new HttpParams();
+    if (filters.status) {
+      params = params.set('status', filters.status);
+    }
+    if (filters.sortBy) {
+      params = params.set('sortBy', filters.sortBy);
+    }
+    if (filters.sortOrder) {
+      params = params.set('sortOrder', filters.sortOrder);
+    }
+
+    return this.http.get<Orders>(`${this.apiUrl}/${userId}/orders`, { params });
+  }
+
+  getOrderById(orderId: string) {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    return this.http.get<Order>(`${this.apiUrl}/${userId}/orders/${orderId}`);
+  }
+
+  updateOrderStatus(orderId: string, status: string) {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    return this.http.put<Order>(
+      `${this.apiUrl}/${userId}/orders/${orderId}/status`,
+      { Status: status }
+    );
   }
 }

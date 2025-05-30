@@ -41,11 +41,26 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             {
                 foreach (var group in productByArtisan)
                 {
+                    var artisan = await userRepository.GetUserByIdAsync(group.Key);
+                    if (artisan is null || artisan.ArtisanProfile is null)
+                    {
+                        continue; // TODO handle artisan not found
+                    }
+
+                    var deliveryPartner = await userRepository.GetUserByIdAsync(deliveryPartnerId);
+                    if (deliveryPartner is null || deliveryPartner.DeliveryPartnerProfile is null)
+                    {
+                        continue; // TODO handle delivery partner not found
+                    }
+
                     var order = new Order
                     {
                         Id = Guid.NewGuid(),
                         CustomerId = customerId,
                         DeliveryPartnerId = deliveryPartnerId,
+                        DeliveryPartnerName = deliveryPartner.Username,
+                        ArtisanId = artisan.Id,
+                        ArtisanName = artisan.Username,
                         ShippingAddress = user!.CustomerProfile!.ShippingAddress,
                         Status = OrderStatus.Pending,
                     };
@@ -59,12 +74,6 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                         if (product is null)
                         {
                             continue; // TODO handle product not found
-                        }
-
-                        var artisan = await userRepository.GetUserByIdAsync(product.ArtisanId);
-                        if (artisan is null || artisan.ArtisanProfile is null)
-                        {
-                            continue; // TODO handle artisan not found
                         }
 
                         if (orderProductDto.Quantity <= 0)

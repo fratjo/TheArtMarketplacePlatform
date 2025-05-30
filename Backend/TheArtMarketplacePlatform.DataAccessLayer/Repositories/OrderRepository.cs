@@ -37,6 +37,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                 .Where(o => o.Id == orderId)
                 .Include(o => o.OrderProducts)
                 .Include(o => o.DeliveryStatusUpdates)
+                .Include(o => o.Customer)
                 .Include(o => o.DeliveryPartner).ThenInclude(dp => dp.User)
                 .FirstOrDefaultAsync();
         }

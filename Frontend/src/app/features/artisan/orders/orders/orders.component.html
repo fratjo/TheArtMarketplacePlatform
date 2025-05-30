@@ -1,1 +1,35 @@
-<p>orders works!</p>
+<div
+  id="my-products-container"
+  class="d-flex flex-column justify-content-between align-items-center px-4 pt-4 h-100 container"
+>
+  <div
+    class="d-flex flex-row justify-content-between align-items-center mb-3 w-100"
+  >
+    <h3 class="text-center">Orders</h3>
+  </div>
+  <hr class="w-100 my-3" />
+  <table class="table table-striped w-100 border table-hover">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Products</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(order of orders$ | async; track order) {
+      <tr (click)="goToOrderDetails(order.id)">
+        <td>{{ order.id }}</td>
+        <td>{{ order.createdAt | date : "shortDate" }}</td>
+        <td [ngClass]="getOrderStatusClass(order.status)">
+          {{ order.status | orderStatus }}
+        </td>
+        <td>{{ getTotalQuantity(order) }}</td>
+        <td>{{ getTotalPrice(order) | currency }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

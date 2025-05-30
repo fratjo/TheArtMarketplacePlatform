@@ -1,1 +1,55 @@
-<p>order-details works!</p>
+<div
+  id="my-products-container"
+  class="d-flex flex-column justify-content-between align-items-center px-4 pt-4 h-100 container"
+>
+  <div
+    class="d-flex flex-row justify-content-between align-items-center mb-3 w-100"
+  >
+    <h3 class="text-center">Order # {{ orderId }}</h3>
+  </div>
+  <hr class="w-100 my-3" />
+  @if (order$ | async; as order) {
+
+  <div
+    class="d-flex flex-row justify-content-between align-items-center mb-3 w-100"
+  >
+    <span class="text-muted">Order Date: {{ order.createdAt | date }}</span>
+    <span class="text-muted"
+      >Total Amount: {{ totalPrice | currency : "EUR" }}</span
+    >
+    <span class="text-muted">Status: {{ order.status | orderStatus }}</span>
+    <span class="text-muted"
+      >Delivery Address: {{ order.shippingAddress }}</span
+    >
+  </div>
+
+  <table class="table table-striped w-100 border table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Unit Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (product of order.orderProducts; track product) {
+      <tr>
+        <td>{{ product.productName }}</td>
+        <td>{{ product.productPrice | currency : "EUR" }}</td>
+        <td>{{ product.quantity }}</td>
+        <td>
+          {{ product.productPrice * product.quantity | currency : "EUR" }}
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  @if (order.status === 0) {
+  <button (click)="setOrderStatus('Processing')">
+    Accept and Process Order
+  </button>
+  } @else if (order.status === 1) {
+  <button (click)="setOrderStatus('Shipped')">Mark Order as Shipped</button>
+  } }
+</div>

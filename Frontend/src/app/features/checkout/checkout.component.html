@@ -1,12 +1,12 @@
 <div class="container p-3 w-100">
   <h1>Checkout Resume</h1>
-  <div class="d-flex flex-col">
+  <div class="">
     @for(group of getCheckoutResumeArray(); track $index) {
-    <div class="d-flex flex-row w-75 justify-content-between p-3 border mb-3">
+    <div class="d-flex w-100 justify-content-between p-3 border mb-3">
       <div>
         <h3>{{ group.artisan.username }}</h3>
       </div>
-      <div>
+      <div class="d-flex w-75">
         <table class="border table table-hover w-100">
           <thead>
             <tr>

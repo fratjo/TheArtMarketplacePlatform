@@ -246,7 +246,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         public async Task<Order> GetOrderByIdAsync(Guid ArtisanId, Guid id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
-            if (order == null || order.DeliveryPartnerId != ArtisanId)
+            if (order == null || order.ArtisanId != ArtisanId)
             {
                 throw new Exception("Order not found or you are not authorized to view this order");
             }
@@ -257,7 +257,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         public async Task<Order> UpdateOrderStatusAsync(Guid ArtisanId, Guid id, string status)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
-            if (order == null || order.DeliveryPartnerId != ArtisanId)
+            if (order == null || order.ArtisanId != ArtisanId)
             {
                 throw new Exception("Order not found or you are not authorized to update this order");
             }

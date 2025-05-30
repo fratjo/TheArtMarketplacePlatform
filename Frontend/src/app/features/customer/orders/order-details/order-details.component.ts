@@ -38,6 +38,4 @@ export class OrderDetailsComponent implements OnInit {
       },
     });
   }
-
-  // Ajoute d'autres méthodes si nécessaire
 }

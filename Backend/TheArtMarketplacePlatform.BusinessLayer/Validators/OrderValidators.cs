@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using TheArtMarketplacePlatform.Core.DTOs;
+using TheArtMarketplacePlatform.Core.Entities;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Validators
 {
@@ -32,6 +33,18 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
                         .GreaterThan(0)
                         .WithMessage("Quantity must be greater than zero.");
                 });
+        }
+    }
+
+    public class ArtisanUpdateOrderStatusValidators : AbstractValidator<ArtisanUpdateOrderStatusRequest>
+    {
+        public ArtisanUpdateOrderStatusValidators()
+        {
+            RuleFor(x => x.Status)
+                .NotEmpty()
+                .WithMessage("Status is required.")
+                .Must(status => Enum.TryParse(typeof(OrderStatus), status, true, out _))
+                .WithMessage("Invalid order status.");
         }
     }
 }

@@ -36,6 +36,7 @@ builder.Services
     .AddValidatorsFromAssemblyContaining<ArtisanInsertProductValidator>()
     .AddValidatorsFromAssemblyContaining<ArtisanUpdateProductValidator>()
     .AddValidatorsFromAssemblyContaining<CustomerInsertOrderValidators>()
+    .AddValidatorsFromAssemblyContaining<ArtisanUpdateOrderStatusValidators>()
 ;
 
 // Handlers
