@@ -211,7 +211,9 @@
             "
           />
         </td>
-        <td class="align-middle">{{ product.name }}</td>
+        <td class="align-middle">
+          <a href="products/{{ product.id }}/details">{{ product.name }}</a>
+        </td>
         <td class="align-middle">{{ product.price }}</td>
         <td class="align-middle">{{ product.category.name }}</td>
         <td class="align-middle">

@@ -30,7 +30,16 @@ namespace TheArtMarketplacePlatform.Core.DTOs
         public string? ImageExtension { get; set; } = string.Empty;
     }
 
-    public class ArtisanProductResponse
+    public class ArtisanRespondToReviewRequest
     {
+        public Guid ReviewId { get; set; }
+        public string Response { get; set; } = string.Empty;
+    }
+
+    public class CustomerLeaveProductReviewRequest
+    {
+        public Guid ProductId { get; set; }
+        public int Rating { get; set; }
+        public string Review { get; set; } = string.Empty;
     }
 }

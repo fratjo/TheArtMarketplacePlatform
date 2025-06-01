@@ -30,4 +30,27 @@ export class CustomerService {
       `http://localhost:5140/api/customers/${userId}/orders/${orderId}`
     );
   }
+
+  checkIfAlreadyBoughtProductAndNotReviewed(productId: string) {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    return this.http.get<boolean>(
+      `http://localhost:5140/api/customers/${userId}/already-bought-reviewed/${productId}`
+    );
+  }
+
+  reviewProduct(productId: string, review: any) {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    return this.http.post(
+      `http://localhost:5140/api/customers/${userId}/review-product`,
+      {
+        productId: productId,
+        rating: review.score,
+        review: review.comment,
+      }
+    );
+  }
 }

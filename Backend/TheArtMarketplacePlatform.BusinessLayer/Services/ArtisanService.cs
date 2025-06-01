@@ -291,6 +291,29 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return order;
         }
 
+        public async Task RespondToReviewAsync(Guid ArsitsanId, Guid reviewId, ArtisanRespondToReviewRequest request)
+        {
+            var review = await _productRepository.GetReviewByIdAsync(reviewId);
+            if (review == null || review.Product.ArtisanId != ArsitsanId)
+            {
+                throw new Exception("Review not found or you are not authorized to respond to this review");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Response))
+            {
+                throw new ArgumentException("Response cannot be empty", nameof(request.Response));
+            }
+
+            if (!string.IsNullOrWhiteSpace(review.ArtisanResponse))
+            {
+                throw new InvalidOperationException("Response already exists for this review.");
+            }
+
+            review.ArtisanResponse = request.Response;
+            review.UpdatedAt = DateTime.UtcNow;
+            await _productRepository.UpdateReviewAsync(review);
+        }
+
         #endregion
     }
 }

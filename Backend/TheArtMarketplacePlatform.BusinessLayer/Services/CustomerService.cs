@@ -135,5 +135,73 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         {
             return orderRepository.GetOrdersByCustomerIdAsync(customerId);
         }
+
+        public async Task<bool> AlreadyBoughtReviewedAsync(Guid customerId, Guid productId)
+        {
+            var orders = await orderRepository.GetOrdersByCustomerIdAsync(customerId);
+            if (orders == null || !orders.Any())
+            {
+                return false; // No orders found for the customer
+            }
+
+            orders = orders.Where(o => o.Status == OrderStatus.Delivered).ToList();
+
+            foreach (var order in orders)
+            {
+                var orderProducts = await orderRepository.GetOrderProductsByOrderIdAsync(order.Id);
+                if (orderProducts.Any(op => op.ProductId == productId))
+                {
+                    // Check if the customer has reviewed the product
+                    var review = await productRepository.GetReviewOfUserAsync(productId, customerId);
+                    if (review is not null) return false;
+                    return true; // Custome can review the product
+                }
+            }
+
+            return false; // The customer has not bought or reviewed the product
+        }
+
+        public async Task<bool> ReviewProductAsync(Guid customerId, CustomerLeaveProductReviewRequest review)
+        {
+            var product = await productRepository.GetByIdAsync(review.ProductId);
+            if (product is null)
+            {
+                throw new Exception("Product not found"); // TODO handle product not found
+            }
+
+            if (review.Rating < 1 || review.Rating > 5)
+            {
+                throw new Exception("Rating must be between 1 and 5"); // TODO handle invalid rating
+            }
+
+            var existingReview = await productRepository.GetReviewOfUserAsync(review.ProductId, customerId);
+            if (existingReview is not null)
+            {
+                throw new Exception("You have already reviewed this product"); // TODO handle already reviewed
+            }
+
+            var newReview = new ProductReview
+            {
+                Id = Guid.NewGuid(),
+                ProductId = review.ProductId,
+                CustomerId = customerId,
+                Rating = review.Rating,
+                CustomerComment = review.Review,
+                CreatedAt = DateTime.Now,
+            };
+
+            await productRepository.CreateReviewAsync(newReview);
+
+            // Update product rating
+            var reviews = await productRepository.GetReviewsByProductIdAsync(review.ProductId);
+            if (reviews.Any())
+            {
+                var averageRating = reviews.Average(r => r.Rating);
+                product.Rating = (decimal)averageRating;
+                await productRepository.UpdateAsync(product);
+            }
+
+            return true; // Review added successfully
+        }
     }
 }

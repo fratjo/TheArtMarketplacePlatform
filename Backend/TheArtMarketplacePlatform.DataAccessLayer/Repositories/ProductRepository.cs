@@ -92,5 +92,39 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             _dbContext.Products.Update(product);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<ProductReview?> GetReviewOfUserAsync(Guid productId, Guid userId)
+        {
+            return await _dbContext.ProductReviews
+                .Where(pr => pr.ProductId == productId && pr.CustomerId == userId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task CreateReviewAsync(ProductReview review)
+        {
+            await _dbContext.ProductReviews.AddAsync(review);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<ProductReview>> GetReviewsByProductIdAsync(Guid productId)
+        {
+            return await _dbContext.ProductReviews
+                .Where(pr => pr.ProductId == productId)
+                .ToListAsync();
+        }
+
+        public async Task<ProductReview?> GetReviewByIdAsync(Guid reviewId)
+        {
+            return await _dbContext.ProductReviews
+                .Include(pr => pr.Customer)
+                .Include(pr => pr.Product).ThenInclude(p => p.Artisan)
+                .FirstOrDefaultAsync(pr => pr.Id == reviewId);
+        }
+
+        public async Task UpdateReviewAsync(ProductReview review)
+        {
+            _dbContext.ProductReviews.Update(review);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

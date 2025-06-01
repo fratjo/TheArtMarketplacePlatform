@@ -12,10 +12,15 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
         Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync();
         Task<Product?> GetByIdAsync(Guid id);
         Task<IEnumerable<Product>> GetByArtisanIdAsync(Guid artisanId);
+        Task<ProductReview?> GetReviewOfUserAsync(Guid productId, Guid userId);
         Task AddAsync(Product product);
         Task AddCategoryAsync(ProductCategory category);
         Task UpdateAsync(Product product);
         Task DeleteAsync(Guid id);
+        Task CreateReviewAsync(ProductReview review);
+        Task<ProductReview?> GetReviewByIdAsync(Guid reviewId);
+        Task UpdateReviewAsync(ProductReview review);
+        Task<List<ProductReview>> GetReviewsByProductIdAsync(Guid productId);
 
         // Query methods
         Task<Guid?> DoesCategoryExistAsync(string name);

@@ -18,6 +18,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
         Task<Product> CreateProductAsync(Guid ArsitsanId, ArtisanInsertProductRequest request);
         Task<Product> UpdateProductAsync(Guid ArsitsanId, Guid ProductId, ArtisanUpdateProductRequest request);
         Task<bool> DeleteProductAsync(Guid ArsitsanId, Guid id);
+        Task RespondToReviewAsync(Guid ArsitsanId, Guid reviewId, ArtisanRespondToReviewRequest request);
         #endregion
 
         #region Orders

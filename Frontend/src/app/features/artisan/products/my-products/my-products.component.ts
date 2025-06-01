@@ -104,6 +104,9 @@ export class MyProductsComponent implements OnInit {
   }
 
   getImageUrl(imagePath: string): string {
+    if (!imagePath) {
+      return `/default_product.png`; // Fallback image
+    }
     return `${environment.apiUrl}/${imagePath}`;
   }
 

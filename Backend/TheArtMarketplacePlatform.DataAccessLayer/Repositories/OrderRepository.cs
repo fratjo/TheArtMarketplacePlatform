@@ -36,9 +36,9 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             await context.DeliveryStatusUpdates.AddAsync(deliveryStatusUpdate);
         }
 
-        public Task<Order?> GetOrderByIdAsync(Guid orderId)
+        public async Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
-            return context.Orders
+            return await context.Orders
                 .Where(o => o.Id == orderId)
                 .Include(o => o.OrderProducts)
                 .Include(o => o.DeliveryStatusUpdates)
@@ -47,13 +47,21 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public Task<List<Order>> GetOrdersByCustomerIdAsync(Guid customerId)
+        public async Task<List<Order>> GetOrdersByCustomerIdAsync(Guid customerId)
         {
-            return context.Orders
+            return await context.Orders
                 .Where(o => o.CustomerId == customerId)
                 .Include(o => o.OrderProducts)
                 .Include(o => o.DeliveryStatusUpdates)
                 .Include(o => o.DeliveryPartner).ThenInclude(dp => dp.User)
+                .ToListAsync();
+        }
+
+        public async Task<List<OrderProduct>> GetOrderProductsByOrderIdAsync(Guid orderId)
+        {
+            return await context.OrderProducts
+                .Where(op => op.OrderId == orderId)
+                .Include(op => op.Product)
                 .ToListAsync();
         }
 

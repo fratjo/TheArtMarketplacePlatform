@@ -34,5 +34,19 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             var order = await customerService.GetOrderAsync(customerId, orderId);
             return order != null ? Ok(order) : NotFound("Order not found");
         }
+
+        [HttpGet("{customerId:guid}/already-bought-reviewed/{productId:guid}")]
+        public async Task<IActionResult> AlreadyBoughtReviewed(Guid customerId, Guid productId)
+        {
+            var result = await customerService.AlreadyBoughtReviewedAsync(customerId, productId);
+            return Ok(result);
+        }
+
+        [HttpPost("{customerId:guid}/review-product")]
+        public async Task<IActionResult> ReviewProduct(Guid customerId, [FromBody] CustomerLeaveProductReviewRequest review)
+        {
+            var result = await customerService.ReviewProductAsync(customerId, review);
+            return result ? Ok() : BadRequest("Failed to review product");
+        }
     }
 }

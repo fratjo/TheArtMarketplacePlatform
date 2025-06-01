@@ -16,6 +16,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();
         Task<Order?> GetOrderByIdAsync(Guid orderId);
+        Task<List<OrderProduct>> GetOrderProductsByOrderIdAsync(Guid orderId);
         Task<List<Order>> GetOrdersByCustomerIdAsync(Guid customerId);
         Task<List<Order>> GetOrdersByArtisanIdAsync(Guid artisanId);
         Task<List<Order>>

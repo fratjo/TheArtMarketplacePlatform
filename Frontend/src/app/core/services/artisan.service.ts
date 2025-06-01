@@ -6,6 +6,7 @@ import {
   Product,
   ProductForm,
   Products,
+  Review,
 } from '../models/product.interface';
 import { AuthService } from './auth.service';
 import { Form } from '@angular/forms';
@@ -192,6 +193,29 @@ export class ArtisanService {
     return this.http.put<Order>(
       `${this.apiUrl}/${userId}/orders/${orderId}/status`,
       { Status: status }
+    );
+  }
+
+  checkIfProductIsOwnedByArtisan(product: Product): boolean {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    // Vérifier si l'ID du produit correspond à l'ID de l'artisan
+    return product.artisan.userId === userId;
+  }
+
+  respondToReview(reviewId: string, response: any) {
+    // get user id
+    const userId = this.authService.getUserId();
+
+    console.log(response);
+
+    return this.http.post(
+      `${this.apiUrl}/${userId}/reviews/${reviewId}/response`,
+      {
+        reviewId: reviewId,
+        response: response,
+      }
     );
   }
 }

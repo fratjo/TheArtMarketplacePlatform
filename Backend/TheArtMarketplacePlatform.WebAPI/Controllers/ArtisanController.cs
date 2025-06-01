@@ -125,6 +125,13 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             return Ok(updatedOrder);
         }
 
+        [HttpPost("reviews/{reviewId}/response")]
+        public async Task<IActionResult> RespondToReview(Guid artisanId, Guid reviewId, [FromBody] ArtisanRespondToReviewRequest request)
+        {
+            await _artisanService.RespondToReviewAsync(artisanId, reviewId, request);
+            return Ok();
+        }
+
         #endregion
     }
 }

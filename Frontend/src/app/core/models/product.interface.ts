@@ -9,7 +9,7 @@ export interface Product {
   quantityLeft: number;
   status: string;
   availability: string;
-  reviews: Reviews;
+  productReviews: Reviews;
   artisan: ArtisanProduct;
 }
 
@@ -44,11 +44,13 @@ export interface ArtisanProduct {
 export type ArtisanProducts = ArtisanProduct[];
 
 export interface Review {
-  user: string;
+  id: string;
+  productId: string;
   rating: number;
-  comment: string;
-  authorComment: string;
+  customerComment: string;
+  artisanResponse: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export type Reviews = Review[];

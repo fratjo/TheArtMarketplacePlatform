@@ -170,48 +170,7 @@
             </div>
             <div class="card-body d-flex flex-column">
               <h5 class="card-title">{{ item.name }}</h5>
-              <div class="product-rating" *ngIf="item.rating">
-                <!-- First -->
-                @if (item.rating) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 0 && item.rating < 1) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Second -->
-                @if (item.rating > 2) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating && item.rating < 2) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Third -->
-                @if (item.rating > 3) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 2 && item.rating < 3) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Fourth -->
-                @if (item.rating > 4) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 3 && item.rating < 4) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-                <!-- Fifth -->
-                @if (item.rating == 5) {
-                <i class="bi bi-star-fill"></i>
-                } @else if (item.rating > 4 && item.rating < 5) {
-                <i class="bi bi-star-half"></i>
-                } @else {
-                <i class="bi bi-star"></i>
-                }
-              </div>
+              <app-star-rating [rating]="item.rating"></app-star-rating>
               <p>{{ item.category.name }}</p>
               <p class="card-text fw-bold price">
                 {{ item.price | currency }}
@@ -252,54 +211,11 @@
             <div class="d-flex flex-column gap-2 card-body">
               <div>
                 <h5 class="card-title">{{ item.name }}</h5>
-                <div class="product-rating" *ngIf="item.rating">
-                  <!-- First -->
-                  @if (item.rating) {
-                  <i class="bi bi-star-fill"></i>
-                  } @else if (item.rating > 0 && item.rating < 1) {
-                  <i class="bi bi-star-half"></i>
-                  } @else {
-                  <i class="bi bi-star"></i>
-                  }
-                  <!-- Second -->
-                  @if (item.rating > 2) {
-                  <i class="bi bi-star-fill"></i>
-                  } @else if (item.rating && item.rating < 2) {
-                  <i class="bi bi-star-half"></i>
-                  } @else {
-                  <i class="bi bi-star"></i>
-                  }
-                  <!-- Third -->
-                  @if (item.rating > 3) {
-                  <i class="bi bi-star-fill"></i>
-                  } @else if (item.rating > 2 && item.rating < 3) {
-                  <i class="bi bi-star-half"></i>
-                  } @else {
-                  <i class="bi bi-star"></i>
-                  }
-                  <!-- Fourth -->
-                  @if (item.rating > 4) {
-                  <i class="bi bi-star-fill"></i>
-                  } @else if (item.rating > 3 && item.rating < 4) {
-                  <i class="bi bi-star-half"></i>
-                  } @else {
-                  <i class="bi bi-star"></i>
-                  }
-                  <!-- Fifth -->
-                  @if (item.rating == 5) {
-                  <i class="bi bi-star-fill"></i>
-                  } @else if (item.rating > 4 && item.rating < 5) {
-                  <i class="bi bi-star-half"></i>
-                  } @else {
-                  <i class="bi bi-star"></i>
-                  }
-                </div>
-                <p>{{ item.category.name }}</p>
-                <p class="card-text">{{ item.description }}</p>
+                <app-star-rating [rating]="item.rating"></app-star-rating>
+                <p class="card-text fw-bold price">
+                  {{ item.price | currency }}
+                </p>
               </div>
-              <p class="card-text fw-bold price">
-                {{ item.price | currency }}
-              </p>
             </div>
           </div>
           <div

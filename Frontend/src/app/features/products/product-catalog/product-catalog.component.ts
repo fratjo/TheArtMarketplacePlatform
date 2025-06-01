@@ -16,10 +16,17 @@ import {
 } from '../../../core/models/product.interface';
 import { environment } from '../../../../../environment';
 import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
+import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 
 @Component({
   selector: 'app-product-catalog',
-  imports: [AsyncPipe, CurrencyPipe, CommonModule, RouterLink],
+  imports: [
+    AsyncPipe,
+    CurrencyPipe,
+    CommonModule,
+    RouterLink,
+    StarRatingComponent,
+  ],
   templateUrl: './product-catalog.component.html',
   styleUrl: './product-catalog.component.css',
 })
