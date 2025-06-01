@@ -6,10 +6,17 @@ import { BehaviorSubject } from 'rxjs';
 import { AsyncPipe, CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { OrderStatusPipe } from '../../../../core/pipes/order-status.pipe';
+import { OrdersViewComponent } from '../../../../shared/components/orders-view/orders-view.component';
 
 @Component({
   selector: 'app-orders',
-  imports: [AsyncPipe, DatePipe, OrderStatusPipe, CommonModule],
+  imports: [
+    AsyncPipe,
+    DatePipe,
+    OrderStatusPipe,
+    CommonModule,
+    OrdersViewComponent,
+  ],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css',
 })

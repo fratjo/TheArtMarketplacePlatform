@@ -1,0 +1,56 @@
+<div
+  id="my-products-container"
+  class="d-flex flex-column justify-content-between align-items-center px-4 pt-4 h-100 container"
+>
+  <div
+    class="d-flex flex-row justify-content-between align-items-center mb-3 w-100"
+  >
+    <h3 class="text-center">Orders</h3>
+  </div>
+  <hr class="w-100 my-3" />
+  <table class="table table-striped w-100 border table-hover">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>Date Received</th>
+        <th>Customer</th>
+        <th>Delivery Status</th>
+        <th>Delivered</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(delivery of deliveries$ | async; track delivery) {
+      <tr>
+        <td>{{ delivery.orderId }}</td>
+        <td>
+          {{
+            delivery.deliveryStatusUpdates?.[1]?.createdAt
+            ? (delivery.deliveryStatusUpdates[1].createdAt | date : "shortDate")
+            : ''
+          }}
+        </td>
+        <td>{{ delivery.customerName }}</td>
+        <td>
+          {{
+            delivery.deliveryStatusUpdates?.length
+              ? (delivery.deliveryStatusUpdates[
+                  delivery.deliveryStatusUpdates.length - 1
+                ].status | deliveryStatus)
+              : ""
+          }}
+        </td>
+        <td>
+          @if (delivery.deliveryStatusUpdates?.[2]) {
+          {{ delivery.deliveryStatusUpdates[2].createdAt | date : "shortDate" }}
+          } @else if (delivery.deliveryStatusUpdates?.[1]) {
+          <button (click)="setAsDelivered(delivery.orderId)">
+            Set as Delivered
+          </button>
+          }
+        </td>
+      </tr>
+
+      }
+    </tbody>
+  </table>
+</div>

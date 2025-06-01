@@ -62,9 +62,8 @@ namespace TheArtMarketplacePlatform.Core.Entities
 
     public enum DeliveryStatus
     {
-        Pending,
+        Pending, // Initial status when the order is created
         InTransit,
-        Delivered,
-        Returned
+        Delivered
     }
 }

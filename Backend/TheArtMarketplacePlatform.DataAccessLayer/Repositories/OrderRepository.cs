@@ -31,13 +31,18 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             }
         }
 
+        public async Task CreateDeliveryStatusUpdateAsync(DeliveryStatusUpdate deliveryStatusUpdate)
+        {
+            await context.DeliveryStatusUpdates.AddAsync(deliveryStatusUpdate);
+        }
+
         public Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
             return context.Orders
                 .Where(o => o.Id == orderId)
                 .Include(o => o.OrderProducts)
                 .Include(o => o.DeliveryStatusUpdates)
-                .Include(o => o.Customer)
+                .Include(o => o.Customer).ThenInclude(c => c.User)
                 .Include(o => o.DeliveryPartner).ThenInclude(dp => dp.User)
                 .FirstOrDefaultAsync();
         }
@@ -82,7 +87,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             }
         }
 
-        public async Task<List<Order>> GetOrdersByArtisanIdAsync(Guid artisanId, string? status = null, string? sortBy = null, string? sortOrder = null)
+        public async Task<List<Order>> GetOrdersByArtisanIdAsync(Guid artisanId)
         {
             var query = context.Orders
                 .Where(o => o.ArtisanId == artisanId)
@@ -92,6 +97,18 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<List<Order>> GetDeliveryOrdersByDeliveryPartnerAsync(Guid deliveryPartnerId)
+        {
+            var query = context.Orders
+                .Where(o => o.DeliveryPartnerId == deliveryPartnerId)
+                .Include(o => o.OrderProducts)
+                .Include(o => o.DeliveryStatusUpdates)
+                .Include(o => o.Customer).ThenInclude(c => c.User);
+
+            return await query.ToListAsync();
+        }
+
         public async Task UpdateOrderAsync(Order order)
         {
             // Update the order in the context

@@ -30,7 +30,13 @@
           </td>
           <td>{{ item.product!.price | currency }}</td>
           <td>
-            <button (click)="increaseQuantity(item.product!.id)">+</button>
+            <button
+              (click)="
+                increaseQuantity(item.product!.id, item.product!.quantityLeft)
+              "
+            >
+              +
+            </button>
             {{ item.quantity }}
             <button (click)="decreaseQuantity(item.product!.id)">-</button>
           </td>

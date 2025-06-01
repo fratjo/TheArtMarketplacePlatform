@@ -52,7 +52,7 @@
       } @else if ( (isLoggedIn$ | async) && (userRole$ | async) ===
       'deliverypartner' ) {
       <a class="btn" href="/dashboard">Dashboard</a>
-      <a class="btn" href="/deliveries">Deliveries</a>
+      <a class="btn" href="/delivery-partner/deliveries">Deliveries</a>
       } @else if ( (isLoggedIn$ | async) && (userRole$ | async) === 'admin' ) {}
       @else {
       <a

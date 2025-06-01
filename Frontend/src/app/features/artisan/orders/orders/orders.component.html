@@ -8,28 +8,9 @@
     <h3 class="text-center">Orders</h3>
   </div>
   <hr class="w-100 my-3" />
-  <table class="table table-striped w-100 border table-hover">
-    <thead>
-      <tr>
-        <th>Order #</th>
-        <th>Date</th>
-        <th>Status</th>
-        <th>Products</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for(order of orders$ | async; track order) {
-      <tr (click)="goToOrderDetails(order.id)">
-        <td>{{ order.id }}</td>
-        <td>{{ order.createdAt | date : "shortDate" }}</td>
-        <td [ngClass]="getOrderStatusClass(order.status)">
-          {{ order.status | orderStatus }}
-        </td>
-        <td>{{ getTotalQuantity(order) }}</td>
-        <td>{{ getTotalPrice(order) | currency }}</td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <app-orders-view
+    class="w-100"
+    [orders]="orders$ | async"
+    (orderSelected)="goToOrderDetails($event)"
+  ></app-orders-view>
 </div>

@@ -276,7 +276,18 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             order.UpdatedAt = DateTime.UtcNow;
 
             await _orderRepository.UpdateOrderAsync(order);
+
+            // Create a delivery status update
+            var deliveryStatusUpdate = new DeliveryStatusUpdate
+            {
+                OrderId = order.Id,
+                Status = orderStatus == OrderStatus.Shipped ? DeliveryStatus.InTransit : DeliveryStatus.Pending,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _orderRepository.CreateDeliveryStatusUpdateAsync(deliveryStatusUpdate);
+
             await _orderRepository.SaveChangesAsync();
+
             return order;
         }
 

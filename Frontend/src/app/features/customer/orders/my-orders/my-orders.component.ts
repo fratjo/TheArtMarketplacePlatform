@@ -11,10 +11,11 @@ import {
 } from '@angular/common';
 import { OrderStatusPipe } from '../../../../core/pipes/order-status.pipe';
 import { Router } from '@angular/router';
+import { OrdersViewComponent } from '../../../../shared/components/orders-view/orders-view.component';
 
 @Component({
   selector: 'app-my-orders',
-  imports: [AsyncPipe, DatePipe, CurrencyPipe, OrderStatusPipe, CommonModule],
+  imports: [AsyncPipe, CommonModule, OrdersViewComponent],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
 })

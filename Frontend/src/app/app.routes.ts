@@ -84,6 +84,25 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'delivery-partner',
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import(
+            './features/delivery-partner/delivery-partner-dashboard/delivery-partner-dashboard.component'
+          ).then((c) => c.DeliveryPartnerDashboardComponent),
+      },
+      {
+        path: 'deliveries',
+        loadComponent: () =>
+          import(
+            './features/delivery-partner/deliveries/deliveries/deliveries.component'
+          ).then((c) => c.DeliveriesComponent),
+      },
+    ],
+  },
   // {
   //   path: 'dashboard',
   //   loadComponent: () =>

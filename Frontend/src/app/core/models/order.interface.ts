@@ -14,6 +14,7 @@ export interface Order {
   deliveryPartnerId?: string | null;
   customerId?: string | null;
   deliveryPartnerName: string;
+  artisanName: string;
   shippingAddress: string;
   status: number; // ou OrderStatus si tu as un enum côté TS
   createdAt: Date;
@@ -40,6 +41,24 @@ export interface OrderProduct {
 
 export interface DeliveryPartnerProfile {}
 
-export interface CustomerProfile {}
+export interface CustomerProfile {
+  user: {
+    username: string;
+  };
+}
 
-export interface DeliveryStatusUpdate {}
+export interface DeliveryStatusUpdate {
+  id: string;
+  status: number;
+  createdAt: Date;
+}
+
+export interface Delivery {
+  customerName: string;
+  shippingAddress: string;
+  orderId: string;
+  deliveryStatusUpdates: DeliveryStatusUpdate[];
+  status: string;
+}
+
+export type Deliveries = Delivery[];

@@ -86,17 +86,21 @@ export class CartComponent implements OnInit {
     }
   }
 
-  increaseQuantity(productId: string) {
+  increaseQuantity(productId: string, quantity: number) {
     const storedCart = JSON.parse(sessionStorage.getItem('cart') || '[]');
     const existingItem = storedCart.find(
       (item: { productId: string; quantity: number }) =>
         item.productId === productId
     );
 
-    if (existingItem) {
+    if (existingItem && existingItem.quantity + 1 <= quantity) {
       existingItem.quantity += 1;
     } else {
-      storedCart.push({ productId, quantity: 1 });
+      this.toastService.show({
+        text: 'Cannot add more than available quantity',
+        classname: 'bg-warning text-light',
+        delay: 3000,
+      });
     }
 
     sessionStorage.setItem('cart', JSON.stringify(storedCart));
@@ -121,8 +125,6 @@ export class CartComponent implements OnInit {
           storedCart.splice(index, 1);
         }
       }
-    } else {
-      storedCart.push({ productId, quantity: 1 });
     }
 
     sessionStorage.setItem('cart', JSON.stringify(storedCart));

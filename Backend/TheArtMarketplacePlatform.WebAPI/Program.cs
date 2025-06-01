@@ -53,6 +53,7 @@ builder.Services.AddScoped<IGuestService, GuestService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IArtisanService, ArtisanService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IDeliveryPartnerService, DeliveryPartnerService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

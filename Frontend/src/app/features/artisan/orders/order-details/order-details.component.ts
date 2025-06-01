@@ -5,10 +5,17 @@ import { Order } from '../../../../core/models/order.interface';
 import { ToastService } from '../../../../core/services/toast.service';
 import { AsyncPipe, CurrencyPipe, DatePipe, SlicePipe } from '@angular/common';
 import { OrderStatusPipe } from '../../../../core/pipes/order-status.pipe';
+import { DeliveryStatusPipe } from '../../../../core/pipes/delivery-status.pipe';
 
 @Component({
   selector: 'app-order-details',
-  imports: [AsyncPipe, CurrencyPipe, SlicePipe, DatePipe, OrderStatusPipe],
+  imports: [
+    AsyncPipe,
+    CurrencyPipe,
+    DatePipe,
+    OrderStatusPipe,
+    DeliveryStatusPipe,
+  ],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css',
 })
@@ -28,6 +35,8 @@ export class OrderDetailsComponent implements OnInit {
     this.artisanService.getOrderById(this.orderId!).subscribe({
       next: (order) => {
         this.order$.next(order);
+
+        console.log('Order fetched successfully:', order);
       },
       error: (error) => {
         console.log('Error fetching order:', error);
@@ -69,6 +78,10 @@ export class OrderDetailsComponent implements OnInit {
     this.artisanService.updateOrderStatus(orderId, status).subscribe({
       next: (updatedOrder) => {
         this.order$.next(updatedOrder);
+
+        console.log('Order status updated successfully:', updatedOrder);
+        // Afficher un toast de succès
+
         this.toastService.show({
           text: 'Order status updated successfully',
           classname: 'bg-success text-light',

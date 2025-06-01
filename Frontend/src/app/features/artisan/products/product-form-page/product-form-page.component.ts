@@ -54,7 +54,7 @@ export class ProductFormPageComponent implements OnInit {
             classname: 'bg-success text-light',
             delay: 3000,
           });
-          this.router.navigate(['/products/my-products']);
+          this.router.navigate(['/artisan/products']);
         },
         error: (error: any) => {
           console.error('Error updating product:', error);
@@ -73,7 +73,7 @@ export class ProductFormPageComponent implements OnInit {
             classname: 'bg-success text-light',
             delay: 3000,
           });
-          this.router.navigate(['/products/my-products']);
+          this.router.navigate(['/artisan/products']);
         },
         error: (error: any) => {
           console.error('Error creating product:', error);
