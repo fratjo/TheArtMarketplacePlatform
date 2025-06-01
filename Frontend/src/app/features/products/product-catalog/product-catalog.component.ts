@@ -17,6 +17,7 @@ import {
 import { environment } from '../../../../../environment';
 import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-catalog',
@@ -57,6 +58,7 @@ export class ProductCatalogComponent implements OnInit {
   constructor(
     private guestService: GuestService,
     private toastService: ToastService,
+    private cartService: CartService,
     private router: Router
   ) {}
 
@@ -151,6 +153,8 @@ export class ProductCatalogComponent implements OnInit {
       ...currentFilters,
       artisans: currentFilters.artisans,
     });
+
+    console.log('Selected artisans:', currentFilters.artisans);
   }
 
   onCategorySelect(event: any) {
@@ -205,30 +209,11 @@ export class ProductCatalogComponent implements OnInit {
   }
 
   addToCart(productId: string, spanRef: HTMLSpanElement) {
-    const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-    const existingItem = cart.find(
-      (item: { productId: string; quantity: number }) =>
-        item.productId === productId
-    );
-
     const quantity = parseInt(spanRef.innerText, 10);
-
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.push({ productId, quantity: quantity });
-    }
 
     spanRef.innerText = '1';
 
-    sessionStorage.setItem('cart', JSON.stringify(cart));
-    this.toastService.show({
-      text: 'Product added to cart!',
-      classname: 'bg-success text-light',
-      delay: 3000,
-    });
-
-    window.dispatchEvent(new Event('cart'));
+    this.cartService.addToCart(productId, quantity);
   }
 
   increment(spanRef: HTMLSpanElement, item: Product) {

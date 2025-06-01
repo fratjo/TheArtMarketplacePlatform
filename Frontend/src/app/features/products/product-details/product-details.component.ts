@@ -10,6 +10,7 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ArtisanService } from '../../../core/services/artisan.service';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-details',
@@ -36,7 +37,8 @@ export class ProductDetailsComponent implements OnInit {
     private customerService: CustomerService,
     private artisanService: ArtisanService,
     private activatedRoute: ActivatedRoute,
-    private toast: ToastService
+    private toastService: ToastService,
+    private cartService: CartService
   ) {}
 
   ngOnInit() {
@@ -70,7 +72,7 @@ export class ProductDetailsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error fetching product:', error);
-          this.toast.show({
+          this.toastService.show({
             text: `Error fetching product: ${error.error.title}`,
             classname: 'bg-danger text-light',
             delay: 5000,
@@ -96,7 +98,7 @@ export class ProductDetailsComponent implements OnInit {
       .reviewProduct(this.product.id, this.productReview)
       .subscribe({
         next: () => {
-          this.toast.show({
+          this.toastService.show({
             text: 'Review submitted successfully!',
             classname: 'bg-success text-light',
             delay: 5000,
@@ -105,7 +107,7 @@ export class ProductDetailsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error submitting review:', error);
-          this.toast.show({
+          this.toastService.show({
             text: `Error submitting review: ${error.error.title}`,
             classname: 'bg-danger text-light',
             delay: 5000,
@@ -123,7 +125,7 @@ export class ProductDetailsComponent implements OnInit {
       .respondToReview(reviewId, this.productReview.responseText)
       .subscribe({
         next: () => {
-          this.toast.show({
+          this.toastService.show({
             text: 'Response submitted successfully!',
             classname: 'bg-success text-light',
             delay: 5000,
@@ -132,12 +134,40 @@ export class ProductDetailsComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error responding to review:', err);
-          this.toast.show({
+          this.toastService.show({
             text: `Error responding to review: ${err.error.title}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
         },
       });
+  }
+
+  addToCart(productId: string, spanRef: HTMLSpanElement) {
+    const quantity = parseInt(spanRef.innerText, 10);
+
+    spanRef.innerText = '1';
+
+    this.cartService.addToCart(productId, quantity);
+  }
+
+  increment(spanRef: HTMLSpanElement, item: Product) {
+    let value = parseInt(spanRef.innerText, 10);
+    if (value >= item.quantityLeft) {
+      this.toastService.show({
+        text: 'Cannot add more than available quantity',
+        classname: 'bg-warning text-light',
+        delay: 3000,
+      });
+      return;
+    }
+    spanRef.innerText = (value + 1).toString();
+  }
+
+  decrement(spanRef: HTMLSpanElement) {
+    let value = parseInt(spanRef.innerText, 10);
+    if (value > 1) {
+      spanRef.innerText = (value - 1).toString();
+    }
   }
 }

@@ -94,14 +94,14 @@ export class CheckoutComponent implements OnInit {
     this.checkoutResume = {};
 
     this.cartItems().forEach((item) => {
-      const artisanId = item.product?.artisan.userId;
+      const artisanId = item.product?.artisan.id;
       if (!artisanId) return;
 
       if (!this.checkoutResume[artisanId]) {
         this.checkoutResume[artisanId] = {
           artisan: {
             id: artisanId,
-            username: item.product?.artisan.user.username || '',
+            username: item.product?.artisan.username || '',
           },
           products: [],
         };
@@ -127,7 +127,7 @@ export class CheckoutComponent implements OnInit {
       deliveryPartnerId: this.selectedDeliveryPartner?.id || '',
       orderProducts: this.cartItems().map((item) => ({
         productId: item.product?.id || '',
-        artisanId: item.product?.artisan.userId || '',
+        artisanId: item.product?.artisan.id || '',
         quantity: item.quantity,
       })),
     };
