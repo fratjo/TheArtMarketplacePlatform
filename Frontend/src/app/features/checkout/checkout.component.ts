@@ -28,7 +28,7 @@ export class CheckoutComponent implements OnInit {
     DeliveryPartner[]
   >([]);
   selectedDeliveryPartner: DeliveryPartner | null = null;
-  cartItems = signal<{ product: Product | undefined; quantity: number }[]>([]);
+  cartItems = signal<{ product: Product; quantity: number }[]>([]);
   totalPriceComputed = computed(() => {
     return this.cartItems().reduce((total, item) => {
       return total + (item.product?.price || 0) * item.quantity;
@@ -76,7 +76,7 @@ export class CheckoutComponent implements OnInit {
         productIds.map((id) => this.guestService.getProductById(id).toPromise())
       ).then((products) => {
         const items = products.map((product, index) => ({
-          product,
+          product: product as Product,
           quantity: Object.values(cartData).map((item: any) => item.quantity)[
             index
           ],
@@ -94,16 +94,16 @@ export class CheckoutComponent implements OnInit {
     this.checkoutResume = {};
 
     this.cartItems().forEach((item) => {
-      console.log('Processing item:', item);
-
-      const artisanId = item.product?.artisan.id;
+      const artisanId = item.product.artisanId;
       if (!artisanId) return;
 
       if (!this.checkoutResume[artisanId]) {
+        console.log(item);
+
         this.checkoutResume[artisanId] = {
           artisan: {
             id: artisanId,
-            username: item.product?.artisan.username || '',
+            username: item.product?.artisan.user.username || '',
           },
           products: [],
         };
@@ -117,10 +117,11 @@ export class CheckoutComponent implements OnInit {
   }
 
   getCheckoutResumeArray() {
-    return Object.values(this.checkoutResume).map((entry) => ({
+    const arr = Object.values(this.checkoutResume).map((entry) => ({
       artisan: entry.artisan,
       products: entry.products,
     }));
+    return arr;
   }
 
   placeOrder() {
