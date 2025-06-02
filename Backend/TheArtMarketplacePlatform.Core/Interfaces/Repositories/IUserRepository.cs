@@ -14,5 +14,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
         Task<User?> GetUserByIdAsync(Guid id);
         Task<IEnumerable<User>> GetAllArtisansAsync();
         Task<IEnumerable<User>> GetAllDeliveryPartnersAsync();
+        Task<bool> UpdateUserAsync(User user);
+
     }
 }

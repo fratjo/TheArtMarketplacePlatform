@@ -1,0 +1,254 @@
+<div class="container d-flex flex-column gap-3 p-3">
+  <h3>My Profil</h3>
+  <div class="border rounded p-3 mb-3 bg-light">
+    <form
+      [formGroup]="profileForm"
+      *ngIf="profileForm"
+      (ngSubmit)="saveProfile()"
+    >
+      <div class="mb-3">
+        <h4>Credentials:</h4>
+        <label for="username" class="form-label">Username</label>
+        <input
+          id="username"
+          class="form-control"
+          formControlName="username"
+          [readonly]="!editMode"
+          [ngClass]="{
+            'is-invalid':
+              profileForm.get('username')?.invalid &&
+              profileForm.get('username')?.dirty
+          }"
+          (blur)="checkIfUsernameExist()"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          id="email"
+          class="form-control"
+          formControlName="email"
+          [readonly]="!editMode"
+          [ngClass]="{
+            'is-invalid':
+              profileForm.get('email')?.invalid &&
+              profileForm.get('email')?.dirty
+          }"
+          (blur)="checkIfEmailExist()"
+        />
+      </div>
+      <h4>Profile Informations:</h4>
+      <div class="mb-3" *ngIf="role === 'customer'">
+        <label for="shippingAddress" class="form-label"
+          >Adresse de livraison</label
+        >
+        <input
+          id="shippingAddress"
+          class="form-control"
+          formControlName="shippingAddress"
+          [readonly]="!editMode"
+        />
+      </div>
+      <div class="mb-3" *ngIf="role === 'artisan'">
+        <label for="bio" class="form-label">Bio</label>
+        <input
+          id="bio"
+          class="form-control"
+          formControlName="bio"
+          [readonly]="!editMode"
+        />
+        <label for="city" class="form-label">City</label>
+        <input
+          id="city"
+          class="form-control"
+          formControlName="city"
+          [readonly]="!editMode"
+        />
+      </div>
+      <div class="mb-3">
+        <button
+          *ngIf="!editMode"
+          type="button"
+          class="btn btn-primary"
+          (click)="editMode = true"
+        >
+          Edit
+        </button>
+        <div *ngIf="editMode" class="d-flex gap-2">
+          <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="profileForm.invalid"
+          >
+            Sauvegarder
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancelEdit()"
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <form
+    [formGroup]="passwordForm"
+    *ngIf="passwordForm"
+    (ngSubmit)="changePassword()"
+  >
+    <div class="border rounded p-3 mb-3 bg-light">
+      <h4>Change password :</h4>
+      <div class="mb-3">
+        <label for="currentPassword" class="form-label">Current password</label>
+        <div class="input-group">
+          <input
+            id="currentPassword"
+            type="{{ showPassword ? 'text' : 'password' }}"
+            formControlName="currentPassword"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                passwordForm.get('currentPassword')?.invalid &&
+                passwordForm.get('currentPassword')?.touched
+            }"
+            (focus)="passwordFocus = true"
+            (blur)="passwordFocus = false"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary icon"
+            (click)="showPassword = !showPassword"
+          >
+            <i class="{{ showPassword ? 'bi bi-eye-slash' : 'bi bi-eye' }}"></i>
+          </button>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="newPassword" class="form-label">New password</label>
+        <div class="input-group">
+          <input
+            id="newPassword"
+            type="{{ showNewPassword ? 'text' : 'password' }}"
+            formControlName="newPassword"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                passwordForm.get('newPassword')?.invalid &&
+                passwordForm.get('newPassword')?.touched
+            }"
+            (focus)="newPasswordFocus = true"
+            (blur)="newPasswordFocus = false"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary icon"
+            (click)="showNewPassword = !showNewPassword"
+          >
+            <i
+              class="{{ showNewPassword ? 'bi bi-eye-slash' : 'bi bi-eye' }}"
+            ></i>
+          </button>
+        </div>
+        @if ( newPasswordFocus) { @if (
+        passwordForm.get('newPassword')?.hasError('missingLowercase') ) {
+        <div class="text-danger">
+          <i class="bi bi-x-lg"></i> Lowercase character [a-z]
+        </div>
+        } @else {
+        <div class="text-success">
+          <i class="bi bi-check-lg"></i> Lowercase character [a-z]
+        </div>
+        } @if ( passwordForm.get('newPassword')?.hasError('missingUppercase') )
+        {
+        <div class="text-danger">
+          <i class="bi bi-x-lg"></i> Uppercase character [A-Z]
+        </div>
+        } @else {
+        <div class="text-success">
+          <i class="bi bi-check-lg"></i> Uppercase character [A-Z]
+        </div>
+        } @if ( passwordForm.get('newPassword')?.hasError('missingNumber') ) {
+        <div class="text-danger"><i class="bi bi-x-lg"></i> Number [0-9]</div>
+        } @else {
+        <div class="text-success">
+          <i class="bi bi-check-lg"></i> Number [0-9]
+        </div>
+        } @if (
+        passwordForm.get('newPassword')?.hasError('missingSpecialCharacter') ) {
+        <div class="text-danger">
+          <i class="bi bi-x-lg"></i> Special character [{{ specialCharacters }}]
+        </div>
+        } @else {
+        <div class="text-success">
+          <i class="bi bi-check-lg"></i> Special character [{{
+            specialCharacters
+          }}]
+        </div>
+        } @if ( passwordForm.get('newPassword')?.hasError('tooShort') ) {
+        <div class="text-danger">
+          <i class="bi bi-x-lg"></i> Minimum 6 characters
+        </div>
+        } @else {
+        <div class="text-success">
+          <i class="bi bi-check-lg"></i> Minimum 6 characters
+        </div>
+        } } @else if (passwordForm.get('newPassword')?.touched &&
+        !newPasswordFocus) { @if (
+        passwordForm.get('newPassword')?.hasError('required') ) {
+        <div class="text-danger">Password is required.</div>
+        } @else if
+        (passwordForm.get('newPassword')?.hasError('missingLowercase') ||
+        passwordForm.get('newPassword')?.hasError('missingUppercase')
+        ||passwordForm.get('newPassword')?.hasError('missingNumber')
+        ||passwordForm.get('newPassword')?.hasError('missingSpecialCharacter')
+        ||passwordForm.get('newPassword')?.hasError('tooShort')) {
+        <div class="text-danger">Invalid password format.</div>
+        }}
+      </div>
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label"
+          >Confirm new password</label
+        >
+        <div class="input-group">
+          <input
+            id="confirmPassword"
+            type="{{ showConfirmPassword ? 'text' : 'password' }}"
+            formControlName="confirmPassword"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                passwordForm.get('confirmPassword')?.invalid &&
+                passwordForm.get('confirmPassword')?.touched
+            }"
+            (focus)="confirmPasswordFocus = true"
+            (blur)="confirmPasswordFocus = false"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary icon"
+            (click)="showConfirmPassword = !showConfirmPassword"
+          >
+            <i
+              class="{{
+                showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'
+              }}"
+            ></i>
+          </button>
+        </div>
+        @if ( passwordForm.get('confirmPassword')?.touched &&
+        passwordForm.hasError('notMatch') ) {
+        <div class="text-danger">Passwords do not match.</div>
+        }
+      </div>
+      <button
+        type="submit"
+        class="btn btn-warning"
+        [disabled]="passwordForm.invalid"
+      >
+        Changer le mot de passe
+      </button>
+    </div>
+  </form>
+</div>

@@ -90,4 +90,19 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
                 .WithMessage("Passwords do not match.");
         }
     }
+
+    public class ChangePasswordValidator : AbstractValidator<ChangePasswordRequest>
+    {
+        public ChangePasswordValidator()
+        {
+            RuleFor(x => x.CurrentPassword)
+                .NotEmpty()
+                .WithMessage("Current password is required.");
+
+            RuleFor(x => x.NewPassword)
+                .NotEmpty()
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$")
+                .WithMessage("New password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+        }
+    }
 }

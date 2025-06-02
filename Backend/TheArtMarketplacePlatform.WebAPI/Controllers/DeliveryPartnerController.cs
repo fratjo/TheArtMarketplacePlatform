@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,18 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
 {
     [ApiController]
     [Authorize(Roles = "DeliveryPartner")]
-    [Route("api/delivery-partners/{deliveryPartnerId:guid}")]
+    [Route("api/deliverypartners/{deliveryPartnerId:guid}")]
     public class DeliveryPartnerController(IDeliveryPartnerService deliveryPartnerService) : ControllerBase
     {
+        private void CheckUserId(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null || Guid.Parse(userId) != id)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to access this resource.");
+            }
+        }
+
         [HttpGet("deliveries")]
         public async Task<IActionResult> GetDeliveryOrders(
             [FromRoute] Guid deliveryPartnerId,

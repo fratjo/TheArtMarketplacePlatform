@@ -1,3 +1,5 @@
+import { CustomerProfile, DeliveryPartnerProfile } from './user.interface';
+
 export interface CreateOrder {
   customerId: string;
   deliveryPartnerId: string;
@@ -37,14 +39,6 @@ export interface OrderProduct {
   quantity: number;
   artisanName?: string;
   imageUrl?: string;
-}
-
-export interface DeliveryPartnerProfile {}
-
-export interface CustomerProfile {
-  user: {
-    username: string;
-  };
 }
 
 export interface DeliveryStatusUpdate {

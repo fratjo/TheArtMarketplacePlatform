@@ -137,4 +137,11 @@ export class AuthService {
       params: { email },
     });
   }
+
+  changePassword(currentPassword: string, newPassword: string) {
+    return this.http.post(`${this.apiUrl}/change-password`, {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    });
+  }
 }

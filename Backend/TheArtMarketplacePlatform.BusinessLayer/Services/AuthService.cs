@@ -22,6 +22,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
             if (existingUser != null) throw new ArgumentException("Email is already in use.");
 
+            // Check if the username is already in use
+            var existingUsername = await _userRepository.GetUserByUsernameAsync(request.Username);
+            if (existingUsername != null) throw new ArgumentException("Username is already in use.");
+
             // Generate a salt and hash the password
             var salt = GenerateSalt();
             var hashedPassword = HashPasswordWithSalt(request.Password, salt);
@@ -211,6 +215,31 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         {
             var hash = HashPasswordWithSalt(password, salt);
             return hash == hashedPassword;
+        }
+
+        public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
+        {
+            // Get the user by ID
+            var user = _userRepository.GetUserByIdAsync(userId).Result;
+            if (user is null) throw new Exception("User not found.");
+
+            // Verify the old password
+            if (!VerifyPassword(request.CurrentPassword, user.PasswordSalt, user.PasswordHash))
+            {
+                throw new InvalidCredentialsException("Current password is incorrect.");
+            }
+
+            // Generate a new salt and hash the new password
+            var newSalt = GenerateSalt();
+            var newHashedPassword = HashPasswordWithSalt(request.NewPassword, newSalt);
+
+            // Update the user's password
+            user.PasswordHash = newHashedPassword;
+            user.PasswordSalt = newSalt;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            // Save the updated user
+            return await _userRepository.UpdateUserAsync(user);
         }
     }
 }

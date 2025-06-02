@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
 using TheArtMarketplacePlatform.Core.DTOs;
+using System.Security.Claims;
 
 
 namespace TheArtMarketplacePlatform.WebAPI.Controllers
@@ -59,6 +60,24 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         {
             var token = await _authService.LoginUserAsync(request);
             return Ok(new { Token = token });
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out var userId))
+            {
+                return Unauthorized(new { Message = "User not authenticated." });
+            }
+
+            var result = await _authService.ChangePasswordAsync(Guid.Parse(id), request);
+
+            if (result)
+            {
+                return Ok(new { Message = "Password changed successfully." });
+            }
+            return BadRequest(new { Message = "Failed to change password." });
         }
     }
 }

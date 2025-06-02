@@ -212,7 +212,7 @@ export class RegisterComponent {
     return null;
   }
 
-  checkIfEmailExist() {
+  async checkIfEmailExist() {
     this.authService
       .checkIfEmailExist(this.registerForm.get('email')?.value)
       .subscribe({

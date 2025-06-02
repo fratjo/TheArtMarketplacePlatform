@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
@@ -202,6 +203,55 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             }
 
             return true; // Review added successfully
+        }
+
+        public async Task<CustomerProfileResponse?> GetCustomerAsync(Guid customerId)
+        {
+            var user = await userRepository.GetUserByIdAsync(customerId);
+            if (user is null || user.CustomerProfile is null)
+            {
+                return null; // TODO handle user not found or customer profile not found
+            }
+
+            return new CustomerProfileResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                ShippingAddress = user.CustomerProfile.ShippingAddress
+                // Mappe les autres propriétés si besoin
+            };
+        }
+
+        public async Task<bool> CheckEmailExistsAsync(string email) => await userRepository.GetUserByEmailAsync(email) is not null;
+        public async Task<bool> CheckUsernameExistsAsync(string username) => await userRepository.GetUserByUsernameAsync(username) is not null;
+
+        public async Task<bool> UpdateCustomerAsync(Guid customerId, CustomerUpdateProfileRequest request)
+        {
+            var user = await userRepository.GetUserByIdAsync(customerId);
+            if (user is null || user.CustomerProfile is null)
+            {
+                throw new Exception("Artisan not found");
+            }
+
+            if (await userRepository.GetUserByEmailAsync(request.Email!) is not null && user.Email != request.Email)
+            {
+                throw new Exception("Email already exists");
+            }
+
+            if (await userRepository.GetUserByUsernameAsync(request.Username!) is not null && user.Username != request.Username)
+            {
+                throw new Exception("Username already exists");
+            }
+
+            user.CustomerProfile.ShippingAddress = request.ShippingAddress!;
+            user.Username = request.Username!;
+            user.Email = request.Email!;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await userRepository.UpdateUserAsync(user);
+
+            return true; // TODO handle user not found or customer profile not found
         }
     }
 }

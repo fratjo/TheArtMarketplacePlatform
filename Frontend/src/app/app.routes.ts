@@ -26,6 +26,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'profile',
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then(
+        (c) => c.ProfileComponent
+      ),
+  },
+  {
     path: 'artisan',
     children: [
       {
@@ -103,23 +111,6 @@ export const routes: Routes = [
       },
     ],
   },
-  // {
-  //   path: 'dashboard',
-  //   loadComponent: () =>
-  //     import('./features/dashboard/dashboard.component').then(
-  //       (c) => c.DashboardComponent
-  //     ),
-  //   canActivate: [AuthGuard],
-  //   children: [
-  //     {
-  //       path: 'delivery-partner',
-  //       loadComponent: () =>
-  //         import(
-  //           './features/delivery-partner/delivery-partner-dashboard/delivery-partner-dashboard.component'
-  //         ).then((c) => c.DeliveryPartnerDashboardComponent),
-  //     },
-  //   ],
-  // },
   {
     path: 'cart',
     loadComponent: () =>

@@ -10,7 +10,7 @@ using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
-    public class ArtisanService(IProductRepository _productRepository, IOrderRepository _orderRepository, IWebHostEnvironment _env) : IArtisanService
+    public class ArtisanService(IProductRepository _productRepository, IOrderRepository _orderRepository, IUserRepository userRepository, IWebHostEnvironment _env) : IArtisanService
     {
         #region Products
         public async Task<Product> CreateProductAsync(Guid ArsitsanId, ArtisanInsertProductRequest request)
@@ -312,6 +312,56 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             review.ArtisanResponse = request.Response;
             review.UpdatedAt = DateTime.UtcNow;
             await _productRepository.UpdateReviewAsync(review);
+        }
+
+        public async Task<ArtisanProfileResponse?> GetArtisanAsync(Guid artisanId)
+        {
+            var user = await userRepository.GetUserByIdAsync(artisanId);
+            if (user is null || user.ArtisanProfile is null)
+            {
+                return null; // TODO handle user not found or customer profile not found
+            }
+
+            return new ArtisanProfileResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Bio = user.ArtisanProfile.Bio,
+                City = user.ArtisanProfile.City,
+            };
+        }
+
+        public async Task<bool> CheckEmailExistsAsync(string email) => await userRepository.GetUserByEmailAsync(email) is not null;
+        public async Task<bool> CheckUsernameExistsAsync(string username) => await userRepository.GetUserByUsernameAsync(username) is not null;
+
+        public async Task<bool> UpdateArtisanAsync(Guid artisanId, ArtisanUpdateProfileRequest request)
+        {
+            var user = await userRepository.GetUserByIdAsync(artisanId);
+            if (user is null || user.ArtisanProfile is null)
+            {
+                throw new Exception("Artisan not found");
+            }
+
+            if (await userRepository.GetUserByEmailAsync(request.Email!) is not null && user.Email != request.Email)
+            {
+                throw new Exception("Email already exists");
+            }
+
+            if (await userRepository.GetUserByUsernameAsync(request.Username!) is not null && user.Username != request.Username)
+            {
+                throw new Exception("Username already exists");
+            }
+
+            user.ArtisanProfile.Bio = request.Bio!;
+            user.ArtisanProfile.City = request.City!;
+            user.Username = request.Username!;
+            user.Email = request.Email!;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await userRepository.UpdateUserAsync(user);
+
+            return true; // TODO handle user not found or customer profile not found
         }
 
         #endregion

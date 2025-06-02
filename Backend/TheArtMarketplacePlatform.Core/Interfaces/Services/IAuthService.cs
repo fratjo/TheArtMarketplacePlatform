@@ -14,5 +14,6 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
         Task<string> RegisterCustomerAsync(RegisterCustomerRequest request);
         Task<string> RegisterDeliveryPartnerAsync(RegisterDeliveryPartnerRequest request);
         Task<string> LoginUserAsync(LoginRequest request);
+        Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request);
     }
 }

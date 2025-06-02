@@ -9,6 +9,8 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
 {
     public interface ICustomerService
     {
+        Task<CustomerProfileResponse?> GetCustomerAsync(Guid customerId);
+        Task<bool> UpdateCustomerAsync(Guid customerId, CustomerUpdateProfileRequest request);
         Task<bool> CreateOrderAsync(Guid customerId, Guid deliveryPartnerId, List<CustomerInsertOrderProductDto> orderProducts);
         Task<List<Order>> GetOrdersAsync(Guid customerId);
         Task<Order?> GetOrderAsync(Guid customerId, Guid orderId);

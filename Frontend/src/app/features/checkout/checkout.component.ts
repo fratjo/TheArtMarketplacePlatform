@@ -94,6 +94,8 @@ export class CheckoutComponent implements OnInit {
     this.checkoutResume = {};
 
     this.cartItems().forEach((item) => {
+      console.log('Processing item:', item);
+
       const artisanId = item.product?.artisan.id;
       if (!artisanId) return;
 

@@ -9,6 +9,8 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
 {
     public interface IArtisanService
     {
+        Task<ArtisanProfileResponse?> GetArtisanAsync(Guid artisanId);
+        Task<bool> UpdateArtisanAsync(Guid artisanId, ArtisanUpdateProfileRequest request);
         #region Products
         Task<IEnumerable<Product>> GetAllProductsAsync(Guid? ArsitsanId, string? search = null,
             string? category = null, string? status = null, string? availability = null, decimal? rating = null, string? sortBy = null, string? sortOrder = null);

@@ -8,7 +8,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
   providedIn: 'root',
 })
 export class DeliveryPartnerService {
-  private apiUrl = 'http://localhost:5140/api/delivery-partners';
+  private apiUrl = 'http://localhost:5140/api/deliverypartners';
 
   constructor(private authService: AuthService, private http: HttpClient) {}
 

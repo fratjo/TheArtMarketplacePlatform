@@ -71,6 +71,12 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                             .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+            return await _context.SaveChangesAsync().ContinueWith(t => t.Result > 0);
+        }
+
         #endregion
     }
 }
