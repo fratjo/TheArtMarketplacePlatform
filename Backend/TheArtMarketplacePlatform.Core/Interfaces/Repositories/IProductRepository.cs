@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 
 namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
@@ -21,6 +22,8 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
         Task<ProductReview?> GetReviewByIdAsync(Guid reviewId);
         Task UpdateReviewAsync(ProductReview review);
         Task<List<ProductReview>> GetReviewsByProductIdAsync(Guid productId);
+        Task<List<Product>> GetFavoritesByUserIdAsync(Guid userId);
+        Task<bool> AddToFavoritesAsync(Guid userId, Guid productId);
 
         // Query methods
         Task<Guid?> DoesCategoryExistAsync(string name);

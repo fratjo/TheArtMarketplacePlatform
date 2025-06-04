@@ -18,6 +18,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<ProductCategory> ProductCategories { get; set; } = null!;
         public DbSet<ProductReview> ProductReviews { get; set; } = null!;
+        public DbSet<ProductFavorite> ProductFavorites { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderProduct> OrderProducts { get; set; } = null!;
         public DbSet<DeliveryStatusUpdate> DeliveryStatusUpdates { get; set; } = null!;
@@ -164,25 +165,38 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
+            // ProductFavorite entity configuration
+            modelBuilder.Entity<ProductFavorite>(entity =>
+            {
+                entity.HasKey(pf => new { pf.CustomerId, pf.ProductId });
+                entity.Property(pf => pf.CustomerId).IsRequired();
+                entity.Property(pf => pf.ProductId).IsRequired();
+
+                entity.HasOne(pf => pf.Customer)
+                    .WithMany(c => c.FavoriteProducts)
+                    .HasForeignKey(pf => pf.CustomerId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
             // Order entity configuration
             modelBuilder.Entity<Order>(entity =>
-            {
-                entity.HasKey(o => o.Id);
-                entity.Property(o => o.ShippingAddress).IsRequired().HasMaxLength(256);
-                entity.Property(o => o.Status).IsRequired().HasConversion<string>().HasDefaultValue(OrderStatus.Pending);
-                entity.Property(o => o.CreatedAt).HasDefaultValueSql("GETDATE()");
-                entity.Property(o => o.UpdatedAt).HasDefaultValueSql("GETDATE()");
+        {
+            entity.HasKey(o => o.Id);
+            entity.Property(o => o.ShippingAddress).IsRequired().HasMaxLength(256);
+            entity.Property(o => o.Status).IsRequired().HasConversion<string>().HasDefaultValue(OrderStatus.Pending);
+            entity.Property(o => o.CreatedAt).HasDefaultValueSql("GETDATE()");
+            entity.Property(o => o.UpdatedAt).HasDefaultValueSql("GETDATE()");
 
-                entity.HasOne(o => o.DeliveryPartner)
-                    .WithMany(d => d.Orders)
-                    .HasForeignKey(o => o.DeliveryPartnerId)
-                    .OnDelete(DeleteBehavior.NoAction);
+            entity.HasOne(o => o.DeliveryPartner)
+                .WithMany(d => d.Orders)
+                .HasForeignKey(o => o.DeliveryPartnerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-                entity.HasOne(o => o.Customer)
-                    .WithMany(c => c.Orders)
-                    .HasForeignKey(o => o.CustomerId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
+            entity.HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
 
             // OrderProduct entity configuration
             modelBuilder.Entity<OrderProduct>(entity =>

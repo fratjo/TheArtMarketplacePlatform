@@ -208,6 +208,19 @@ ALTER TABLE [Orders] ADD [ArtisanName] nvarchar(max) NOT NULL DEFAULT N'';
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES (N'20250527200144_OrderAddArtisan', N'9.0.4');
 
+CREATE TABLE [ProductFavorites] (
+    [CustomerId] uniqueidentifier NOT NULL,
+    [ProductId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_ProductFavorites] PRIMARY KEY ([CustomerId], [ProductId]),
+    CONSTRAINT [FK_ProductFavorites_CustomerProfiles_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [CustomerProfiles] ([UserId]),
+    CONSTRAINT [FK_ProductFavorites_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id]) ON DELETE CASCADE
+);
+
+CREATE INDEX [IX_ProductFavorites_ProductId] ON [ProductFavorites] ([ProductId]);
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250604133646_AddProductFavorite', N'9.0.4');
+
 COMMIT;
 GO
 

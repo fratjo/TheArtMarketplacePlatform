@@ -253,5 +253,26 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
             return true; // TODO handle user not found or customer profile not found
         }
+
+        public async Task<List<CustomerFavoriteProductResponse>> GetFavoriteProductsAsync(Guid customerId)
+        {
+            var favorites = await productRepository.GetFavoritesByUserIdAsync(customerId);
+            return favorites.Select(f => new CustomerFavoriteProductResponse
+            {
+                Id = f.Id,
+                Name = f.Name,
+                Description = f.Description,
+                Price = f.Price,
+                Category = f.Category!.Name,
+                Availability = f.Availability.ToString(), // Assuming Category is a navigation property
+                Rating = f.Rating,
+                ImageUrl = f.ImageUrl, // Assuming ImageUrl is a property of Product
+            }).ToList();
+        }
+
+        public async Task<bool> AddProductToFavoritesAsync(Guid customerId, Guid productId)
+        {
+            return await productRepository.AddToFavoritesAsync(customerId, productId);
+        }
     }
 }

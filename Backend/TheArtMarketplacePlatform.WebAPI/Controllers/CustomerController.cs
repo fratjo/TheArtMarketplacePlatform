@@ -77,5 +77,21 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             var result = await customerService.ReviewProductAsync(customerId, review);
             return result ? Ok() : BadRequest("Failed to review product");
         }
+
+        [HttpGet("{customerId:guid}/products/favorites")]
+        public async Task<IActionResult> GetFavoriteProducts(Guid customerId)
+        {
+            CheckUserId(customerId);
+            var products = await customerService.GetFavoriteProductsAsync(customerId);
+            return Ok(products);
+        }
+
+        [HttpPost("{customerId:guid}/products/favorites/{productId:guid}")]
+        public async Task<IActionResult> AddProductToFavorites(Guid customerId, Guid productId)
+        {
+            CheckUserId(customerId);
+            var result = await customerService.AddProductToFavoritesAsync(customerId, productId);
+            return result ? Ok() : BadRequest("Failed to add product to favorites");
+        }
     }
 }

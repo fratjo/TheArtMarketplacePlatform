@@ -66,4 +66,13 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public Product Product { get; set; } = null!;
         public CustomerProfile? Customer { get; set; }
     }
+
+    public class ProductFavorite
+    {
+        public Guid CustomerId { get; set; }
+        public Guid ProductId { get; set; }
+
+        public CustomerProfile Customer { get; set; } = null!;
+        public Product Product { get; set; } = null!;
+    }
 }

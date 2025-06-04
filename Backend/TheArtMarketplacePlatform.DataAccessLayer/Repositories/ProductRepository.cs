@@ -126,5 +126,41 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             _dbContext.ProductReviews.Update(review);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<Product>> GetFavoritesByUserIdAsync(Guid userId)
+        {
+            var p = await _dbContext.Products
+                .Where(p => p.IsDeleted == false && p.Artisan.UserId == userId)
+                .Include(p => p.Artisan).ThenInclude(a => a.User)
+                .Include(p => p.Category)
+                .Include(p => p.ProductReviews)
+                .ToListAsync();
+
+            var f = await _dbContext.ProductFavorites
+                .Where(f => f.CustomerId == userId)
+                .Select(f => f.ProductId)
+                .ToListAsync();
+
+            return p.Where(x => f.Contains(x.Id)).ToList();
+        }
+
+        public async Task<bool> AddToFavoritesAsync(Guid userId, Guid productId)
+        {
+            var product = await _dbContext.Products.FindAsync(productId);
+            if (product == null || product.IsDeleted)
+            {
+                throw new KeyNotFoundException("Product not found or is deleted.");
+            }
+
+            var favorite = new ProductFavorite
+            {
+                CustomerId = userId,
+                ProductId = productId
+            };
+
+            await _dbContext.ProductFavorites.AddAsync(favorite);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

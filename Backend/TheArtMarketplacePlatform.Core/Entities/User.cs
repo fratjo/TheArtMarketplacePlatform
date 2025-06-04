@@ -60,6 +60,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public User User { get; set; } = null!;
+        public ICollection<ProductFavorite> FavoriteProducts { get; set; } = null!;
         public ICollection<Order> Orders { get; set; } = null!;
         public ICollection<ProductReview> ProductReviews { get; set; } = null!;
     }
