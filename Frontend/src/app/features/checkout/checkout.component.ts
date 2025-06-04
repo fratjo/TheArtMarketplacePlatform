@@ -125,12 +125,14 @@ export class CheckoutComponent implements OnInit {
   }
 
   placeOrder() {
+    console.log(this.cartItems());
+
     const order: CreateOrder = {
       customerId: this.authService.getUserId() || '',
       deliveryPartnerId: this.selectedDeliveryPartner?.id || '',
       orderProducts: this.cartItems().map((item) => ({
         productId: item.product?.id || '',
-        artisanId: item.product?.artisan.id || '',
+        artisanId: item.product?.artisan.userId || '',
         quantity: item.quantity,
       })),
     };

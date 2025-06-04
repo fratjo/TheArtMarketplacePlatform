@@ -35,7 +35,7 @@ export interface Category {
 export type Categories = Category[];
 
 export interface ArtisanProduct {
-  id: string;
+  userId: string;
   username: string;
   user: {
     username: string;

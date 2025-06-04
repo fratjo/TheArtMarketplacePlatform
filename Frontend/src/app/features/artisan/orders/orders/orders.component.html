@@ -7,6 +7,27 @@
   >
     <h3 class="text-center">Orders</h3>
   </div>
+  <div
+    class="d-flex flex-row justify-content-end align-items-center mb-3 w-100"
+  >
+    <div
+      class="d-flex flex-row justify-content-between align-items-center gap-2"
+    >
+      <label for="searchInput" class="form-label">Search:</label>
+      <select
+        name=""
+        id=""
+        (change)="onStatusChange($event)"
+        class="form-select"
+      >
+        <option value="">All</option>
+        <option value="pending">Pending</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+      </select>
+    </div>
+  </div>
   <hr class="w-100 my-3" />
   <app-orders-view
     class="w-100"

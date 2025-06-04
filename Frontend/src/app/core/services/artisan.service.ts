@@ -9,7 +9,6 @@ import {
   Review,
 } from '../models/product.interface';
 import { AuthService } from './auth.service';
-import { Form } from '@angular/forms';
 import { Order, Orders } from '../models/order.interface';
 
 @Injectable({
@@ -201,7 +200,7 @@ export class ArtisanService {
     const userId = this.authService.getUserId();
 
     // Vérifier si l'ID du produit correspond à l'ID de l'artisan
-    return product.artisan.id === userId;
+    return product.artisan.userId === userId;
   }
 
   respondToReview(reviewId: string, response: any) {

@@ -1,1 +1,28 @@
-<p>artisan-dashboard works!</p>
+<div class="container p-3">
+  <h3>My Dashboard</h3>
+  <hr />
+  <div>
+    <div
+      class="d-flex flex-row justify-content-between align-items-center mb-3 w-25"
+    >
+      <label for="yearSelect">Choose Year :</label>
+      <select
+        id="yearSelect"
+        class="form-select w-50"
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="updateChart()"
+      >
+        @for(year of years; track $index) {
+        <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+    <div
+      class="d-flex flex-row justify-content-between align-items-center mb-3 w-100 gap-2"
+      style="height: 400px"
+    >
+      <canvas id="sales" class="w-50">{{ chart1 }}</canvas>
+      <canvas id="revenue" class="w-50">{{ chart2 }}</canvas>
+    </div>
+  </div>
+</div>

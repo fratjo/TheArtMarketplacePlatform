@@ -25,11 +25,11 @@
             <div>
               <input
                 type="checkbox"
-                [id]="'category-' + artisan.id"
-                [value]="artisan.id"
+                [id]="'category-' + artisan.userId"
+                [value]="artisan.userId"
                 (change)="onArtisanSelect($event)"
               />
-              <label [for]="'category-' + artisan.id">{{
+              <label [for]="'category-' + artisan.userId">{{
                 artisan.username
               }}</label>
             </div>

@@ -7,7 +7,7 @@
       @if ( (isLoggedIn$ | async) && (userRole$ | async) === 'artisan' ) {
       <a
         class="btn"
-        href="/dashboard"
+        href="/artisan/dashboard"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >Dashboard</a

@@ -27,6 +27,7 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPost("orders")]
         public async Task<IActionResult> CreateOrder([FromBody] CustomerInsertOrderRequest orderDto)
         {
+            CheckUserId(orderDto.CustomerId);
             var result = await customerService.CreateOrderAsync(orderDto.CustomerId, orderDto.DeliveryPartnerId, orderDto.OrderProducts);
             return result ? Ok() : BadRequest("Failed to create order");
         }
