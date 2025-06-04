@@ -90,6 +90,13 @@ export const routes: Routes = [
             './features/customer/customer-dashboard/customer-dashboard.component'
           ).then((c) => c.CustomerDashboardComponent),
       },
+      {
+        path: 'favorites',
+        loadComponent: () =>
+          import('./features/customer/favorites/favorites.component').then(
+            (c) => c.FavoritesComponent
+          ),
+      },
     ],
   },
   {

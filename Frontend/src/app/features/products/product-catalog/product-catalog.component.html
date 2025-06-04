@@ -157,91 +157,27 @@
       @if(view === 'grid') {
       <div class="row">
         @for (item of products$ | async; track $index) {
-        <div class="col col-12 col-md-6 col-lg-4 mb-3">
-          <div
-            class="product-card d-flex flex-column"
-            routerLink="/products/{{ item.id }}/details"
-          >
-            <div class="card-header">
-              <img
-                [src]="getImageUrl(item.imageUrl)"
-                class="rounded"
-                alt="..."
-              />
-            </div>
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">{{ item.name }}</h5>
-              <app-star-rating [rating]="item.rating"></app-star-rating>
-              <p>{{ item.category.name }}</p>
-              <p class="card-text fw-bold price">
-                {{ item.price | currency }}
-              </p>
-            </div>
-          </div>
-          <div
-            class="add-to-cart-card d-flex flex-row justify-content-between align-items-center border-top"
-          >
-            @if(item.quantityLeft > 0) {
-            <div class="quantity">
-              <button (click)="increment(spanRef, item)">+</button>
-              <span #spanRef>1</span>
-              <button (click)="decrement(spanRef)">-</button>
-            </div>
-            <button
-              class="btn addToCart d-flex flex-row gap-2"
-              (click)="addToCart(item.id, spanRef)"
-            >
-              <p>Add to Cart</p>
-              <i class="bi bi-basket3"></i>
-            </button>
-            } @else {
-            <div class="out-of-stock text-danger">
-              <p>Out of Stock</p>
-            </div>
-            }
-          </div>
-        </div>
+        <app-product-card-grid
+          class="col col-12 col-md-6 col-lg-4 mb-3"
+          [product]="item"
+          [imageUrl]="getImageUrl(item.imageUrl)"
+          [isWishlist]="favorites.includes(item.id)"
+          (toggleToWishlist)="toggleFavorite($event)"
+          (addToCart)="addToCart($event)"
+        ></app-product-card-grid>
         }
       </div>
       } @else if (view === 'list') {
       <div class="d-flex flex-column gap-3">
         @for (item of products$ | async; track $index) {
-        <div>
-          <div class="list-card" routerLink="/products/{{ item.id }}/details">
-            <img [src]="getImageUrl(item.imageUrl)" class="rounded" alt="..." />
-            <div class="d-flex flex-column gap-2 card-body">
-              <div>
-                <h5 class="card-title">{{ item.name }}</h5>
-                <app-star-rating [rating]="item.rating"></app-star-rating>
-                <p class="card-text fw-bold price">
-                  {{ item.price | currency }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div
-            class="add-to-cart-card d-flex flex-row justify-content-end align-items-center border-top"
-          >
-            @if(item.quantityLeft > 0) {
-            <div class="quantity">
-              <button (click)="increment(spanRef, item)">+</button>
-              <span #spanRef>1</span>
-              <button (click)="decrement(spanRef)">-</button>
-            </div>
-            <button
-              class="btn addToCart d-flex flex-row gap-2"
-              (click)="addToCart(item.id, spanRef)"
-            >
-              <p>Add to Cart</p>
-              <i class="bi bi-basket3"></i>
-            </button>
-            } @else {
-            <div class="out-of-stock text-danger">
-              <p>Out of Stock</p>
-            </div>
-            }
-          </div>
-        </div>
+        <app-product-card-list
+          class="w-100"
+          [product]="item"
+          [imageUrl]="getImageUrl(item.imageUrl)"
+          [isWishlist]="favorites.includes(item.id)"
+          (toggleToWishlist)="toggleFavorite($event)"
+          (addToCart)="addToCart($event)"
+        ></app-product-card-list>
         }
       </div>
       }

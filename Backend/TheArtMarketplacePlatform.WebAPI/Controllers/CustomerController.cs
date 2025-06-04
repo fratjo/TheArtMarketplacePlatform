@@ -93,5 +93,13 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             var result = await customerService.AddProductToFavoritesAsync(customerId, productId);
             return result ? Ok() : BadRequest("Failed to add product to favorites");
         }
+
+        [HttpDelete("{customerId:guid}/products/favorites/{productId:guid}")]
+        public async Task<IActionResult> RemoveProductFromFavorites(Guid customerId, Guid productId)
+        {
+            CheckUserId(customerId);
+            var result = await customerService.RemoveProductFromFavoritesAsync(customerId, productId);
+            return result ? Ok() : BadRequest("Failed to remove product from favorites");
+        }
     }
 }

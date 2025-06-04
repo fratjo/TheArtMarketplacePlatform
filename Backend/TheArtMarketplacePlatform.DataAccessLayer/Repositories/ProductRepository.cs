@@ -130,8 +130,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
         public async Task<List<Product>> GetFavoritesByUserIdAsync(Guid userId)
         {
             var p = await _dbContext.Products
-                .Where(p => p.IsDeleted == false && p.Artisan.UserId == userId)
-                .Include(p => p.Artisan).ThenInclude(a => a.User)
+                .Where(p => p.IsDeleted == false)
                 .Include(p => p.Category)
                 .Include(p => p.ProductReviews)
                 .ToListAsync();
@@ -159,6 +158,20 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             };
 
             await _dbContext.ProductFavorites.AddAsync(favorite);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RemoveFromFavoritesAsync(Guid userId, Guid productId)
+        {
+            var favorite = await _dbContext.ProductFavorites
+                .FirstOrDefaultAsync(f => f.CustomerId == userId && f.ProductId == productId);
+            if (favorite == null)
+            {
+                return false; // Favorite not found
+            }
+
+            _dbContext.ProductFavorites.Remove(favorite);
             await _dbContext.SaveChangesAsync();
             return true;
         }

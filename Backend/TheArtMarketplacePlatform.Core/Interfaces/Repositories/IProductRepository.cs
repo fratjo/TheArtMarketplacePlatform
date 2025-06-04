@@ -24,6 +24,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Repositories
         Task<List<ProductReview>> GetReviewsByProductIdAsync(Guid productId);
         Task<List<Product>> GetFavoritesByUserIdAsync(Guid userId);
         Task<bool> AddToFavoritesAsync(Guid userId, Guid productId);
+        Task<bool> RemoveFromFavoritesAsync(Guid userId, Guid productId);
 
         // Query methods
         Task<Guid?> DoesCategoryExistAsync(string name);

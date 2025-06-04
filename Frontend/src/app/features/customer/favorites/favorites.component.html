@@ -1,0 +1,55 @@
+<div class="container p-3">
+  <h1>My Favorites Products</h1>
+  <div class="d-flex flex-row gap-2">
+    <div class="container">
+      <div
+        class="mb-3 d-flex flex-row gap-2 align-items-center justify-content-end"
+      >
+        <div>
+          <button
+            class="btn-display-style"
+            (click)="onViewChange('grid')"
+            [ngClass]="{ 'btn-active': view === 'grid' }"
+          >
+            <i class="bi bi-grid"></i>
+          </button>
+          <button
+            class="btn-display-style"
+            (click)="onViewChange('list')"
+            [ngClass]="{ 'btn-active': view === 'list' }"
+          >
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+      </div>
+      <hr />
+      @if(view === 'grid') {
+      <div class="row">
+        @for (item of products$ | async; track $index) {
+        <app-product-card-grid
+          class="col col-12 col-md-6 col-lg-4 mb-3"
+          [product]="item"
+          [imageUrl]="getImageUrl(item.imageUrl)"
+          [isWishlist]="favorites.includes(item.id)"
+          (toggleToWishlist)="toggleFavorite($event)"
+          (addToCart)="addToCart($event)"
+        ></app-product-card-grid>
+        }
+      </div>
+      } @else if (view === 'list') {
+      <div class="d-flex flex-column gap-3">
+        @for (item of products$ | async; track $index) {
+        <app-product-card-list
+          class="w-100"
+          [product]="item"
+          [imageUrl]="getImageUrl(item.imageUrl)"
+          [isWishlist]="favorites.includes(item.id)"
+          (toggleToWishlist)="toggleFavorite($event)"
+          (addToCart)="addToCart($event)"
+        ></app-product-card-list>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</div>

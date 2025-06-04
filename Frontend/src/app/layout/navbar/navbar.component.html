@@ -78,6 +78,11 @@
       <a class="btn" href="/login">Login</a>
       } @if ( isLoggedIn$ | async ) {
       <a class="btn" href="/profile">Profile</a>
+      @if ( (userRole$ | async) === 'customer' ) {
+      <a class="btn" href="/customer/favorites">
+        <i class="bi bi-heart mx-1"></i>
+      </a>
+      }
       <a class="btn" (click)="logout()">Logout</a>
       }
     </form>

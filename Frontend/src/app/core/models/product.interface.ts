@@ -55,3 +55,16 @@ export interface Review {
 }
 
 export type Reviews = Review[];
+
+export interface ProductFavorite {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  category: Category;
+  availability: string;
+  rating: number;
+  imageUrl: string;
+}
+
+export type ProductFavorites = ProductFavorite[];

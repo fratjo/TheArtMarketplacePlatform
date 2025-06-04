@@ -18,5 +18,6 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
         Task<bool> ReviewProductAsync(Guid customerId, CustomerLeaveProductReviewRequest review);
         Task<List<CustomerFavoriteProductResponse>> GetFavoriteProductsAsync(Guid customerId);
         Task<bool> AddProductToFavoritesAsync(Guid customerId, Guid productId);
+        Task<bool> RemoveProductFromFavoritesAsync(Guid customerId, Guid productId);
     }
 }

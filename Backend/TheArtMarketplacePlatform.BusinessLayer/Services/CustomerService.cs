@@ -272,7 +272,21 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
         public async Task<bool> AddProductToFavoritesAsync(Guid customerId, Guid productId)
         {
+            var product = await productRepository.GetByIdAsync(productId);
+            if (product is null || product.IsDeleted)
+            {
+                throw new Exception("Product not found or is deleted"); // TODO handle product not found or deleted
+            }
+
+            var favorite = await productRepository.GetFavoritesByUserIdAsync(customerId);
+            if (favorite.Any(f => f.Id == productId)) return true;
+
             return await productRepository.AddToFavoritesAsync(customerId, productId);
+        }
+
+        public Task<bool> RemoveProductFromFavoritesAsync(Guid customerId, Guid productId)
+        {
+            return productRepository.RemoveFromFavoritesAsync(customerId, productId);
         }
     }
 }

@@ -13,20 +13,24 @@ import {
   Categories,
   Product,
   ArtisanProducts,
+  ProductFavorites,
 } from '../../../core/models/product.interface';
 import { environment } from '../../../../../environment';
 import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 import { CartService } from '../../../core/services/cart.service';
+import { CustomerService } from '../../../core/services/customer.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ProductCardGridComponent } from '../../../shared/components/product-card-grid/product-card-grid.component';
+import { ProductCardListComponent } from '../../../shared/components/product-card-list/product-card-list.component';
 
 @Component({
   selector: 'app-product-catalog',
   imports: [
     AsyncPipe,
-    CurrencyPipe,
     CommonModule,
-    RouterLink,
-    StarRatingComponent,
+    ProductCardGridComponent,
+    ProductCardListComponent,
   ],
   templateUrl: './product-catalog.component.html',
   styleUrl: './product-catalog.component.css',
@@ -49,6 +53,7 @@ export class ProductCatalogComponent implements OnInit {
     direction: 'asc' | 'desc';
   } | null>(null);
   view = localStorage.getItem('view') || 'grid';
+  favorites: string[] = [];
 
   onViewChange(view: string) {
     this.view = view;
@@ -57,6 +62,8 @@ export class ProductCatalogComponent implements OnInit {
 
   constructor(
     private guestService: GuestService,
+    private customerService: CustomerService,
+    private authService: AuthService,
     private toastService: ToastService,
     private cartService: CartService,
     private router: Router
@@ -103,6 +110,25 @@ export class ProductCatalogComponent implements OnInit {
         });
       },
     });
+
+    if (
+      this.authService.isLoggedIn() &&
+      this.authService.getUserRole() === 'customer'
+    ) {
+      this.customerService.getFavoriteProducts().subscribe({
+        next: (favorites) => {
+          this.favorites = favorites.map((fav) => fav.id);
+        },
+        error: (error) => {
+          console.error('Error fetching favorites:', error);
+          this.toastService.show({
+            text: `Error fetching favorites: ${error.error.title}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
+        },
+      });
+    }
 
     // Combine les filtres et le tri pour envoyer au serveur
     this.products$ = this.filters$.pipe(
@@ -209,31 +235,61 @@ export class ProductCatalogComponent implements OnInit {
     this.sorting$.next({ property, direction });
   }
 
-  addToCart(productId: string, spanRef: HTMLSpanElement) {
-    const quantity = parseInt(spanRef.innerText, 10);
-
-    spanRef.innerText = '1';
-
-    this.cartService.addToCart(productId, quantity);
+  addToCart($event: { id: string; quantity: number }) {
+    this.cartService.addToCart($event.id, $event.quantity);
   }
 
-  increment(spanRef: HTMLSpanElement, item: Product) {
-    let value = parseInt(spanRef.innerText, 10);
-    if (value >= item.quantityLeft) {
+  toggleFavorite(productId: string) {
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserRole() !== 'customer'
+    ) {
       this.toastService.show({
-        text: 'Cannot add more than available quantity',
+        text: 'You must be logged in as customer to add products to favorites.',
         classname: 'bg-warning text-light',
         delay: 3000,
       });
       return;
     }
-    spanRef.innerText = (value + 1).toString();
-  }
 
-  decrement(spanRef: HTMLSpanElement) {
-    let value = parseInt(spanRef.innerText, 10);
-    if (value > 1) {
-      spanRef.innerText = (value - 1).toString();
+    if (this.favorites.includes(productId)) {
+      this.customerService.removeProductFromFavorites(productId).subscribe({
+        next: () => {
+          this.favorites = this.favorites.filter((id) => id !== productId);
+          this.toastService.show({
+            text: 'Product removed from favorites successfully.',
+            classname: 'bg-success text-light',
+            delay: 3000,
+          });
+        },
+        error: (error) => {
+          console.error('Error removing product from favorites:', error);
+          this.toastService.show({
+            text: `Error removing product from favorites: ${error.error.title}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
+        },
+      });
+    } else {
+      this.customerService.addProductToFavorites(productId).subscribe({
+        next: () => {
+          this.favorites.push(productId);
+          this.toastService.show({
+            text: 'Product added to favorites successfully.',
+            classname: 'bg-success text-light',
+            delay: 3000,
+          });
+        },
+        error: (error) => {
+          console.error('Error adding product to favorites:', error);
+          this.toastService.show({
+            text: `Error adding product to favorites: ${error.error.title}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
+        },
+      });
     }
   }
 }
