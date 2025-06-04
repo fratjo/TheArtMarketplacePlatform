@@ -33,7 +33,7 @@ import {
 })
 export class ProfileComponent implements OnInit {
   editMode = false;
-  role!: 'customer' | 'artisan' | 'deliveryPartner';
+  role!: 'customer' | 'artisan' | 'deliverypartner';
   profile: AnyUserProfile | null = null;
   originalProfile = {} as AnyUserProfile;
   passwordData = {
@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit {
     this.role = this.authService.getUserRole() as
       | 'customer'
       | 'artisan'
-      | 'deliveryPartner';
+      | 'deliverypartner';
     this.loadProfile();
   }
 
@@ -94,7 +94,7 @@ export class ProfileComponent implements OnInit {
             bio: [this.profile.bio],
             city: [this.profile.city],
           });
-        } else if (this.role === 'deliveryPartner') {
+        } else if (this.role === 'deliverypartner') {
           this.profile = profile as DeliveryPartnerProfile;
           this.profileForm = this.fb.group({
             username: [this.profile.username, Validators.required],

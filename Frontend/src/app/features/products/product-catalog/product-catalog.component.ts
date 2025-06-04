@@ -92,6 +92,7 @@ export class ProductCatalogComponent implements OnInit {
     this.guestService.getArtisans().subscribe({
       next: (artisans) => {
         this.artisans$ = new BehaviorSubject<ArtisanProducts>(artisans);
+        console.log('Artisans fetched successfully:', artisans);
       },
       error: (error) => {
         console.error('Error fetching artisans:', error);

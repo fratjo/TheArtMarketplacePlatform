@@ -11,5 +11,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
     {
         Task<ICollection<DeliveryPartnerDeliveryOrderResponse>> GetDeliveryOrdersByDeliveryPartnerAsync(Guid deliveryPartnerId, string? status = null, string? sortBy = null, string? sortOrder = null);
         Task<bool> SetDeliveryAsDeliveredAsync(Guid deliveryPartnerId, Guid deliveryId);
+        Task<DeliveryPartnerProfileResponse?> GetDeliveryPartnerAsync(Guid deliveryPartnerId);
+        Task<bool> UpdateDeliveryPartnerAsync(Guid deliveryPartnerId, DeliveryPartnerUpdateProfileRequest request);
     }
 }

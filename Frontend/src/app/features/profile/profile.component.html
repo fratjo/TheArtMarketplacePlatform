@@ -65,6 +65,9 @@
           [readonly]="!editMode"
         />
       </div>
+      <div class="mb-3" *ngIf="role === 'deliverypartner'">
+        <p>No current additional informations</p>
+      </div>
       <div class="mb-3">
         <button
           *ngIf="!editMode"

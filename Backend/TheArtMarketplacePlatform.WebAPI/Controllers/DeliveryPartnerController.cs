@@ -25,6 +25,26 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetDeliveryPartnerProfile([FromRoute] Guid deliveryPartnerId)
+        {
+            CheckUserId(deliveryPartnerId);
+            var artisanProfile = await deliveryPartnerService.GetDeliveryPartnerAsync(deliveryPartnerId);
+            if (artisanProfile == null)
+            {
+                return NotFound();
+            }
+            return Ok(artisanProfile);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateDeliveryPartnerProfile([FromRoute] Guid deliveryPartnerId, [FromBody] DeliveryPartnerUpdateProfileRequest request)
+        {
+            CheckUserId(deliveryPartnerId);
+            var updatedProfile = await deliveryPartnerService.UpdateDeliveryPartnerAsync(deliveryPartnerId, request);
+            return updatedProfile ? Ok() : NotFound();
+        }
+
         [HttpGet("deliveries")]
         public async Task<IActionResult> GetDeliveryOrders(
             [FromRoute] Guid deliveryPartnerId,

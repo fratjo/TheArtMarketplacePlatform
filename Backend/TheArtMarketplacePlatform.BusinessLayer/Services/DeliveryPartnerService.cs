@@ -9,7 +9,7 @@ using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
-    public class DeliveryPartnerService(IOrderRepository orderRepository) : IDeliveryPartnerService
+    public class DeliveryPartnerService(IOrderRepository orderRepository, IUserRepository userRepository) : IDeliveryPartnerService
     {
         public async Task<ICollection<DeliveryPartnerDeliveryOrderResponse>> GetDeliveryOrdersByDeliveryPartnerAsync(Guid deliveryPartnerId, string? status = null, string? sortBy = null, string? sortOrder = null)
         {
@@ -82,6 +82,53 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 await orderRepository.RollbackTransactionAsync();
                 throw;
             }
+            return true;
+        }
+
+        public async Task<DeliveryPartnerProfileResponse?> GetDeliveryPartnerAsync(Guid deliveryPartnerId)
+        {
+            var user = await userRepository.GetUserByIdAsync(deliveryPartnerId);
+            if (user == null || user.DeliveryPartnerProfile is null)
+            {
+                return null; // TODO handle user not found or customer profile not found
+            }
+
+            return new DeliveryPartnerProfileResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+            };
+        }
+
+        public async Task<bool> CheckEmailExistsAsync(string email) => await userRepository.GetUserByEmailAsync(email) is not null;
+        public async Task<bool> CheckUsernameExistsAsync(string username) => await userRepository.GetUserByUsernameAsync(username) is not null;
+
+        public async Task<bool> UpdateDeliveryPartnerAsync(Guid deliveryPartnerId, DeliveryPartnerUpdateProfileRequest request)
+        {
+            var user = await userRepository.GetUserByIdAsync(deliveryPartnerId);
+            if (user == null || user.DeliveryPartnerProfile is null)
+            {
+                throw new KeyNotFoundException("Delivery partner not found.");
+            }
+
+            if (await CheckEmailExistsAsync(request.Email!) && user.Email != request.Email)
+            {
+                throw new InvalidOperationException("Email already exists.");
+            }
+
+            if (await CheckUsernameExistsAsync(request.Username!) && user.Username != request.Username)
+            {
+                throw new InvalidOperationException("Username already exists.");
+            }
+
+            user.Username = request.Username ?? user.Username;
+            user.Email = request.Email ?? user.Email;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            // Save changes to the repository
+            await userRepository.UpdateUserAsync(user);
+
             return true;
         }
     }
