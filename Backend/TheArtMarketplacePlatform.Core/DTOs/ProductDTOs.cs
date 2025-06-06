@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheArtMarketplacePlatform.Core.Entities;
 
 namespace TheArtMarketplacePlatform.Core.DTOs
 {
@@ -76,6 +77,7 @@ namespace TheArtMarketplacePlatform.Core.DTOs
         public decimal? Rating { get; set; }
         public string Category { get; set; } = string.Empty;
         public string Availability { get; set; } = string.Empty;
+        public List<ProductReview> ProductReviews { get; set; } = new();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }

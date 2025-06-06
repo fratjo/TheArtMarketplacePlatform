@@ -6,6 +6,7 @@ import {
   map,
   Observable,
   switchMap,
+  tap,
 } from 'rxjs';
 import {
   Categories,
@@ -32,7 +33,7 @@ import { environment } from '../../../../../../environment';
   styleUrl: './my-products.component.css',
 })
 export class MyProductsComponent implements OnInit {
-  products$!: Observable<Products>;
+  products$!: BehaviorSubject<Products>;
   categories$!: Observable<Categories>;
   filters$ = new BehaviorSubject<any>({
     search: '',
@@ -70,9 +71,14 @@ export class MyProductsComponent implements OnInit {
       },
     });
 
+    this.products$ = this.artisanService.products$;
+
     this.artisanService.getCategories().subscribe({
       next: (categories) => {
-        this.categories$ = new BehaviorSubject<Categories>(categories);
+        this.categories$ = new Observable<Categories>((subscriber) => {
+          subscriber.next(categories);
+          subscriber.complete();
+        });
       },
       error: (error) => {
         console.error('Error fetching categories:', error);
@@ -84,23 +90,29 @@ export class MyProductsComponent implements OnInit {
       },
     });
 
-    // Combine les filtres et le tri pour envoyer au serveur
-    this.products$ = this.filters$.pipe(
-      combineLatestWith(this.sorting$),
-      switchMap(([filters, sorting]) => {
-        // Ajouter les critères de tri aux filtres
-        if (sorting) {
+    this.filters$
+      .pipe(
+        tap((f) => console.log('[DEBUG] filters$', f)),
+        combineLatestWith(
+          this.sorting$.pipe(tap((s) => console.log('[DEBUG] sorting$', s)))
+        ),
+        tap(([f, s]) => console.log('[DEBUG] combineLatest →', f, s)),
+        switchMap(([filters, sorting]) => {
           filters = {
             ...filters,
-            sortProperty: sorting.property,
-            sortDirection: sorting.direction,
+            sortProperty: sorting?.property,
+            sortDirection: sorting?.direction,
           };
-        }
 
-        // Envoyer les filtres au serveur
-        return this.artisanService.filterProducts(filters);
-      })
-    );
+          // ...
+          return this.artisanService.filterProducts(filters);
+        })
+      )
+      .subscribe((result) => {
+        // … affichage, ou stockage en local si tu n’utilises pas async pipe
+        console.log('[DEBUG] produits reçus', result);
+        this.products$.next(result);
+      });
   }
 
   getImageUrl(imagePath: string): string {

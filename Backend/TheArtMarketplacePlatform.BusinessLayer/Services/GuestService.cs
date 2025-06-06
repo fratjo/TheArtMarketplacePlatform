@@ -118,8 +118,9 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 Availability = p.Availability.ToString(),
                 Rating = p.Rating ?? 0,
                 ImageUrl = p.ImageUrl,
+                ProductReviews = p.ProductReviews.ToList(),
                 CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt
+                UpdatedAt = p.UpdatedAt,
             });
         }
 
@@ -141,6 +142,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 Availability = product.Availability.ToString(),
                 Rating = product.Rating,
                 ImageUrl = product.ImageUrl,
+                ProductReviews = product.ProductReviews.ToList(),
                 CreatedAt = product.CreatedAt,
                 UpdatedAt = product.UpdatedAt
             };

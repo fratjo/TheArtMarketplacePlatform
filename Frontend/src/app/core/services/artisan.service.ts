@@ -44,7 +44,7 @@ export class ArtisanService {
   }
 
   getCategories() {
-    return this.http.get<Categories>(`${this.apiUrl}/categories`);
+    return this.http.get<Categories>(`http://localhost:5140/api/categories`);
   }
 
   createProduct(data: FormData) {
@@ -147,9 +147,16 @@ export class ArtisanService {
     }
 
     // Envoyer la requête HTTP avec les paramètres
-    return this.http.get<Products>(`${this.apiUrl}/${userId}/products`, {
-      params,
-    });
+    return this.http
+      .get<Products>(`${this.apiUrl}/${userId}/products`, {
+        params,
+      })
+      .pipe(
+        tap((products) => {
+          // Mettre à jour le BehaviorSubject avec les produits filtrés
+          this.products$.next(products);
+        })
+      );
   }
 
   getOrders(filters?: {
