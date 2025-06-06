@@ -10,7 +10,7 @@ img {
   border-radius: 8px;
 }
 
-table tr td button {
+button {
   border: none;
   padding: 5px 10px;
   text-align: center;
@@ -22,6 +22,6 @@ table tr td button {
   border-radius: 4px;
 }
 
-table tr td button:hover {
+button:hover {
   background-color: #ddd;
 }

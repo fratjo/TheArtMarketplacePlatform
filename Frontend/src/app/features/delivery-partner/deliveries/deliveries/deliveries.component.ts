@@ -42,7 +42,7 @@ export class DeliveriesComponent implements OnInit {
       error: (error) => {
         console.error('Error marking delivery as delivered:', error);
         this.toastService.show({
-          text: `Error marking delivery as delivered: ${error.error.title}`,
+          text: `Error marking delivery as delivered: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -63,7 +63,7 @@ export class DeliveriesComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching deliveries:', error);
           this.toastService.show({
-            text: `Error fetching deliveries: ${error.error.title}`,
+            text: `Error fetching deliveries: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -99,7 +99,7 @@ export class DeliveriesComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching deliveries:', error);
         this.toastService.show({
-          text: `Error fetching deliveries: ${error.error.title}`,
+          text: `Error fetching deliveries: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

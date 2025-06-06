@@ -63,7 +63,7 @@ export class MyProductsComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching products:', error);
         this.toastService.show({
-          text: `Error fetching products: ${error.error.title}`,
+          text: `Error fetching products: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -77,7 +77,7 @@ export class MyProductsComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching categories:', error);
         this.toastService.show({
-          text: `Error fetching categories: ${error.error.title}`,
+          text: `Error fetching categories: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -161,7 +161,7 @@ export class MyProductsComponent implements OnInit {
       error: (error) => {
         console.error('Error deleting product:', error);
         this.toastService.show({
-          text: `Error deleting product: ${error.error.title}`,
+          text: `Error deleting product: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

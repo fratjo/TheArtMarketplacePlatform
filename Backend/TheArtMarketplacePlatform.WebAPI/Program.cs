@@ -29,6 +29,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 // Validators
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+// => Normaly dont need to specify the validators
 builder.Services
     .AddValidatorsFromAssemblyContaining<RegisterArtisanValidator>()
     .AddValidatorsFromAssemblyContaining<RegisterCustomerValidator>()
@@ -37,11 +38,19 @@ builder.Services
     .AddValidatorsFromAssemblyContaining<ArtisanUpdateProductValidator>()
     .AddValidatorsFromAssemblyContaining<CustomerInsertOrderValidators>()
     .AddValidatorsFromAssemblyContaining<ArtisanUpdateOrderStatusValidators>()
+    .AddValidatorsFromAssemblyContaining<CustomerUpdateProfileRequestValidator>()
+    .AddValidatorsFromAssemblyContaining<ArtisanUpdateProfileRequestValidator>()
+    .AddValidatorsFromAssemblyContaining<DeliveryPartnerUpdateProfileRequestValidator>()
 ;
 
 // Handlers
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ArgumentExceptionHandler>();
+builder.Services.AddExceptionHandler<ArgumentOutOfRangeExceptionHandler>();
+builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
+builder.Services.AddExceptionHandler<UnauthorizedAccessExceptionHandler>();
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<InvalidOperationExceptionHandler>();
 builder.Services.AddExceptionHandler<InvalidCredentialsExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

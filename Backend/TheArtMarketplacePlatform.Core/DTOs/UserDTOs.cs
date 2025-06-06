@@ -5,6 +5,14 @@ using System.Threading.Tasks;
 
 namespace TheArtMarketplacePlatform.Core.DTOs
 {
+    public class SimpleUserResponse
+    {
+        public Guid Id { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string? Email { get; set; }
+        public string? Role { get; set; }
+    }
+
     public class CustomerProfileResponse
     {
         public Guid Id { get; set; }

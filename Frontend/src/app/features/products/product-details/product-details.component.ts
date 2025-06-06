@@ -73,7 +73,7 @@ export class ProductDetailsComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching product:', error);
           this.toastService.show({
-            text: `Error fetching product: ${error.error.title}`,
+            text: `Error fetching product: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -108,7 +108,7 @@ export class ProductDetailsComponent implements OnInit {
         error: (error) => {
           console.error('Error submitting review:', error);
           this.toastService.show({
-            text: `Error submitting review: ${error.error.title}`,
+            text: `Error submitting review: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -135,7 +135,7 @@ export class ProductDetailsComponent implements OnInit {
         error: (err) => {
           console.error('Error responding to review:', err);
           this.toastService.show({
-            text: `Error responding to review: ${err.error.title}`,
+            text: `Error responding to review: ${err.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });

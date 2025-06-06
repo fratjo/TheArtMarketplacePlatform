@@ -207,7 +207,7 @@ export class CartComponent implements OnInit {
         console.error('Login failed', error);
         // Handle login error, e.g., show error message
         this.toastService.show({
-          text: `Login failed:  ${error.error.title}`,
+          text: `Login failed:  ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

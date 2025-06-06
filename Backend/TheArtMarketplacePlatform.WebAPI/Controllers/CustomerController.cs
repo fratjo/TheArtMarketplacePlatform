@@ -7,98 +7,100 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace TheArtMarketplacePlatform.WebAPI.Controllers
 {
-    [ApiController]
-    [Authorize(Roles = "Customer")]
-    [Route("api/customers")]
-    public class CustomerController(ICustomerService customerService) : ControllerBase
+    public class CheckCustomerIdAttribute : Attribute, IAuthorizationFilter
     {
-        private void CheckUserId(Guid id)
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var artisanId = context.RouteData.Values["customerId"] as string;
+            if (artisanId == null || !Guid.TryParse(artisanId, out var id))
+            {
+                context.Result = new BadRequestResult();
+                return;
+            }
+
+            var userId = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null || Guid.Parse(userId) != id)
             {
-                throw new UnauthorizedAccessException("You are not authorized to access this resource.");
+                context.Result = new UnauthorizedResult();
             }
+        }
+    }
+
+    [ApiController]
+    [Authorize(Roles = "Customer")]
+    [CheckCustomerId]
+    [Route("api/customers/{customerId:guid}")]
+    public class CustomerController(ICustomerService customerService) : ControllerBase
+    {
+        [HttpGet()]
+        public async Task<IActionResult> GetCustomer(Guid customerId)
+        {
+            var customer = await customerService.GetCustomerAsync(customerId);
+            return customer != null ? Ok(customer) : NotFound("Customer not found");
+        }
+
+        [HttpPut()]
+        public async Task<IActionResult> UpdateCustomer(Guid customerId, [FromBody] CustomerUpdateProfileRequest request)
+        {
+            var updated = await customerService.UpdateCustomerAsync(customerId, request);
+            return updated ? Ok() : NotFound("Customer not found or update failed");
         }
 
         [HttpPost("orders")]
         public async Task<IActionResult> CreateOrder([FromBody] CustomerInsertOrderRequest orderDto)
         {
-            CheckUserId(orderDto.CustomerId);
             var result = await customerService.CreateOrderAsync(orderDto.CustomerId, orderDto.DeliveryPartnerId, orderDto.OrderProducts);
             return result ? Ok() : BadRequest("Failed to create order");
         }
-
-        [HttpGet("{customerId}")]
-        public async Task<IActionResult> GetCustomer(Guid customerId)
-        {
-            CheckUserId(customerId); // TODO handle unauthorized access more gracefully
-            var customer = await customerService.GetCustomerAsync(customerId);
-            return customer != null ? Ok(customer) : NotFound("Customer not found");
-        }
-
-        [HttpPut("{customerId}")]
-        public async Task<IActionResult> UpdateCustomer(Guid customerId, [FromBody] CustomerUpdateProfileRequest request)
-        {
-            CheckUserId(customerId);
-            var updated = await customerService.UpdateCustomerAsync(customerId, request);
-            return updated ? Ok() : NotFound("Customer not found or update failed");
-        }
-
-        [HttpGet("{customerId}/orders")]
+        [HttpGet("orders")]
         public async Task<IActionResult> GetOrders(Guid customerId)
         {
             var orders = await customerService.GetOrdersAsync(customerId);
             return Ok(orders);
         }
 
-        [HttpGet("{customerId}/orders/{orderId}")]
+        [HttpGet("orders/{orderId}")]
         public async Task<IActionResult> GetOrder(Guid customerId, Guid orderId)
         {
-            CheckUserId(customerId);
             var order = await customerService.GetOrderAsync(customerId, orderId);
             return order != null ? Ok(order) : NotFound("Order not found");
         }
 
-        [HttpGet("{customerId:guid}/already-bought-reviewed/{productId:guid}")]
+        [HttpGet("already-bought-reviewed/{productId:guid}")]
         public async Task<IActionResult> AlreadyBoughtReviewed(Guid customerId, Guid productId)
         {
-            CheckUserId(customerId);
             var result = await customerService.AlreadyBoughtReviewedAsync(customerId, productId);
             return Ok(result);
         }
 
-        [HttpPost("{customerId:guid}/review-product")]
+        [HttpPost("review-product")]
         public async Task<IActionResult> ReviewProduct(Guid customerId, [FromBody] CustomerLeaveProductReviewRequest review)
         {
-            CheckUserId(customerId);
             var result = await customerService.ReviewProductAsync(customerId, review);
             return result ? Ok() : BadRequest("Failed to review product");
         }
 
-        [HttpGet("{customerId:guid}/products/favorites")]
+        [HttpGet("products/favorites")]
         public async Task<IActionResult> GetFavoriteProducts(Guid customerId)
         {
-            CheckUserId(customerId);
             var products = await customerService.GetFavoriteProductsAsync(customerId);
             return Ok(products);
         }
 
-        [HttpPost("{customerId:guid}/products/favorites/{productId:guid}")]
+        [HttpPost("products/favorites/{productId:guid}")]
         public async Task<IActionResult> AddProductToFavorites(Guid customerId, Guid productId)
         {
-            CheckUserId(customerId);
             var result = await customerService.AddProductToFavoritesAsync(customerId, productId);
             return result ? Ok() : BadRequest("Failed to add product to favorites");
         }
 
-        [HttpDelete("{customerId:guid}/products/favorites/{productId:guid}")]
+        [HttpDelete("products/favorites/{productId:guid}")]
         public async Task<IActionResult> RemoveProductFromFavorites(Guid customerId, Guid productId)
         {
-            CheckUserId(customerId);
             var result = await customerService.RemoveProductFromFavoritesAsync(customerId, productId);
             return result ? Ok() : BadRequest("Failed to remove product from favorites");
         }

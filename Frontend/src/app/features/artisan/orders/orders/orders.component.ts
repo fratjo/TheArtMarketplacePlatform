@@ -39,7 +39,7 @@ export class OrdersComponent implements OnInit {
           // Handle error in retrieving orders
           console.error('Error fetching orders:', error);
           this.toastService.show({
-            text: `Error fetching orders: ${error.error.title}`,
+            text: `Error fetching orders: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -97,7 +97,7 @@ export class OrdersComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching orders:', error);
         this.toastService.show({
-          text: `Error fetching orders: ${error.error.title}`,
+          text: `Error fetching orders: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheArtMarketplacePlatform.BusinessLayer.Exceptions;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
@@ -90,7 +91,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var user = await userRepository.GetUserByIdAsync(deliveryPartnerId);
             if (user == null || user.DeliveryPartnerProfile is null)
             {
-                return null; // TODO handle user not found or customer profile not found
+                throw new NotFoundException("Delivery partner not found.");
             }
 
             return new DeliveryPartnerProfileResponse

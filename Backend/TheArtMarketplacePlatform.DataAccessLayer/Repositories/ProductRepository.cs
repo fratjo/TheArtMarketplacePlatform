@@ -56,7 +56,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
             return await _dbContext.Products
-                .Include(p => p.Artisan)
+                .Include(p => p.Artisan).ThenInclude(a => a.User)
                 .Include(p => p.Category)
                 .Include(p => p.ProductReviews)
                 .ToListAsync();

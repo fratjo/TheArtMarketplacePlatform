@@ -5,29 +5,40 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.WebAPI.Controllers
 {
+    public class CheckArtisanIdAttribute : Attribute, IAuthorizationFilter
+    {
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            var artisanId = context.RouteData.Values["artisanId"] as string;
+            if (artisanId == null || !Guid.TryParse(artisanId, out var id))
+            {
+                context.Result = new BadRequestResult();
+                return;
+            }
+
+            var userId = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null || Guid.Parse(userId) != id)
+            {
+                context.Result = new UnauthorizedResult();
+            }
+        }
+    }
+
     [ApiController]
     [Authorize(Roles = "Artisan")]
+    [CheckArtisanId]
     [Route("api/artisans/{artisanId:guid}")]
     public class ArtisanController(IArtisanService _artisanService) : ControllerBase
     {
-        private void CheckUserId(Guid id)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null || Guid.Parse(userId) != id) // Ensure the user is accessing their own profile
-            {
-                throw new UnauthorizedAccessException("You are not authorized to access this resource.");
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetArtisanProfile([FromRoute] Guid artisanId)
         {
-            CheckUserId(artisanId);
             var artisanProfile = await _artisanService.GetArtisanAsync(artisanId);
             if (artisanProfile == null)
             {
@@ -39,7 +50,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateArtisanProfile([FromRoute] Guid artisanId, [FromBody] ArtisanUpdateProfileRequest request)
         {
-            CheckUserId(artisanId);
             var updatedProfile = await _artisanService.UpdateArtisanAsync(artisanId, request);
             return updatedProfile ? Ok() : NotFound();
         }
@@ -56,7 +66,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             [FromQuery] string? sortBy = null,
             [FromQuery] string? sortOrder = null)
         {
-            CheckUserId(artisanId);
             var products = await _artisanService.GetAllProductsAsync(artisanId, search, category, status, availability, rating, sortBy, sortOrder);
             return Ok(products);
         }
@@ -94,7 +103,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPost("products")]
         public async Task<IActionResult> CreateProduct([FromRoute] Guid artisanId, [FromBody] ArtisanInsertProductRequest request)
         {
-            CheckUserId(artisanId);
             var createdProduct = await _artisanService.CreateProductAsync(artisanId, request);
             return Created();
         }
@@ -102,7 +110,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPut("products/{id}")]
         public async Task<IActionResult> UpdateProduct(Guid artisanId, Guid id, [FromBody] ArtisanUpdateProductRequest request)
         {
-            CheckUserId(artisanId);
             var updatedProduct = await _artisanService.UpdateProductAsync(artisanId, id, request);
             if (updatedProduct == null)
             {
@@ -114,7 +121,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpDelete("products/{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] Guid artisanId, Guid id)
         {
-            CheckUserId(artisanId);
             var result = await _artisanService.DeleteProductAsync(artisanId, id);
             if (!result)
             {
@@ -134,7 +140,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
             [FromQuery] string? sortBy = null,
             [FromQuery] string? sortOrder = null)
         {
-            CheckUserId(artisanId);
             var orders = await _artisanService.GetAllOrdersAsync(artisanId, status, year, sortBy, sortOrder);
             return Ok(orders);
         }
@@ -142,7 +147,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpGet("orders/{id}")]
         public async Task<IActionResult> GetOrderById(Guid artisanId, Guid id)
         {
-            CheckUserId(artisanId);
             var order = await _artisanService.GetOrderByIdAsync(artisanId, id);
             if (order == null)
             {
@@ -154,7 +158,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPut("orders/{id}/status")]
         public async Task<IActionResult> UpdateOrderStatus(Guid artisanId, Guid id, [FromBody] ArtisanUpdateOrderStatusRequest request)
         {
-            CheckUserId(artisanId);
             var updatedOrder = await _artisanService.UpdateOrderStatusAsync(artisanId, id, request.Status);
             if (updatedOrder == null)
             {
@@ -166,7 +169,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPost("reviews/{reviewId}/response")]
         public async Task<IActionResult> RespondToReview(Guid artisanId, Guid reviewId, [FromBody] ArtisanRespondToReviewRequest request)
         {
-            CheckUserId(artisanId);
             await _artisanService.RespondToReviewAsync(artisanId, reviewId, request);
             return Ok();
         }

@@ -53,7 +53,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
       error: (error) => {
         console.error('Error fetching categories:', error);
         this.toastService.show({
-          text: `Error fetching categories: ${error.error.title}`,
+          text: `Error fetching categories: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

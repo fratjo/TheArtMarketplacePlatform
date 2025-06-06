@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using TheArtMarketplacePlatform.BusinessLayer.Exceptions;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
@@ -20,14 +21,14 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         {
             if (orderProducts == null || !orderProducts.Any())
             {
-                return false; // TODO handle empty order products
+                throw new ArgumentException("Order products cannot be null or empty");
             }
 
             var user = await userRepository.GetUserByIdAsync(customerId);
 
             if (user is null || user.CustomerProfile is null)
             {
-                return false; // TODO handle user not found
+                throw new NotFoundException("Customer not found or customer profile not found");
             }
 
             // List to Dict 
@@ -45,13 +46,13 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                     var artisan = await userRepository.GetUserByIdAsync(group.Key);
                     if (artisan is null || artisan.ArtisanProfile is null)
                     {
-                        continue; // TODO handle artisan not found
+                        throw new NotFoundException("Artisan not found or artisan profile not found");
                     }
 
                     var deliveryPartner = await userRepository.GetUserByIdAsync(deliveryPartnerId);
                     if (deliveryPartner is null || deliveryPartner.DeliveryPartnerProfile is null)
                     {
-                        continue; // TODO handle delivery partner not found
+                        throw new NotFoundException("Delivery partner not found or delivery partner profile not found");
                     }
 
                     var order = new Order
@@ -74,17 +75,17 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                         var product = await productRepository.GetByIdAsync(orderProductDto.ProductId);
                         if (product is null)
                         {
-                            continue; // TODO handle product not found
+                            throw new NotFoundException($"Product with ID {orderProductDto.ProductId} not found");
                         }
 
                         if (orderProductDto.Quantity <= 0)
                         {
-                            continue; // TODO handle invalid quantity
+                            throw new ArgumentException("Quantity must be greater than zero");
                         }
 
                         if (orderProductDto.Quantity > product.QuantityLeft)
                         {
-                            continue; // TODO handle insufficient stock
+                            throw new ArgumentException($"Insufficient stock for product {product.Name}. Available: {product.QuantityLeft}, Requested: {orderProductDto.Quantity}");
                         }
 
                         var orderProductEntity = new OrderProduct
@@ -114,7 +115,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             catch (Exception e)
             {
                 await orderRepository.RollbackTransactionAsync();
-                throw new Exception("Transaction failed, rolling back", e); // TODO handle transaction failure
+                throw new InvalidOperationException("Transaction failed, rolling back", e);
             }
 
 
@@ -124,10 +125,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         public async Task<Order?> GetOrderAsync(Guid customerId, Guid orderId)
         {
             var order = await orderRepository.GetOrderByIdAsync(orderId);
-            if (order is null) throw new Exception("Order not found"); // TODO handle order not found
+            if (order is null) throw new NotFoundException("Order not found");
             if (order.CustomerId != customerId)
             {
-                throw new Exception("Order does not belong to the customer"); // TODO handle order not belong to customer
+                throw new UnauthorizedAccessException("Order does not belong to the customer");
             }
             return order;
         }
@@ -142,7 +143,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var orders = await orderRepository.GetOrdersByCustomerIdAsync(customerId);
             if (orders == null || !orders.Any())
             {
-                return false; // No orders found for the customer
+                throw new NotFoundException("No orders found for the customer");
             }
 
             orders = orders.Where(o => o.Status == OrderStatus.Delivered).ToList();
@@ -167,18 +168,18 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var product = await productRepository.GetByIdAsync(review.ProductId);
             if (product is null)
             {
-                throw new Exception("Product not found"); // TODO handle product not found
+                throw new NotFoundException("Product not found");
             }
 
             if (review.Rating < 1 || review.Rating > 5)
             {
-                throw new Exception("Rating must be between 1 and 5"); // TODO handle invalid rating
+                throw new ArgumentOutOfRangeException("Rating must be between 1 and 5");
             }
 
             var existingReview = await productRepository.GetReviewOfUserAsync(review.ProductId, customerId);
             if (existingReview is not null)
             {
-                throw new Exception("You have already reviewed this product"); // TODO handle already reviewed
+                throw new InvalidOperationException("You have already reviewed this product");
             }
 
             var newReview = new ProductReview
@@ -210,7 +211,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var user = await userRepository.GetUserByIdAsync(customerId);
             if (user is null || user.CustomerProfile is null)
             {
-                return null; // TODO handle user not found or customer profile not found
+                throw new NotFoundException("Customer not found or customer profile not found");
             }
 
             return new CustomerProfileResponse
@@ -231,17 +232,17 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var user = await userRepository.GetUserByIdAsync(customerId);
             if (user is null || user.CustomerProfile is null)
             {
-                throw new Exception("Artisan not found");
+                throw new NotFoundException("Artisan not found");
             }
 
             if (await userRepository.GetUserByEmailAsync(request.Email!) is not null && user.Email != request.Email)
             {
-                throw new Exception("Email already exists");
+                throw new InvalidCredentialsException("Email already exists");
             }
 
             if (await userRepository.GetUserByUsernameAsync(request.Username!) is not null && user.Username != request.Username)
             {
-                throw new Exception("Username already exists");
+                throw new InvalidCredentialsException("Username already exists");
             }
 
             user.CustomerProfile.ShippingAddress = request.ShippingAddress!;
@@ -251,7 +252,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
             await userRepository.UpdateUserAsync(user);
 
-            return true; // TODO handle user not found or customer profile not found
+            return true;
         }
 
         public async Task<List<CustomerFavoriteProductResponse>> GetFavoriteProductsAsync(Guid customerId)
@@ -275,7 +276,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var product = await productRepository.GetByIdAsync(productId);
             if (product is null || product.IsDeleted)
             {
-                throw new Exception("Product not found or is deleted"); // TODO handle product not found or deleted
+                throw new NotFoundException("Product not found or is deleted");
             }
 
             var favorite = await productRepository.GetFavoritesByUserIdAsync(customerId);

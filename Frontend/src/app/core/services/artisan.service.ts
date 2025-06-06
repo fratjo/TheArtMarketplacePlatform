@@ -204,7 +204,7 @@ export class ArtisanService {
     const userId = this.authService.getUserId();
 
     // Vérifier si l'ID du produit correspond à l'ID de l'artisan
-    return product.artisan.userId === userId;
+    return product.artisanId === userId;
   }
 
   respondToReview(reviewId: string, response: any) {

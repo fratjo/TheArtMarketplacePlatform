@@ -10,8 +10,8 @@ export interface Product {
   status: string;
   availability: string;
   productReviews: Reviews;
-  artisan: ArtisanProduct;
   artisanId: string;
+  artisanName: string;
 }
 
 export interface ProductForm {

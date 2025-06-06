@@ -11,7 +11,13 @@ export class CustomerService {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   createOrder(order: any) {
-    return this.http.post('http://localhost:5140/api/customers/orders', order);
+    // get user id
+    const userId = this.authService.getUserId();
+
+    return this.http.post(
+      `http://localhost:5140/api/customers/${userId}/orders`,
+      order
+    );
   }
 
   getOrders() {

@@ -59,7 +59,7 @@ export class ProductFormPageComponent implements OnInit {
         error: (error: any) => {
           console.error('Error updating product:', error);
           this.toastService.show({
-            text: `Error updating product: ${error.error.title}`,
+            text: `Error updating product: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -78,7 +78,7 @@ export class ProductFormPageComponent implements OnInit {
         error: (error: any) => {
           console.error('Error creating product:', error);
           this.toastService.show({
-            text: `Error creating product: ${error.error.title}`,
+            text: `Error creating product: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });

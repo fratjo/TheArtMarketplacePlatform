@@ -74,7 +74,7 @@ export class ProductCatalogComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching products:', error);
         this.toastService.show({
-          text: `Error fetching products: ${error.error.title}`,
+          text: `Error fetching products: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -89,7 +89,7 @@ export class ProductCatalogComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching categories:', error);
         this.toastService.show({
-          text: `Error fetching categories: ${error.error.title}`,
+          text: `Error fetching categories: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -104,7 +104,7 @@ export class ProductCatalogComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching artisans:', error);
         this.toastService.show({
-          text: `Error fetching artisans: ${error.error.title}`,
+          text: `Error fetching artisans: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -122,7 +122,7 @@ export class ProductCatalogComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching favorites:', error);
           this.toastService.show({
-            text: `Error fetching favorites: ${error.error.title}`,
+            text: `Error fetching favorites: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -265,7 +265,7 @@ export class ProductCatalogComponent implements OnInit {
         error: (error) => {
           console.error('Error removing product from favorites:', error);
           this.toastService.show({
-            text: `Error removing product from favorites: ${error.error.title}`,
+            text: `Error removing product from favorites: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -284,7 +284,7 @@ export class ProductCatalogComponent implements OnInit {
         error: (error) => {
           console.error('Error adding product to favorites:', error);
           this.toastService.show({
-            text: `Error adding product to favorites: ${error.error.title}`,
+            text: `Error adding product to favorites: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });

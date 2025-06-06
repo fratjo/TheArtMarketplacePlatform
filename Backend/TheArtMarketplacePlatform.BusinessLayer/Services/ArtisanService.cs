@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.HttpResults;
+using TheArtMarketplacePlatform.BusinessLayer.Exceptions;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
@@ -256,6 +258,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 throw new Exception("Order not found or you are not authorized to view this order");
             }
 
+            order.DeliveryStatusUpdates = order.DeliveryStatusUpdates?.OrderByDescending(d => d.CreatedAt).ToList();
+
             return order;
         }
 
@@ -324,7 +328,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var user = await userRepository.GetUserByIdAsync(artisanId);
             if (user is null || user.ArtisanProfile is null)
             {
-                return null; // TODO handle user not found or customer profile not found
+                throw new NotFoundException("Artisan not found");
             }
 
             return new ArtisanProfileResponse
@@ -345,17 +349,17 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var user = await userRepository.GetUserByIdAsync(artisanId);
             if (user is null || user.ArtisanProfile is null)
             {
-                throw new Exception("Artisan not found");
+                throw new NotFoundException("Artisan not found");
             }
 
             if (await userRepository.GetUserByEmailAsync(request.Email!) is not null && user.Email != request.Email)
             {
-                throw new Exception("Email already exists");
+                throw new InvalidCredentialsException("Email already exists");
             }
 
             if (await userRepository.GetUserByUsernameAsync(request.Username!) is not null && user.Username != request.Username)
             {
-                throw new Exception("Username already exists");
+                throw new InvalidCredentialsException("Username already exists");
             }
 
             user.ArtisanProfile.Bio = request.Bio!;
@@ -366,7 +370,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
             await userRepository.UpdateUserAsync(user);
 
-            return true; // TODO handle user not found or customer profile not found
+            return true;
         }
 
         #endregion

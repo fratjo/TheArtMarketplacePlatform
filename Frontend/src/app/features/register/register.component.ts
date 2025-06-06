@@ -139,7 +139,7 @@ export class RegisterComponent {
       error: (error) => {
         console.error('Registration failed', error);
         this.toastService.show({
-          text: `Register failed:  ${error.error.title}`,
+          text: `Register failed:  ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -163,7 +163,7 @@ export class RegisterComponent {
         console.error('Registration failed', error);
         // Handle registration error, e.g., show error message
         this.toastService.show({
-          text: `Register failed:  ${error.error.title}`,
+          text: `Register failed:  ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -188,7 +188,7 @@ export class RegisterComponent {
         console.error('Registration failed', error);
         // Handle registration error, e.g., show error message
         this.toastService.show({
-          text: `Register failed:  ${error.error.title}`,
+          text: `Register failed:  ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

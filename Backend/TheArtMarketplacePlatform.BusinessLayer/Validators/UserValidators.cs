@@ -47,4 +47,18 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Validators
                 .WithMessage("City cannot exceed 100 characters.");
         }
     }
+
+    public class DeliveryPartnerUpdateProfileRequestValidator : AbstractValidator<DeliveryPartnerUpdateProfileRequest>
+    {
+        public DeliveryPartnerUpdateProfileRequestValidator()
+        {
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .WithMessage("Username is required.");
+
+            RuleFor(x => x.Email)
+                .EmailAddress()
+                .WithMessage("A valid email address is required.");
+        }
+    }
 }

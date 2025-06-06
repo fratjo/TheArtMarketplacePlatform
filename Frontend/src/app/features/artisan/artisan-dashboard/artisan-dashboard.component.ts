@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ArtisanService } from '../../../core/services/artisan.service';
 import { CurrencyPipe } from '@angular/common';
+import { ToastService } from '../../../core/services/toast.service';
 
 Chart.register(...registerables);
 
@@ -103,7 +104,10 @@ export class ArtisanDashboardComponent implements OnInit {
   };
   chart2: any;
 
-  constructor(private artisanService: ArtisanService) {}
+  constructor(
+    private artisanService: ArtisanService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.years.push(new Date().getFullYear());
@@ -164,8 +168,13 @@ export class ArtisanDashboardComponent implements OnInit {
 
           this.chart2.update();
         },
-        error: (err) => {
-          console.error('Error fetching orders:', err);
+        error: (error) => {
+          console.error('Error fetching orders:', error);
+          this.toastService.show({
+            text: `Error fetching orders: ${error.error.detail}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
         },
       });
   }

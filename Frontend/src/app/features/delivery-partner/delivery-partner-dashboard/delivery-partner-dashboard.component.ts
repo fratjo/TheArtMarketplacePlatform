@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Delivery } from '../../../core/models/order.interface';
 import { DeliveryStatusPipe } from '../../../core/pipes/delivery-status.pipe';
+import { ToastService } from '../../../core/services/toast.service';
 
 Chart.register(...registerables);
 @Component({
@@ -63,7 +64,10 @@ export class DeliveryPartnerDashboardComponent implements OnInit {
   };
   chart1: any;
 
-  constructor(private deliveryPartnerService: DeliveryPartnerService) {}
+  constructor(
+    private deliveryPartnerService: DeliveryPartnerService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.years.push(new Date().getFullYear());
@@ -108,8 +112,13 @@ export class DeliveryPartnerDashboardComponent implements OnInit {
 
           this.chart1.update();
         },
-        error: (err) => {
-          console.error('Error fetching orders:', err);
+        error: (error) => {
+          console.error('Error fetching deliveries:', error);
+          this.toastService.show({
+            text: `Error fetching deliveries: ${error.error.detail}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
         },
       });
   }

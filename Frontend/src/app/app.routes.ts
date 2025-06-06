@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LoggedInGuard } from './core/guards/logged-in.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -27,7 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    canActivate: [AuthGuard],
+    canActivate: [roleGuard()],
     loadComponent: () =>
       import('./features/profile/profile.component').then(
         (c) => c.ProfileComponent
@@ -35,6 +36,7 @@ export const routes: Routes = [
   },
   {
     path: 'artisan',
+    canActivate: [roleGuard('artisan')],
     children: [
       {
         path: 'products',
@@ -68,6 +70,7 @@ export const routes: Routes = [
   },
   {
     path: 'customer',
+    canActivate: [roleGuard('customer')],
     children: [
       {
         path: 'orders',
@@ -84,13 +87,6 @@ export const routes: Routes = [
           ).then((c) => c.OrderDetailsComponent),
       },
       {
-        path: 'dashboard',
-        loadComponent: () =>
-          import(
-            './features/customer/customer-dashboard/customer-dashboard.component'
-          ).then((c) => c.CustomerDashboardComponent),
-      },
-      {
         path: 'favorites',
         loadComponent: () =>
           import('./features/customer/favorites/favorites.component').then(
@@ -101,6 +97,7 @@ export const routes: Routes = [
   },
   {
     path: 'delivery-partner',
+    canActivate: [roleGuard('deliverypartner')],
     children: [
       {
         path: 'dashboard',
@@ -125,6 +122,7 @@ export const routes: Routes = [
   },
   {
     path: 'checkout',
+    canActivate: [AuthGuard],
     loadComponent: () =>
       import('./features/checkout/checkout.component').then(
         (c) => c.CheckoutComponent
@@ -132,6 +130,7 @@ export const routes: Routes = [
   },
   {
     path: 'order-confirmation',
+    canActivate: [AuthGuard],
     loadComponent: () =>
       import('./features/valid-purchase/valid-purchase.component').then(
         (c) => c.ValidPurchaseComponent
@@ -149,6 +148,7 @@ export const routes: Routes = [
       },
       {
         path: 'new',
+        canActivate: [roleGuard('artisan')],
         loadComponent: () =>
           import(
             './features/artisan/products/product-form-page/product-form-page.component'
@@ -166,6 +166,7 @@ export const routes: Routes = [
           },
           {
             path: 'edit',
+            canActivate: [roleGuard('artisan')],
             loadComponent: () =>
               import(
                 './features/artisan/products/product-form-page/product-form-page.component'

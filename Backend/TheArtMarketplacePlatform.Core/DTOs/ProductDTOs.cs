@@ -54,4 +54,29 @@ namespace TheArtMarketplacePlatform.Core.DTOs
         public decimal? Rating { get; set; }
         public string? ImageUrl { get; set; }
     }
+
+    public class ProductCategoryResponse
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Name { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    }
+
+    public class ProductResponse
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid ArtisanId { get; set; }
+        public string ArtisanName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
+        public decimal Price { get; set; }
+        public int QuantityLeft { get; set; } = 0;
+        public decimal? Rating { get; set; }
+        public string Category { get; set; } = string.Empty;
+        public string Availability { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    }
 }

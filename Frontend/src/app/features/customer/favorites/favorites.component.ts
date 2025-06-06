@@ -74,7 +74,7 @@ export class FavoritesComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching favorites:', error);
           this.toastService.show({
-            text: `Error fetching favorites: ${error.error.title}`,
+            text: `Error fetching favorites: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -141,7 +141,7 @@ export class FavoritesComponent implements OnInit {
         error: (error) => {
           console.error('Error removing product from favorites:', error);
           this.toastService.show({
-            text: `Error removing product from favorites: ${error.error.title}`,
+            text: `Error removing product from favorites: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -160,7 +160,7 @@ export class FavoritesComponent implements OnInit {
         error: (error) => {
           console.error('Error adding product to favorites:', error);
           this.toastService.show({
-            text: `Error adding product to favorites: ${error.error.title}`,
+            text: `Error adding product to favorites: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });

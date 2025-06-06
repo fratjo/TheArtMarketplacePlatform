@@ -103,7 +103,7 @@ export class CheckoutComponent implements OnInit {
         this.checkoutResume[artisanId] = {
           artisan: {
             id: artisanId,
-            username: item.product?.artisan.user.username || '',
+            username: item.product?.artisanName || '',
           },
           products: [],
         };
@@ -132,7 +132,7 @@ export class CheckoutComponent implements OnInit {
       deliveryPartnerId: this.selectedDeliveryPartner?.id || '',
       orderProducts: this.cartItems().map((item) => ({
         productId: item.product?.id || '',
-        artisanId: item.product?.artisan.userId || '',
+        artisanId: item.product?.artisanId || '',
         quantity: item.quantity,
       })),
     };
@@ -152,7 +152,7 @@ export class CheckoutComponent implements OnInit {
       error: (error) => {
         console.error('Error placing order', error);
         this.toastService.show({
-          text: `Error placing order: ${error.error.title}`,
+          text: `Error placing order: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

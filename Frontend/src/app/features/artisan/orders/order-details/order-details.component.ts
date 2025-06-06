@@ -40,7 +40,7 @@ export class OrderDetailsComponent implements OnInit {
       },
       error: (error) => {
         this.toastService.show({
-          text: `Error fetching order: ${error.error.title}`,
+          text: `Error fetching order: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -89,7 +89,7 @@ export class OrderDetailsComponent implements OnInit {
       error: (error) => {
         console.log('Error updating order status:', error);
         this.toastService.show({
-          text: `Error updating order status: ${error.error.title}`,
+          text: `Error updating order status: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });

@@ -71,7 +71,7 @@ export class AuthService {
   }
 
   isLoggedIn() {
-    return !!this.getToken();
+    return !!this.getToken(); // Vérifie si un token est présent, si il l'est, l'utilisateur est connecté
   }
 
   isTokenExpired() {

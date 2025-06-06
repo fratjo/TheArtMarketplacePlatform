@@ -1,0 +1,27 @@
+.btn-display-style {
+  padding: 5px 10px;
+  border-radius: 5px 0 0 5px;
+  color: #000;
+  border: none;
+}
+
+.btn-display-style:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.btn-display-style:focus {
+  outline: none;
+}
+
+button.btn-active {
+  background-color: #e0e0e0;
+}
+
+.btn-display-style:hover {
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+
+i {
+  font-size: 0.8em;
+}

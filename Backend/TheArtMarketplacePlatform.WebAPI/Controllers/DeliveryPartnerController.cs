@@ -5,30 +5,40 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
 
 namespace TheArtMarketplacePlatform.WebAPI.Controllers
 {
+    public class CheckDeliveryPartnerIdAttribute : Attribute, IAuthorizationFilter
+    {
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            var artisanId = context.RouteData.Values["deliveryPartnerId"] as string;
+            if (artisanId == null || !Guid.TryParse(artisanId, out var id))
+            {
+                context.Result = new BadRequestResult();
+                return;
+            }
+
+            var userId = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null || Guid.Parse(userId) != id)
+            {
+                context.Result = new UnauthorizedResult();
+            }
+        }
+    }
     [ApiController]
     [Authorize(Roles = "DeliveryPartner")]
+    [CheckDeliveryPartnerId]
     [Route("api/deliverypartners/{deliveryPartnerId:guid}")]
     public class DeliveryPartnerController(IDeliveryPartnerService deliveryPartnerService) : ControllerBase
     {
-        private void CheckUserId(Guid id)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null || Guid.Parse(userId) != id)
-            {
-                throw new UnauthorizedAccessException("You are not authorized to access this resource.");
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetDeliveryPartnerProfile([FromRoute] Guid deliveryPartnerId)
         {
-            CheckUserId(deliveryPartnerId);
             var artisanProfile = await deliveryPartnerService.GetDeliveryPartnerAsync(deliveryPartnerId);
             if (artisanProfile == null)
             {
@@ -40,7 +50,6 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateDeliveryPartnerProfile([FromRoute] Guid deliveryPartnerId, [FromBody] DeliveryPartnerUpdateProfileRequest request)
         {
-            CheckUserId(deliveryPartnerId);
             var updatedProfile = await deliveryPartnerService.UpdateDeliveryPartnerAsync(deliveryPartnerId, request);
             return updatedProfile ? Ok() : NotFound();
         }

@@ -137,7 +137,7 @@ export class ProfileComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching profile:', error);
         this.toastService.show({
-          text: `Error fetching profile: ${error.error.title}`,
+          text: `Error fetching profile: ${error.error.detail}`,
           classname: 'bg-danger text-light',
           delay: 5000,
         });
@@ -166,7 +166,7 @@ export class ProfileComponent implements OnInit {
         error: (error) => {
           console.error('Error updating profile:', error);
           this.toastService.show({
-            text: `Error updating profile: ${error.error.title}`,
+            text: `Error updating profile: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -206,7 +206,7 @@ export class ProfileComponent implements OnInit {
         error: (error) => {
           console.error('Error changing password:', error);
           this.toastService.show({
-            text: `Error changing password: ${error.error.title}`,
+            text: `Error changing password: ${error.error.detail}`,
             classname: 'bg-danger text-light',
             delay: 5000,
           });
@@ -233,8 +233,7 @@ export class ProfileComponent implements OnInit {
 
   async checkIfUsernameExist() {
     if (
-      this.profileForm.get('username')?.value ===
-      this.originalProfile.user.username
+      this.profileForm.get('username')?.value === this.originalProfile.username
     )
       return;
     this.authService

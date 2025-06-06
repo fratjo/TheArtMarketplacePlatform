@@ -26,7 +26,6 @@ export class LandingComponent implements OnInit {
           window.location.href = '/delivery-partner/dashboard';
           break;
         default:
-          window.location.href = '/login';
           break;
       }
     }
