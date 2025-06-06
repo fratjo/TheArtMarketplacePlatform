@@ -154,6 +154,7 @@ export class ArtisanService {
 
   getOrders(filters?: {
     status?: string;
+    year?: number;
     sortBy?: string | null;
     sortOrder?: 'asc' | 'desc';
   }) {
@@ -167,6 +168,9 @@ export class ArtisanService {
     let params = new HttpParams();
     if (filters.status) {
       params = params.set('status', filters.status);
+    }
+    if (filters.year) {
+      params = params.set('year', filters.year.toString());
     }
     if (filters.sortBy) {
       params = params.set('sortBy', filters.sortBy);

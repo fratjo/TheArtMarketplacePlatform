@@ -39,8 +39,6 @@ export class OrderDetailsComponent implements OnInit {
         console.log('Order fetched successfully:', order);
       },
       error: (error) => {
-        console.log('Error fetching order:', error);
-
         this.toastService.show({
           text: `Error fetching order: ${error.error.title}`,
           classname: 'bg-danger text-light',

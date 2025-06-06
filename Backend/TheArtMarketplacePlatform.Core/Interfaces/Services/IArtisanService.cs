@@ -24,7 +24,7 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
         #endregion
 
         #region Orders
-        Task<IEnumerable<Order>> GetAllOrdersAsync(Guid ArtisanId, string? status = null, string? sortBy = null, string? sortOrder = null);
+        Task<IEnumerable<Order>> GetAllOrdersAsync(Guid ArtisanId, string? status = null, int? year = null, string? sortBy = null, string? sortOrder = null);
         Task<Order> GetOrderByIdAsync(Guid ArtisanId, Guid id);
         Task<Order> UpdateOrderStatusAsync(Guid ArtisanId, Guid id, string status);
         #endregion

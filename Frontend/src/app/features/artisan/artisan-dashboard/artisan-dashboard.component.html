@@ -17,6 +17,20 @@
         }
       </select>
     </div>
+    <div>
+      <hr />
+      <div class="d-flex flex-row align-items-center mb-3 gap-3">
+        <div class="h-100 px-3">
+          <h4>Orders</h4>
+          <span>{{ totalYearlyOrders }}</span>
+        </div>
+        <div class="border-start border-1 border-secondary h-100 px-3">
+          <h4>Revenue</h4>
+          <span>{{ totalYearlyRevenue | currency }}</span>
+        </div>
+      </div>
+      <hr />
+    </div>
     <div
       class="d-flex flex-row justify-content-between align-items-center mb-3 w-100 gap-2"
       style="height: 400px"

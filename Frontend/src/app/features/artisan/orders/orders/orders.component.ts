@@ -25,21 +25,26 @@ export class OrdersComponent implements OnInit {
 
   ngOnInit(): void {
     // Initialization logic can go here
-    this.artisanService.getOrders().subscribe({
-      next: (orders) => {
-        // Handle successful retrieval of orders
-        this.orders$.next(orders);
-      },
-      error: (error) => {
-        // Handle error in retrieving orders
-        console.error('Error fetching orders:', error);
-        this.toastService.show({
-          text: `Error fetching orders: ${error.error.title}`,
-          classname: 'bg-danger text-light',
-          delay: 5000,
-        });
-      },
-    });
+    this.artisanService
+      .getOrders({
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      })
+      .subscribe({
+        next: (orders) => {
+          // Handle successful retrieval of orders
+          this.orders$.next(orders);
+        },
+        error: (error) => {
+          // Handle error in retrieving orders
+          console.error('Error fetching orders:', error);
+          this.toastService.show({
+            text: `Error fetching orders: ${error.error.title}`,
+            classname: 'bg-danger text-light',
+            delay: 5000,
+          });
+        },
+      });
   }
 
   goToOrderDetails(orderId: string) {
@@ -82,6 +87,8 @@ export class OrdersComponent implements OnInit {
   onStatusChange($event: Event) {
     let filters = {
       status: ($event.target as HTMLSelectElement).value,
+      sortBy: 'createdAt',
+      sortOrder: 'desc' as 'asc' | 'desc',
     };
     this.artisanService.getOrders(filters).subscribe({
       next: (orders) => {

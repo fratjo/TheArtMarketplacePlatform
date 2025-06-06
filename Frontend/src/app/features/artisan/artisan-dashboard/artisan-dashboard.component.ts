@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ArtisanService } from '../../../core/services/artisan.service';
+import { CurrencyPipe } from '@angular/common';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-artisan-dashboard',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, CurrencyPipe],
   templateUrl: './artisan-dashboard.component.html',
   styleUrl: './artisan-dashboard.component.css',
 })
@@ -15,6 +16,8 @@ export class ArtisanDashboardComponent implements OnInit {
   orders: any[] = [];
   years: number[] = [];
   selectedYear: number = new Date().getFullYear();
+  totalYearlyOrders: number = 0;
+  totalYearlyRevenue: number = 0;
 
   config1: ChartConfiguration<'bar'> = {
     type: 'bar',
@@ -114,44 +117,56 @@ export class ArtisanDashboardComponent implements OnInit {
   }
 
   updateChart() {
-    this.artisanService.getOrders().subscribe({
-      next: (orders) => {
-        // chart 1
-        this.chart1.data.datasets[0].data = Array(12).fill(0);
-        orders.forEach((order: any) => {
-          const orderDate = new Date(order.createdAt);
+    this.artisanService
+      .getOrders({
+        year: this.selectedYear,
+      })
+      .subscribe({
+        next: (orders) => {
+          // chart 1
+          this.chart1.data.datasets[0].data = Array(12).fill(0);
+          this.totalYearlyOrders = 0;
+          this.totalYearlyRevenue = 0;
 
-          if (orderDate.getFullYear() == this.selectedYear) {
-            const month = orderDate.getMonth();
-            this.chart1.data.datasets[0].data[month] += 1;
-          }
-        });
+          orders.forEach((order: any) => {
+            const orderDate = new Date(order.createdAt);
 
-        this.chart1.update();
+            this.totalYearlyOrders += 1;
 
-        // chart 2
-        this.chart2.data.datasets[0].data = Array(12).fill(0);
-        orders.forEach((order: any) => {
-          const orderDate = new Date(order.createdAt);
+            if (orderDate.getFullYear() == this.selectedYear) {
+              const month = orderDate.getMonth();
+              this.chart1.data.datasets[0].data[month] += 1;
+            }
+          });
 
-          if (orderDate.getFullYear() == this.selectedYear) {
-            console.log(order);
+          this.chart1.update();
 
-            const month = orderDate.getMonth();
-            const totalPrice = order.orderProducts.reduce(
+          // chart 2
+          this.chart2.data.datasets[0].data = Array(12).fill(0);
+          orders.forEach((order: any) => {
+            const orderDate = new Date(order.createdAt);
+            this.totalYearlyRevenue += order.orderProducts.reduce(
               (sum: number, item: any) =>
                 sum + item.productPrice * item.quantity,
               0
             );
-            this.chart2.data.datasets[0].data[month] += totalPrice;
-          }
-        });
 
-        this.chart2.update();
-      },
-      error: (err) => {
-        console.error('Error fetching orders:', err);
-      },
-    });
+            if (orderDate.getFullYear() == this.selectedYear) {
+              const month = orderDate.getMonth();
+              const totalPrice = order.orderProducts.reduce(
+                (sum: number, item: any) =>
+                  sum + item.productPrice * item.quantity,
+                0
+              );
+              this.chart2.data.datasets[0].data[month] += totalPrice;
+            }
+          });
+
+          this.chart2.update();
+        },
+        error: (err) => {
+          console.error('Error fetching orders:', err);
+        },
+      });
   }
 }

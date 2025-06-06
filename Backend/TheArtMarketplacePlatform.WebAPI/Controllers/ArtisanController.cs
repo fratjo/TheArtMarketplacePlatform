@@ -130,11 +130,12 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpGet("orders")]
         public async Task<IActionResult> GetOrders([FromRoute] Guid artisanId,
             [FromQuery] string? status = null,
+            [FromQuery] int? year = null,
             [FromQuery] string? sortBy = null,
             [FromQuery] string? sortOrder = null)
         {
             CheckUserId(artisanId);
-            var orders = await _artisanService.GetAllOrdersAsync(artisanId, status, sortBy, sortOrder);
+            var orders = await _artisanService.GetAllOrdersAsync(artisanId, status, year, sortBy, sortOrder);
             return Ok(orders);
         }
 

@@ -36,6 +36,9 @@ export interface UserProfileStrategy {
 export interface ArtisanProfile extends UserProfileStrategy {
   id: string;
   username: string;
+  user: {
+    username: string;
+  };
   email: string;
   shippingAddress: string;
   profileType: 'artisan';
@@ -46,6 +49,9 @@ export interface ArtisanProfile extends UserProfileStrategy {
 export interface CustomerProfile extends UserProfileStrategy {
   id: string;
   username: string;
+  user: {
+    username: string;
+  };
   email: string;
   shippingAddress: string;
   profileType: 'customer';
@@ -54,6 +60,9 @@ export interface CustomerProfile extends UserProfileStrategy {
 export interface DeliveryPartnerProfile extends UserProfileStrategy {
   id: string;
   username: string;
+  user: {
+    username: string;
+  };
   email: string;
   profileType: 'deliverypartner';
 }

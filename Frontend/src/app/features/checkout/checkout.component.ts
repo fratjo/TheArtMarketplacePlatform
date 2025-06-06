@@ -147,7 +147,7 @@ export class CheckoutComponent implements OnInit {
         });
         // Clear the cart after checkout
         this.clearCart();
-        window.location.href = '/customer/orders';
+        window.location.href = '/order-confirmation';
       },
       error: (error) => {
         console.error('Error placing order', error);

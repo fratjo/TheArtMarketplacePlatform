@@ -69,6 +69,7 @@ export class ProfileComponent implements OnInit {
   loadProfile(): void {
     this.profileService.getProfile().subscribe({
       next: (profile) => {
+        console.log('Profile loaded:', profile);
         // Création dynamique du formulaire selon le rôle
         if (this.role === 'customer') {
           this.profile = profile as CustomerProfile;
@@ -232,7 +233,8 @@ export class ProfileComponent implements OnInit {
 
   async checkIfUsernameExist() {
     if (
-      this.profileForm.get('username')?.value === this.originalProfile.username
+      this.profileForm.get('username')?.value ===
+      this.originalProfile.user.username
     )
       return;
     this.authService

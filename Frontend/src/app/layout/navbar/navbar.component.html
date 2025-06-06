@@ -28,13 +28,13 @@
       >
       } @else if ( (isLoggedIn$ | async) && (userRole$ | async) === 'customer' )
       {
-      <a
+      <!-- <a
         class="btn"
         href="/dashboard"
         [routerLinkActiveOptions]="{ exact: false }"
         [routerLinkActive]="'active'"
         >Dashboard</a
-      >
+      > -->
       <a
         class="btn"
         href="/products/catalog"
@@ -51,7 +51,7 @@
       >
       } @else if ( (isLoggedIn$ | async) && (userRole$ | async) ===
       'deliverypartner' ) {
-      <a class="btn" href="/dashboard">Dashboard</a>
+      <a class="btn" href="/delivery-partner/dashboard">Dashboard</a>
       <a class="btn" href="/delivery-partner/deliveries">Deliveries</a>
       } @else if ( (isLoggedIn$ | async) && (userRole$ | async) === 'admin' ) {}
       @else {

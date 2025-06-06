@@ -222,13 +222,18 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
         #region Orders
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync(Guid ArtisanId, string? status = null, string? sortBy = null, string? sortOrder = null)
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync(Guid ArtisanId, string? status = null, int? year = null, string? sortBy = null, string? sortOrder = null)
         {
             var orders = await _orderRepository.GetOrdersByArtisanIdAsync(ArtisanId);
 
             if (!string.IsNullOrEmpty(status))
             {
                 orders = orders.Where(o => o.Status.ToString().Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (year.HasValue)
+            {
+                orders = orders.Where(o => o.CreatedAt.Year == year.Value).ToList();
             }
 
             if (!string.IsNullOrEmpty(sortBy))

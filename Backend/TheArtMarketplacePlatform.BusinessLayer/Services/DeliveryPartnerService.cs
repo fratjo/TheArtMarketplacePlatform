@@ -18,7 +18,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
             if (!string.IsNullOrEmpty(status))
             {
-                orders = orders.Where(o => o.Status.ToString().Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+                orders = orders.Where(o => status.Equals(o.DeliveryStatusUpdates?.MaxBy(update => update.CreatedAt)?.Status.ToString(), StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             if (!string.IsNullOrEmpty(sortBy))

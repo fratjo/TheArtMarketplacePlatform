@@ -131,6 +131,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'order-confirmation',
+    loadComponent: () =>
+      import('./features/valid-purchase/valid-purchase.component').then(
+        (c) => c.ValidPurchaseComponent
+      ),
+  },
+  {
     path: 'products',
     children: [
       {
