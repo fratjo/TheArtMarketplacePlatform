@@ -243,10 +243,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<bool>("IsAvailable")
+                    b.Property<string>("Availability")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasDefaultValue("Available");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()

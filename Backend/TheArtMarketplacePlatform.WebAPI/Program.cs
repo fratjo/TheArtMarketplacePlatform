@@ -93,9 +93,26 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        // Seed the database with initial data
+        TheArtMarketplacePlatform.DataAccessLayer.Seed.SeedData.Initialize(services);
+        Console.WriteLine("Database updated & seeded successfully.");
+    }
+    catch (Exception ex)
+    {
+        // Handle exceptions during seeding
+        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+
     app.MapOpenApi();
 }
 

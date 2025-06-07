@@ -10,6 +10,7 @@ using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
 using System.Security.Cryptography;
+using TheArtMarketplacePlatform.Core.Utils;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
@@ -28,8 +29,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             if (existingUsername != null) throw new ArgumentException("Username is already in use.");
 
             // Generate a salt and hash the password
-            var salt = GenerateSalt();
-            var hashedPassword = HashPasswordWithSalt(request.Password, salt);
+            var salt = Password.GenerateSalt();
+            var hashedPassword = Password.HashPasswordWithSalt(request.Password, salt);
 
             // Store the user
             var user = new User
@@ -65,8 +66,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             if (existingUser != null) throw new ArgumentException("Email is already in use.");
 
             // Generate a salt and hash the password
-            var salt = GenerateSalt();
-            var hashedPassword = HashPasswordWithSalt(request.Password, salt);
+            var salt = Password.GenerateSalt();
+            var hashedPassword = Password.HashPasswordWithSalt(request.Password, salt);
 
             // Store the user
             var user = new User
@@ -101,8 +102,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             if (existingUser != null) throw new ArgumentException("Email is already in use.");
 
             // Generate a salt and hash the password
-            var salt = GenerateSalt();
-            var hashedPassword = HashPasswordWithSalt(request.Password, salt);
+            var salt = Password.GenerateSalt();
+            var hashedPassword = Password.HashPasswordWithSalt(request.Password, salt);
 
             // Store the user
             var user = new User
@@ -212,29 +213,11 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string GenerateSalt()
-        {
-            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
-            {
-                var saltBytes = new byte[16];
-                rng.GetBytes(saltBytes);
-                return Convert.ToBase64String(saltBytes);
-            }
-        }
 
-        private string HashPasswordWithSalt(string password, string salt)
-        {
-            using (var sha = System.Security.Cryptography.SHA512.Create())
-            {
-                var bytes = System.Text.Encoding.UTF8.GetBytes(password + salt);
-                var hash = sha.ComputeHash(bytes);
-                return Convert.ToHexString(hash);
-            }
-        }
 
         private bool VerifyPassword(string password, string salt, string hashedPassword)
         {
-            var hash = HashPasswordWithSalt(password, salt);
+            var hash = Password.HashPasswordWithSalt(password, salt);
             return hash == hashedPassword;
         }
 
@@ -251,8 +234,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             }
 
             // Generate a new salt and hash the new password
-            var newSalt = GenerateSalt();
-            var newHashedPassword = HashPasswordWithSalt(request.NewPassword, newSalt);
+            var newSalt = Password.GenerateSalt();
+            var newHashedPassword = Password.HashPasswordWithSalt(request.NewPassword, newSalt);
 
             // Update the user's password
             user.PasswordHash = newHashedPassword;

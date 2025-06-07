@@ -118,7 +118,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     QuantityLeft = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "OutOfStock"),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Availability = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, defaultValue: "Available"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
