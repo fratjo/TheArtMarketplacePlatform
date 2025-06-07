@@ -8,7 +8,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const toastService = inject(ToastService);
 
-  if (req.url.includes('/refresh-token')) {
+  if (
+    req.url.includes('/refresh-token') ||
+    req.url.includes('/login') ||
+    req.url.includes('/register') ||
+    req.url.includes('/logout')
+  ) {
+    // Si la requête est pour login ou register, on ne modifie pas le header
     return next(req);
   }
 
@@ -43,14 +49,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       return next(retryReq);
     }),
     catchError((refreshError) => {
-      console.error('[AuthInterceptor] Retry a échoué aussi : logout forcé');
-      console.log(
-        '[AuthInterceptor] Erreur lors du rafraîchissement du token',
-        refreshError
-      );
-
-      alert();
-      // authService.logout();
+      authService.logout();
       toastService.show({
         text: 'Session expirée. Veuillez vous reconnecter.',
         classname: 'bg-danger text-light',
