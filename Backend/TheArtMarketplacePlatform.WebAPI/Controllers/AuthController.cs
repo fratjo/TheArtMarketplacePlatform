@@ -67,18 +67,12 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshToken refreshToken)
         {
-            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out var userId))
-            {
-                return Unauthorized(new { Message = "User not authenticated." });
-            }
-
             if (string.IsNullOrEmpty(refreshToken.Token))
             {
                 return BadRequest(new { Message = "Refresh token is required." });
             }
 
-            var result = await _authService.LogoutUserAsync(Guid.Parse(id), refreshToken.Token);
+            var result = await _authService.LogoutUserAsync(refreshToken.Token);
             if (result)
             {
                 return Ok(new { Message = "Logged out successfully." });

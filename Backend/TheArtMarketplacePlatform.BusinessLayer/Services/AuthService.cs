@@ -276,14 +276,14 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             return await GenerateAuthResponse(user);
         }
 
-        public async Task<bool> LogoutUserAsync(Guid userId, string refreshToken)
+        public async Task<bool> LogoutUserAsync(string refreshToken)
         {
             // Check if the user exists
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
             if (user is null) throw new NotFoundException("User not found.");
 
             // Check if the refresh token is valid
-            var existingTokens = await _userRepository.GetRefreshTokensByUserIdAsync(userId);
+            var existingTokens = await _userRepository.GetRefreshTokensByUserIdAsync(user.Id);
             var tokenToRevoke = existingTokens.FirstOrDefault(rt => rt.Token == refreshToken && !rt.IsRevoked);
             if (tokenToRevoke is null) throw new NotFoundException("Refresh token not found or already revoked.");
 
