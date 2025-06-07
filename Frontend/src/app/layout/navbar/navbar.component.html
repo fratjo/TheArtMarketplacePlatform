@@ -28,13 +28,6 @@
       >
       } @else if ( (isLoggedIn$ | async) && (userRole$ | async) === 'customer' )
       {
-      <!-- <a
-        class="btn"
-        href="/dashboard"
-        [routerLinkActiveOptions]="{ exact: false }"
-        [routerLinkActive]="'active'"
-        >Dashboard</a
-      > -->
       <a
         class="btn"
         href="/products/catalog"

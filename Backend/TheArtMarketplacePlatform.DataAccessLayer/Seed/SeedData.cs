@@ -26,13 +26,15 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Seed
             if (!context.Users.Any(u => u.Email == "admin@marketplace.com"))
             {
                 // Seed admin user
+                var salt = Password.GenerateSalt();
+
                 var adminUser = new User
                 {
                     Id = Guid.NewGuid(),
                     Username = "admin",
                     Email = "admin@marketplace.com",
-                    PasswordSalt = Password.GenerateSalt(),
-                    PasswordHash = Password.HashPasswordWithSalt("Password1!", Password.GenerateSalt()),
+                    PasswordSalt = salt,
+                    PasswordHash = Password.HashPasswordWithSalt("Password1!", salt),
                     Role = UserRole.Admin,
                     Status = UserStatus.Active,
                     IsDeleted = false,

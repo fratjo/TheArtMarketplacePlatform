@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     PasswordSalt = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Active"),
-                    IsAdmin = table.Column<string>(type: "nvarchar(1)", nullable: false, defaultValue: "0"),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<string>(type: "nvarchar(1)", nullable: false, defaultValue: "0"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -107,6 +107,29 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -114,11 +137,13 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     ArtisanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     QuantityLeft = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    Rating = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "OutOfStock"),
-                    Availability = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, defaultValue: "Available"),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Availability = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Available"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -149,7 +174,9 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeliveryPartnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeliveryPartnerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ArtisanId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ArtisanName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DeliveryPartnerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShippingAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Pending"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -169,6 +196,29 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                         column: x => x.DeliveryPartnerId,
                         principalTable: "DeliveryPartnerProfiles",
                         principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductFavorites",
+                columns: table => new
+                {
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductFavorites", x => new { x.CustomerId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_ProductFavorites_CustomerProfiles_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "CustomerProfiles",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_ProductFavorites_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -283,6 +333,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 column: "DeliveryPartnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductFavorites_ProductId",
+                table: "ProductFavorites",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductReviews_ArtisanProfileUserId",
                 table: "ProductReviews",
                 column: "ArtisanProfileUserId");
@@ -308,6 +363,11 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -330,7 +390,13 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
                 name: "OrderProducts");
 
             migrationBuilder.DropTable(
+                name: "ProductFavorites");
+
+            migrationBuilder.DropTable(
                 name: "ProductReviews");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "Orders");

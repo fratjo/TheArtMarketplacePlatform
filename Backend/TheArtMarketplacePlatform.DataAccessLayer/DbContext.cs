@@ -40,7 +40,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.Property(u => u.PasswordHash).IsRequired().HasMaxLength(256);
                 entity.Property(u => u.PasswordSalt).IsRequired().HasMaxLength(256);
                 entity.Property(u => u.Status).IsRequired().HasConversion<string>().HasDefaultValue(UserStatus.Active);
-                entity.Property(u => u.Role).IsRequired().HasConversion<string>().HasDefaultValue(UserRole.Customer);
+                entity.Property(u => u.Role).IsRequired().HasConversion<string>();
                 entity.Property(u => u.IsDeleted).IsRequired().HasConversion<string>().HasDefaultValue(false);
                 entity.Property(u => u.CreatedAt).IsRequired().HasDefaultValueSql("GETDATE()");
                 entity.Property(u => u.UpdatedAt).IsRequired().HasDefaultValueSql("GETDATE()");
@@ -51,7 +51,6 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
             {
                 entity.HasKey(rt => rt.Id);
                 entity.Property(rt => rt.Token).IsRequired().HasMaxLength(1000);
-                entity.HasIndex(rt => rt.Token).IsUnique();
                 entity.Property(rt => rt.UserId).IsRequired();
                 entity.Property(rt => rt.ExpiryDate).IsRequired();
                 entity.Property(rt => rt.IsRevoked).IsRequired().HasDefaultValue(false);

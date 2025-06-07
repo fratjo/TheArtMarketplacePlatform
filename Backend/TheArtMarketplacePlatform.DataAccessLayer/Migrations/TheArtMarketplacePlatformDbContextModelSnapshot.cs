@@ -421,9 +421,6 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Token")
-                        .IsUnique();
-
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
@@ -466,9 +463,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Customer");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

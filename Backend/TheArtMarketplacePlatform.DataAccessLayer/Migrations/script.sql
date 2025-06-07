@@ -24,7 +24,7 @@ CREATE TABLE [Users] (
     [PasswordHash] nvarchar(256) NOT NULL,
     [PasswordSalt] nvarchar(256) NOT NULL,
     [Status] nvarchar(max) NOT NULL DEFAULT N'Active',
-    [IsAdmin] nvarchar(1) NOT NULL DEFAULT N'0',
+    [Role] nvarchar(max) NOT NULL,
     [IsDeleted] nvarchar(1) NOT NULL DEFAULT N'0',
     [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
     [UpdatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
@@ -59,16 +59,29 @@ CREATE TABLE [DeliveryPartnerProfiles] (
     CONSTRAINT [FK_DeliveryPartnerProfiles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
 
+CREATE TABLE [RefreshTokens] (
+    [Id] int NOT NULL IDENTITY,
+    [Token] nvarchar(1000) NOT NULL,
+    [ExpiryDate] datetime2 NOT NULL,
+    [IsRevoked] bit NOT NULL DEFAULT CAST(0 AS bit),
+    [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
+    [UserId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_RefreshTokens] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_RefreshTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+
 CREATE TABLE [Products] (
     [Id] uniqueidentifier NOT NULL,
     [ArtisanId] uniqueidentifier NOT NULL,
     [Name] nvarchar(100) NOT NULL,
     [Description] nvarchar(500) NOT NULL,
+    [ImageUrl] nvarchar(max) NULL,
     [Price] decimal(10,2) NOT NULL,
     [QuantityLeft] int NOT NULL DEFAULT 0,
+    [Rating] decimal(18,2) NULL,
     [CategoryId] uniqueidentifier NULL,
-    [Status] nvarchar(max) NOT NULL DEFAULT N'OutOfStock',
-    [IsAvailable] bit NOT NULL DEFAULT CAST(1 AS bit),
+    [Status] nvarchar(max) NOT NULL,
+    [Availability] nvarchar(max) NOT NULL DEFAULT N'Available',
     [IsDeleted] bit NOT NULL DEFAULT CAST(0 AS bit),
     [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
     [UpdatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
@@ -83,7 +96,9 @@ CREATE TABLE [Orders] (
     [Id] uniqueidentifier NOT NULL,
     [DeliveryPartnerId] uniqueidentifier NULL,
     [CustomerId] uniqueidentifier NULL,
-    [DeliveryPartnerName] nvarchar(100) NOT NULL,
+    [ArtisanId] uniqueidentifier NULL,
+    [ArtisanName] nvarchar(max) NOT NULL,
+    [DeliveryPartnerName] nvarchar(max) NOT NULL,
     [ShippingAddress] nvarchar(256) NOT NULL,
     [Status] nvarchar(max) NOT NULL DEFAULT N'Pending',
     [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
@@ -91,6 +106,14 @@ CREATE TABLE [Orders] (
     CONSTRAINT [PK_Orders] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Orders_CustomerProfiles_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [CustomerProfiles] ([UserId]) ON DELETE SET NULL,
     CONSTRAINT [FK_Orders_DeliveryPartnerProfiles_DeliveryPartnerId] FOREIGN KEY ([DeliveryPartnerId]) REFERENCES [DeliveryPartnerProfiles] ([UserId])
+);
+
+CREATE TABLE [ProductFavorites] (
+    [CustomerId] uniqueidentifier NOT NULL,
+    [ProductId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_ProductFavorites] PRIMARY KEY ([CustomerId], [ProductId]),
+    CONSTRAINT [FK_ProductFavorites_CustomerProfiles_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [CustomerProfiles] ([UserId]),
+    CONSTRAINT [FK_ProductFavorites_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id]) ON DELETE CASCADE
 );
 
 CREATE TABLE [ProductReviews] (
@@ -143,6 +166,8 @@ CREATE INDEX [IX_Orders_CustomerId] ON [Orders] ([CustomerId]);
 
 CREATE INDEX [IX_Orders_DeliveryPartnerId] ON [Orders] ([DeliveryPartnerId]);
 
+CREATE INDEX [IX_ProductFavorites_ProductId] ON [ProductFavorites] ([ProductId]);
+
 CREATE INDEX [IX_ProductReviews_ArtisanProfileUserId] ON [ProductReviews] ([ArtisanProfileUserId]);
 
 CREATE INDEX [IX_ProductReviews_CustomerId] ON [ProductReviews] ([CustomerId]);
@@ -153,104 +178,14 @@ CREATE INDEX [IX_Products_ArtisanId] ON [Products] ([ArtisanId]);
 
 CREATE INDEX [IX_Products_CategoryId] ON [Products] ([CategoryId]);
 
+CREATE INDEX [IX_RefreshTokens_UserId] ON [RefreshTokens] ([UserId]);
+
 CREATE UNIQUE INDEX [IX_Users_Email] ON [Users] ([Email]);
 
 CREATE UNIQUE INDEX [IX_Users_Username] ON [Users] ([Username]);
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250417211247_InitDb', N'9.0.4');
-
-DECLARE @var sysname;
-SELECT @var = [d].[name]
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Users]') AND [c].[name] = N'IsAdmin');
-IF @var IS NOT NULL EXEC(N'ALTER TABLE [Users] DROP CONSTRAINT [' + @var + '];');
-ALTER TABLE [Users] DROP COLUMN [IsAdmin];
-
-ALTER TABLE [Users] ADD [Role] nvarchar(max) NOT NULL DEFAULT N'Customer';
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250417213414_AddUserRole', N'9.0.4');
-
-DECLARE @var1 sysname;
-SELECT @var1 = [d].[name]
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Products]') AND [c].[name] = N'Status');
-IF @var1 IS NOT NULL EXEC(N'ALTER TABLE [Products] DROP CONSTRAINT [' + @var1 + '];');
-
-ALTER TABLE [Products] ADD [ImageUrl] nvarchar(max) NULL;
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250503203006_AddImageUrl', N'9.0.4');
-
-ALTER TABLE [Products] ADD [Rating] decimal(18,2) NULL;
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250507150258_AddProductRating', N'9.0.4');
-
-DECLARE @var2 sysname;
-SELECT @var2 = [d].[name]
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Orders]') AND [c].[name] = N'DeliveryPartnerName');
-IF @var2 IS NOT NULL EXEC(N'ALTER TABLE [Orders] DROP CONSTRAINT [' + @var2 + '];');
-ALTER TABLE [Orders] ALTER COLUMN [DeliveryPartnerName] nvarchar(max) NOT NULL;
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250511163241_AddOrderDLPName', N'9.0.4');
-
-ALTER TABLE [Orders] ADD [ArtisanId] uniqueidentifier NULL;
-
-ALTER TABLE [Orders] ADD [ArtisanName] nvarchar(max) NOT NULL DEFAULT N'';
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250527200144_OrderAddArtisan', N'9.0.4');
-
-CREATE TABLE [ProductFavorites] (
-    [CustomerId] uniqueidentifier NOT NULL,
-    [ProductId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_ProductFavorites] PRIMARY KEY ([CustomerId], [ProductId]),
-    CONSTRAINT [FK_ProductFavorites_CustomerProfiles_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [CustomerProfiles] ([UserId]),
-    CONSTRAINT [FK_ProductFavorites_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id]) ON DELETE CASCADE
-);
-
-CREATE INDEX [IX_ProductFavorites_ProductId] ON [ProductFavorites] ([ProductId]);
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250604133646_AddProductFavorite', N'9.0.4');
-
-CREATE TABLE [RefreshTokens] (
-    [Id] int NOT NULL IDENTITY,
-    [Token] nvarchar(500) NOT NULL,
-    [ExpiryDate] datetime2 NOT NULL,
-    [IsRevoked] bit NOT NULL DEFAULT CAST(0 AS bit),
-    [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
-    [UserId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_RefreshTokens] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_RefreshTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
-);
-
-CREATE UNIQUE INDEX [IX_RefreshTokens_Token] ON [RefreshTokens] ([Token]);
-
-CREATE INDEX [IX_RefreshTokens_UserId] ON [RefreshTokens] ([UserId]);
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250607090309_AddRefreshToken', N'9.0.4');
-
-DROP INDEX [IX_RefreshTokens_Token] ON [RefreshTokens];
-DECLARE @var3 sysname;
-SELECT @var3 = [d].[name]
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[RefreshTokens]') AND [c].[name] = N'Token');
-IF @var3 IS NOT NULL EXEC(N'ALTER TABLE [RefreshTokens] DROP CONSTRAINT [' + @var3 + '];');
-ALTER TABLE [RefreshTokens] ALTER COLUMN [Token] nvarchar(1000) NOT NULL;
-CREATE UNIQUE INDEX [IX_RefreshTokens_Token] ON [RefreshTokens] ([Token]);
-
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20250607092926_RefreshToken1000Length', N'9.0.4');
+VALUES (N'20250607200550_InitDB', N'9.0.4');
 
 COMMIT;
 GO

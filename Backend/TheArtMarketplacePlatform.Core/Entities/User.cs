@@ -13,7 +13,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public string PasswordHash { get; set; } = string.Empty;
         public string PasswordSalt { get; set; } = string.Empty;
         public UserStatus Status { get; set; } = UserStatus.Active;
-        public UserRole Role { get; set; } = UserRole.Customer;
+        public UserRole Role { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
