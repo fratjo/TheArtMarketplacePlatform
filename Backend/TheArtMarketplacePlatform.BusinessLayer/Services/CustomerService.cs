@@ -143,7 +143,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var orders = await orderRepository.GetOrdersByCustomerIdAsync(customerId);
             if (orders == null || !orders.Any())
             {
-                throw new NotFoundException("No orders found for the customer");
+                return false; // No orders found for the customer
             }
 
             orders = orders.Where(o => o.Status == OrderStatus.Delivered).ToList();
