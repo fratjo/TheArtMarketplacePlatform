@@ -77,6 +77,39 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
             return await _context.SaveChangesAsync().ContinueWith(t => t.Result > 0);
         }
 
+        public async Task SaveRefreshTokenAsync(RefreshToken newToken)
+        {
+            _context.RefreshTokens.Add(newToken);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<RefreshToken>> GetRefreshTokensByUserIdAsync(Guid userId)
+        {
+            return await _context.RefreshTokens
+                .Where(rt => rt.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateRefreshTokenAsync(RefreshToken token)
+        {
+            _context.RefreshTokens.Update(token);
+            return await _context.SaveChangesAsync().ContinueWith(t => t.Result > 0);
+        }
+
+        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.RefreshTokens
+                .Where(rt => rt.Token == refreshToken)
+                .Select(rt => rt.User)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
+        {
+            return await _context.RefreshTokens
+                .FirstOrDefaultAsync(rt => rt.Token == token);
+        }
+
         #endregion
     }
 }

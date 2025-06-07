@@ -8,7 +8,17 @@ import {
   DeliveryPartnerRegistration,
   Login,
 } from '../models/auth.interface';
-import { BehaviorSubject, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  Observable,
+  shareReplay,
+  tap,
+  throwError,
+} from 'rxjs';
+import { ToastService } from './toast.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -24,15 +34,64 @@ export class AuthService {
 
   private apiUrl = 'http://localhost:5140/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private toastService: ToastService,
+    private router: Router
+  ) {}
 
   login(login: Login) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, login);
   }
 
   logout() {
-    this.removeToken();
-    this.isLoggedIn$.next(false);
+    console.log('[AuthService] Logging out...');
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.removeToken();
+      localStorage.removeItem('refreshToken');
+      this.isLoggedIn$.next(false);
+      this.userRole$.next(null);
+      return;
+    }
+
+    this.http
+      .post(
+        `${this.apiUrl}/logout`,
+        {
+          token: refreshToken,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+      .subscribe({
+        next: () => {
+          this.removeToken();
+          localStorage.removeItem('refreshToken');
+          this.isLoggedIn$.next(false);
+          this.userRole$.next(null);
+          this.router.navigate(['/']);
+          this.toastService.show({
+            text: 'Logout successful',
+            classname: 'bg-success text-light',
+            delay: 2000,
+          });
+        },
+        error: (err) => {
+          this.removeToken();
+          localStorage.removeItem('refreshToken');
+          this.isLoggedIn$.next(false);
+          this.userRole$.next(null);
+          this.router.navigate(['/']);
+          this.toastService.show({
+            text: 'Logout successful',
+            classname: 'bg-success text-light',
+            delay: 2000,
+          });
+        },
+      });
   }
 
   registerArtisan(artisan: ArtisanRegistration) {
@@ -58,12 +117,12 @@ export class AuthService {
     );
   }
 
-  saveToken(token: string) {
-    localStorage.setItem('token', token);
-  }
-
   getToken() {
     return localStorage.getItem('token');
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem('refreshToken');
   }
 
   removeToken() {
@@ -143,5 +202,32 @@ export class AuthService {
       currentPassword: currentPassword,
       newPassword: newPassword,
     });
+  }
+
+  saveTokens(tokens: AuthResponse) {
+    localStorage.setItem('token', tokens.token);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+    this.isLoggedIn$.next(true);
+    this.userRole$.next(this.getUserRole());
+    console.log('[AuthService] Tokens saved successfully');
+  }
+
+  private refreshInProgress: Observable<AuthResponse> | null = null;
+  refreshToken() {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token'));
+    }
+    if (!this.refreshInProgress) {
+      this.refreshInProgress = this.http
+        .post<AuthResponse>(`${this.apiUrl}/refresh-token`, {
+          token: refreshToken,
+        })
+        .pipe(
+          finalize(() => (this.refreshInProgress = null)),
+          shareReplay(1)
+        );
+    }
+    return this.refreshInProgress;
   }
 }

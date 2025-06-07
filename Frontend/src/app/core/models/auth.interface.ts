@@ -29,6 +29,7 @@ export interface DeliveryPartnerRegistration {
 
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
 }
 
 export interface CheckExist {

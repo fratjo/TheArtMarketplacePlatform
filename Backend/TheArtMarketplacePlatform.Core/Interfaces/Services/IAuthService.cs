@@ -10,10 +10,12 @@ namespace TheArtMarketplacePlatform.Core.Interfaces.Services
     {
         Task<bool> CheckEmailExistsAsync(string email);
         Task<bool> CheckUsernameExistsAsync(string username);
-        Task<string> RegisterArtisanAsync(RegisterArtisanRequest request);
-        Task<string> RegisterCustomerAsync(RegisterCustomerRequest request);
-        Task<string> RegisterDeliveryPartnerAsync(RegisterDeliveryPartnerRequest request);
-        Task<string> LoginUserAsync(LoginRequest request);
+        Task<AuthResponse> RegisterArtisanAsync(RegisterArtisanRequest request);
+        Task<AuthResponse> RegisterCustomerAsync(RegisterCustomerRequest request);
+        Task<AuthResponse> RegisterDeliveryPartnerAsync(RegisterDeliveryPartnerRequest request);
+        Task<AuthResponse> LoginUserAsync(LoginRequest request);
+        Task<AuthResponse?> RefreshTokenAsync(string refreshToken);
+        Task<bool> LogoutUserAsync(Guid userId, string refreshToken);
         Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request);
     }
 }

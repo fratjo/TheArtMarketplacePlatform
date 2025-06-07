@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheArtMarketplacePlatform.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using TheArtMarketplacePlatform.DataAccessLayer;
 namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 {
     [DbContext(typeof(TheArtMarketplacePlatformDbContext))]
-    partial class TheArtMarketplacePlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250607090309_AddRefreshToken")]
+    partial class AddRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,8 +416,8 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

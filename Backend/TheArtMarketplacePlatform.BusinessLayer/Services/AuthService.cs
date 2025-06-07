@@ -9,6 +9,7 @@ using TheArtMarketplacePlatform.Core.DTOs;
 using TheArtMarketplacePlatform.Core.Entities;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
 using TheArtMarketplacePlatform.Core.Interfaces.Repositories;
+using System.Security.Cryptography;
 
 namespace TheArtMarketplacePlatform.BusinessLayer.Services
 {
@@ -16,7 +17,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
     {
         public async Task<bool> CheckEmailExistsAsync(string email) => await _userRepository.GetUserByEmailAsync(email) is not null;
         public async Task<bool> CheckUsernameExistsAsync(string username) => await _userRepository.GetUserByUsernameAsync(username) is not null;
-        public async Task<string> RegisterArtisanAsync(RegisterArtisanRequest request)
+        public async Task<AuthResponse> RegisterArtisanAsync(RegisterArtisanRequest request)
         {
             // Check if the email is already in use
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
@@ -54,14 +55,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             // Check if the user was saved successfully
             if (user.Id == Guid.Empty) throw new Exception("Failed to register new Artisan.");
 
-            // Generate a JWT token
-            var token = GenerateToken(user);
-
-            // Return the token
-            return token;
+            return await GenerateAuthResponse(user);
         }
 
-        public async Task<string> RegisterCustomerAsync(RegisterCustomerRequest request)
+        public async Task<AuthResponse> RegisterCustomerAsync(RegisterCustomerRequest request)
         {
             // Check if the email is already in use
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
@@ -94,14 +91,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             // Check if the user was saved successfully
             if (user.Id == Guid.Empty) throw new Exception("Failed to register new Customer.");
 
-            // Generate a JWT token
-            var token = GenerateToken(user);
-
-            // Return the token
-            return token;
+            return await GenerateAuthResponse(user);
         }
 
-        public async Task<string> RegisterDeliveryPartnerAsync(RegisterDeliveryPartnerRequest request)
+        public async Task<AuthResponse> RegisterDeliveryPartnerAsync(RegisterDeliveryPartnerRequest request)
         {
             // Check if the email is already in use
             var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
@@ -133,14 +126,10 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             // Check if the user was saved successfully
             if (user.Id == Guid.Empty) throw new Exception("Failed to register new DeliveryPartner.");
 
-            // Generate a JWT token
-            var token = GenerateToken(user);
-
-            // Return the token
-            return token;
+            return await GenerateAuthResponse(user);
         }
 
-        public async Task<string> LoginUserAsync(LoginRequest request)
+        public async Task<AuthResponse> LoginUserAsync(LoginRequest request)
         {
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
 
@@ -159,15 +148,47 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             // Check if the user is deleted
             if (user.IsDeleted) throw new InactiveAccountException("Account is deleted.");
 
+            return await GenerateAuthResponse(user);
+        }
+
+        private async Task<AuthResponse> GenerateAuthResponse(User user)
+        {
             // Generate a JWT token
-            var token = GenerateToken(user);
+            var token = GenerateToken(user, DateTime.UtcNow.AddMinutes(1));
+            var expirationDate = DateTime.UtcNow.AddHours(24 * 7);
+            var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+            var existingRefreshToken = await _userRepository.GetRefreshTokensByUserIdAsync(user.Id);
+            if (existingRefreshToken.Any())
+            {
+                // Revoke existing refresh tokens
+                foreach (var rt in existingRefreshToken)
+                {
+                    rt.IsRevoked = true;
+                }
+            }
+
+            var newToken = new Core.Entities.RefreshToken
+            {
+                UserId = user.Id,
+                Token = refreshToken,
+                IsRevoked = false,
+                CreatedAt = DateTime.UtcNow,
+                ExpiryDate = expirationDate
+            };
+
+            await _userRepository.SaveRefreshTokenAsync(newToken);
 
             // Return the token
-            return token;
+            return new AuthResponse
+            {
+                Token = token,
+                RefreshToken = refreshToken
+            };
         }
 
 
-        private string GenerateToken(User user)
+        private string GenerateToken(User user, DateTime expirationDate)
         {
             var claims = new List<Claim>
             {
@@ -184,7 +205,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(3),
+                expires: expirationDate,
                 signingCredentials: creds
             );
 
@@ -240,6 +261,36 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
 
             // Save the updated user
             return await _userRepository.UpdateUserAsync(user);
+        }
+
+        public async Task<AuthResponse?> RefreshTokenAsync(string refreshToken)
+        {
+            var tokenEntry = await _userRepository.GetRefreshTokenAsync(refreshToken);
+            if (tokenEntry == null || tokenEntry.IsRevoked || tokenEntry.ExpiryDate < DateTime.UtcNow)
+                return null;
+
+            var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+            if (user is null) return null;
+
+            // Generate a new JWT token and refresh token
+            return await GenerateAuthResponse(user);
+        }
+
+        public async Task<bool> LogoutUserAsync(Guid userId, string refreshToken)
+        {
+            // Check if the user exists
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user is null) throw new NotFoundException("User not found.");
+
+            // Check if the refresh token is valid
+            var existingTokens = await _userRepository.GetRefreshTokensByUserIdAsync(userId);
+            var tokenToRevoke = existingTokens.FirstOrDefault(rt => rt.Token == refreshToken && !rt.IsRevoked);
+            if (tokenToRevoke is null) throw new NotFoundException("Refresh token not found or already revoked.");
+
+            // Revoke the refresh token
+            tokenToRevoke.IsRevoked = true;
+
+            return await _userRepository.UpdateRefreshTokenAsync(tokenToRevoke);
         }
     }
 }

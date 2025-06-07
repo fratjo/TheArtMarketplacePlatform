@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using TheArtMarketplacePlatform.Core.Interfaces.Services;
 using TheArtMarketplacePlatform.Core.DTOs;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace TheArtMarketplacePlatform.WebAPI.Controllers
@@ -34,32 +35,73 @@ namespace TheArtMarketplacePlatform.WebAPI.Controllers
         [HttpPost("register/artisan")]
         public async Task<IActionResult> RegisterArtisan([FromBody] RegisterArtisanRequest request)
         {
-            var token = await _authService.RegisterArtisanAsync(request);
-            return Ok(new { Token = token });
+            var tokens = await _authService.RegisterArtisanAsync(request);
+            return Ok(tokens);
         }
 
         // api/auth/register/customer
         [HttpPost("register/customer")]
         public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerRequest request)
         {
-            var token = await _authService.RegisterCustomerAsync(request);
-            return Ok(new { Token = token });
+            var tokens = await _authService.RegisterCustomerAsync(request);
+            return Ok(tokens);
         }
 
         // api/auth/register/delivery-partner
         [HttpPost("register/delivery-partner")]
         public async Task<IActionResult> RegisterDeliveryPartner([FromBody] RegisterDeliveryPartnerRequest request)
         {
-            var token = await _authService.RegisterDeliveryPartnerAsync(request);
-            return Ok(new { Token = token });
+            var tokens = await _authService.RegisterDeliveryPartnerAsync(request);
+            return Ok(tokens);
         }
 
         // api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var token = await _authService.LoginUserAsync(request);
-            return Ok(new { Token = token });
+            var tokens = await _authService.LoginUserAsync(request);
+            return Ok(tokens);
+        }
+
+        // api/auth/logout
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] RefreshToken refreshToken)
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out var userId))
+            {
+                return Unauthorized(new { Message = "User not authenticated." });
+            }
+
+            if (string.IsNullOrEmpty(refreshToken.Token))
+            {
+                return BadRequest(new { Message = "Refresh token is required." });
+            }
+
+            var result = await _authService.LogoutUserAsync(Guid.Parse(id), refreshToken.Token);
+            if (result)
+            {
+                return Ok(new { Message = "Logged out successfully." });
+            }
+            return BadRequest(new { Message = "Failed to log out." });
+        }
+
+        // api/auth/refresh-token
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshToken refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken.Token))
+            {
+                return BadRequest(new { Message = "Refresh token is required." });
+            }
+
+            var tokens = await _authService.RefreshTokenAsync(refreshToken.Token);
+            if (tokens == null)
+            {
+                return Unauthorized(new { Message = "Invalid refresh token." });
+            }
+
+            return Ok(tokens);
         }
 
         [HttpPost("change-password")]

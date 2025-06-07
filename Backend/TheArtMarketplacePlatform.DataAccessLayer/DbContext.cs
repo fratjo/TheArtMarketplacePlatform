@@ -12,6 +12,7 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
         }
 
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public DbSet<CustomerProfile> CustomerProfiles { get; set; } = null!;
         public DbSet<ArtisanProfile> ArtisanProfiles { get; set; } = null!;
         public DbSet<DeliveryPartnerProfile> DeliveryPartnerProfiles { get; set; } = null!;
@@ -44,6 +45,22 @@ namespace TheArtMarketplacePlatform.DataAccessLayer
                 entity.Property(u => u.CreatedAt).IsRequired().HasDefaultValueSql("GETDATE()");
                 entity.Property(u => u.UpdatedAt).IsRequired().HasDefaultValueSql("GETDATE()");
                 entity.Property(u => u.DeletedAt).IsRequired(false);
+            });
+
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(rt => rt.Id);
+                entity.Property(rt => rt.Token).IsRequired().HasMaxLength(1000);
+                entity.HasIndex(rt => rt.Token).IsUnique();
+                entity.Property(rt => rt.UserId).IsRequired();
+                entity.Property(rt => rt.ExpiryDate).IsRequired();
+                entity.Property(rt => rt.IsRevoked).IsRequired().HasDefaultValue(false);
+                entity.Property(rt => rt.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+                entity.HasOne(rt => rt.User)
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(rt => rt.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ArtisanProfile entity configuration

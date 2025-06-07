@@ -44,4 +44,15 @@ namespace TheArtMarketplacePlatform.Core.DTOs
         public string CurrentPassword { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;
     }
+
+    public class AuthResponse
+    {
+        public string Token { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+    }
+
+    public class RefreshToken
+    {
+        public string Token { get; set; } = string.Empty;
+    }
 }

@@ -221,6 +221,37 @@ CREATE INDEX [IX_ProductFavorites_ProductId] ON [ProductFavorites] ([ProductId])
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES (N'20250604133646_AddProductFavorite', N'9.0.4');
 
+CREATE TABLE [RefreshTokens] (
+    [Id] int NOT NULL IDENTITY,
+    [Token] nvarchar(500) NOT NULL,
+    [ExpiryDate] datetime2 NOT NULL,
+    [IsRevoked] bit NOT NULL DEFAULT CAST(0 AS bit),
+    [CreatedAt] datetime2 NOT NULL DEFAULT (GETDATE()),
+    [UserId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_RefreshTokens] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_RefreshTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX [IX_RefreshTokens_Token] ON [RefreshTokens] ([Token]);
+
+CREATE INDEX [IX_RefreshTokens_UserId] ON [RefreshTokens] ([UserId]);
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250607090309_AddRefreshToken', N'9.0.4');
+
+DROP INDEX [IX_RefreshTokens_Token] ON [RefreshTokens];
+DECLARE @var3 sysname;
+SELECT @var3 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[RefreshTokens]') AND [c].[name] = N'Token');
+IF @var3 IS NOT NULL EXEC(N'ALTER TABLE [RefreshTokens] DROP CONSTRAINT [' + @var3 + '];');
+ALTER TABLE [RefreshTokens] ALTER COLUMN [Token] nvarchar(1000) NOT NULL;
+CREATE UNIQUE INDEX [IX_RefreshTokens_Token] ON [RefreshTokens] ([Token]);
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250607092926_RefreshToken1000Length', N'9.0.4');
+
 COMMIT;
 GO
 

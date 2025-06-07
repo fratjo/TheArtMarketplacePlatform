@@ -134,7 +134,7 @@ export class RegisterComponent {
       next: (response) => {
         console.log('Registration successful', response);
         // save token
-        this.authService.saveToken(response.token);
+        this.authService.saveTokens(response);
       },
       error: (error) => {
         console.error('Registration failed', error);
@@ -157,7 +157,7 @@ export class RegisterComponent {
       next: (response) => {
         console.log('Registration successful', response);
         // save token
-        this.authService.saveToken(response.token);
+        this.authService.saveTokens(response);
       },
       error: (error) => {
         console.error('Registration failed', error);
@@ -182,7 +182,7 @@ export class RegisterComponent {
       next: (response) => {
         console.log('Registration successful', response);
         // save token
-        this.authService.saveToken(response.token);
+        this.authService.saveTokens(response);
       },
       error: (error) => {
         console.error('Registration failed', error);

@@ -44,7 +44,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('Login successful', response);
           // save token
-          this.authService.saveToken(response.token);
+          this.authService.saveTokens(response);
         },
         error: (error) => {
           console.error('Login failed', error);

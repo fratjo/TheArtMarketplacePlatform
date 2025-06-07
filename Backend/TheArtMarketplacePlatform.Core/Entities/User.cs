@@ -22,6 +22,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
         public ArtisanProfile? ArtisanProfile { get; set; }
         public CustomerProfile? CustomerProfile { get; set; }
         public DeliveryPartnerProfile? DeliveryPartnerProfile { get; set; }
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 
     public enum UserRole
@@ -73,5 +74,17 @@ namespace TheArtMarketplacePlatform.Core.Entities
 
         public User User { get; set; } = null!;
         public ICollection<Order> Orders { get; set; } = null!;
+    }
+
+    public class RefreshToken
+    {
+        public int Id { get; set; }
+        public string Token { get; set; } = string.Empty;
+        public DateTime ExpiryDate { get; set; } = DateTime.Now.AddDays(30);
+        public bool IsRevoked { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public Guid UserId { get; set; }
+        public User User { get; set; } = null!;
     }
 }

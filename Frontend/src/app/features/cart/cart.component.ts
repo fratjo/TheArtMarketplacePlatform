@@ -200,7 +200,7 @@ export class CartComponent implements OnInit {
       next: (response) => {
         console.log('Login successful', response);
         // save token
-        this.authService.saveToken(response.token);
+        this.authService.saveTokens(response);
         window.location.href = '/cart';
       },
       error: (error) => {
