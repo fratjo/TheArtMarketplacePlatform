@@ -88,6 +88,8 @@
 
 -   [x] FluentValidation
 
+-   [x] DTOs (Request/Respone)
+
 -   [x] Automatic Seeding & Migrating
 
 -   [x] Live Password Validation
