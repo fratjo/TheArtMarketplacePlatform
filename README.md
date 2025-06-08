@@ -98,6 +98,8 @@
 
 -   [x] Some work with RxJs
 
+-   [x] JWT information for validate route access (JWT UserId must be the same as the route UserId)
+
 ## Architecture
 
 As said is an N-Tier Architecture, with veticality on roles.
