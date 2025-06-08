@@ -127,6 +127,8 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
         {
             var users = await userRepository.GetAllUsersAsync();
 
+            users = users.Where(u => u.Role != UserRole.Admin); // Exclude Admins from the list
+
             if (!string.IsNullOrEmpty(search))
             {
                 users = users.Where(u =>

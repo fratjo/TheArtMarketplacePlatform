@@ -24,11 +24,17 @@
 
 [x] Hashing & Salting password
 
-[x] Browse marketplace
+[x] Change Password (Current, New, NewRepeat)
 
-[x] Filters data depending the page
+[x] Manage Profile infos as Username, Email, ...
 
-[x] Sorting data depending the page
+[x] Browse marketplace and see products details
+
+[x] Add products to ShoppingCart
+
+[x] Filters data depending the page. Different types of filters (select, multi-select, search, ...)
+
+[x] Sorting data depending the page. Different types of sorting (select, table-title, ...)
 
 ### Admin
 
@@ -48,11 +54,25 @@
 
 ### Customer
 
-[x] Browse Marketplace
+[x] Browse marketplace and see products details
 
-[x] Leave reviews on bought products
+[x] Leave reviews and rating on bought products
 
 [x] Track own orders
+
+[x] Mark/Unmark products as favorites
+
+[x] View favorites
+
+[x] Add products to ShoppingCart
+
+[x] Proceed to ShoppingCart checkout
+
+[x] Select delivery partner
+
+[x] Receive order(s) confirmation (if multiples artisans involved in the order, one order is create for each artisan involved)
+
+[x] => No dashboard provided but a navbar with all access needed
 
 ### Delivery Partner
 
@@ -60,9 +80,11 @@
 
 [x] Update delivery status
 
+[x] Get summary through Dashboard
+
 ## Extra-features
 
-[x] Refresh Opaque Token
+[x] Refresh Opaque Token (JWT short living + opaque token long living)
 
 [x] FluentValidation
 
@@ -73,3 +95,9 @@
 [x] Live Email/Username Checking
 
 [x] Some work with RxJs
+
+## Architecture
+
+As said is an N-Tier Architecture, with veticality on roles.
+
+Frontend Role service -> Api Role Controller -> Role Service -> Entity Repository
