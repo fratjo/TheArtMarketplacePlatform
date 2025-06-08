@@ -254,6 +254,11 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
             if (user is null) return null;
 
+            if (user.IsDeleted)
+                throw new InactiveAccountException("Account is deleted.");
+            if (user.Status != UserStatus.Active)
+                throw new InactiveAccountException("Account is inactive.");
+
             // Generate a new JWT token and refresh token
             return await GenerateAuthResponse(user);
         }

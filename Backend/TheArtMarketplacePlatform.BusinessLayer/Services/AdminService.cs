@@ -25,6 +25,16 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             user.Status = user.Status == UserStatus.Active ? UserStatus.Inactive : UserStatus.Active;
             user.UpdatedAt = DateTime.UtcNow;
 
+            if (user.Status == UserStatus.Inactive)
+            {
+                var tokens = await userRepository.GetRefreshTokensByUserIdAsync(userId);
+                foreach (var token in tokens)
+                {
+                    token.IsRevoked = true;
+                }
+            }
+
+
             await userRepository.UpdateUserAsync(user);
             return true;
         }
@@ -54,9 +64,18 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             }
 
             user.IsDeleted = user.IsDeleted ? false : true;
-            user.Status = user.IsDeleted ? UserStatus.Inactive : UserStatus.Active;
             user.DeletedAt = DateTime.UtcNow;
             user.UpdatedAt = DateTime.UtcNow;
+
+            if (user.IsDeleted)
+            {
+                user.Status = UserStatus.Inactive;
+                var tokens = await userRepository.GetRefreshTokensByUserIdAsync(user.Id);
+                foreach (var token in tokens)
+                {
+                    token.IsRevoked = true;
+                }
+            }
 
             await userRepository.UpdateUserAsync(user);
             return true;
