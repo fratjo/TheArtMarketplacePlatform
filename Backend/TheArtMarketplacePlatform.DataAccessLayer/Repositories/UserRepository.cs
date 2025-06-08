@@ -110,6 +110,15 @@ namespace TheArtMarketplacePlatform.DataAccessLayer.Repositories
                 .FirstOrDefaultAsync(rt => rt.Token == token);
         }
 
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _context.Users
+                .Include(u => u.CustomerProfile)
+                .Include(u => u.ArtisanProfile)
+                .Include(u => u.DeliveryPartnerProfile)
+                .ToListAsync();
+        }
+
         #endregion
     }
 }

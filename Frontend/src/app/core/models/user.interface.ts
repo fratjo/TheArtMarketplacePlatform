@@ -29,6 +29,14 @@ export interface User {
   deletedAt?: Date | null;
 }
 
+export interface UserFullProfile extends User {
+  artisanProfile?: ArtisanProfile;
+  customerProfile?: CustomerProfile;
+  deliveryPartnerProfile?: DeliveryPartnerProfile;
+}
+
+export type UserFullProfiles = UserFullProfile[];
+
 export interface UserProfileStrategy {
   profileType: 'artisan' | 'customer' | 'deliverypartner';
 }

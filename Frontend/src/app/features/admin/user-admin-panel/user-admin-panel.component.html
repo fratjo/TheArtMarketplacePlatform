@@ -1,0 +1,116 @@
+<div class="container d-flex flex-column gap-3 p-3 my-3">
+  <h2>User Admin Panel</h2>
+  <hr />
+  <div class="row mb-2">
+    <div class="col-12 col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by username or email"
+        [(ngModel)]="filters.search"
+        (ngModelChange)="applyFilters()"
+        name="search"
+      />
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>
+          <select
+            class="form-select form-select-sm mt-1"
+            [(ngModel)]="filters.role"
+            (change)="applyFilters()"
+            name="role-filter"
+          >
+            <option value="">All</option>
+            <option value="Customer">Customer</option>
+            <option value="Artisan">Artisan</option>
+            <option value="Admin">Admin</option>
+            <option value="DeliveryPartner">DeliveryPartner</option>
+          </select>
+        </th>
+        <th>
+          <select
+            class="form-select form-select-sm mt-1"
+            [(ngModel)]="filters.status"
+            (change)="applyFilters()"
+            name="status-filter"
+          >
+            <option value="">All</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </th>
+        <th>CreatedAt</th>
+        <th>Infos</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users$ | async; track user) {
+      <tr
+        [ngClass]="{
+          'table-danger': user.isDeleted,
+          'table-warning': user.status === 'Inactive'
+        }"
+      >
+        <td>
+          @if (user.role === "Artisan") {
+          <a
+            [routerLink]="['/admin/panel/products']"
+            [queryParams]="{ artisan: user.username }"
+          >
+            {{ user.username }}
+          </a>
+          } @else { {{ user.username }} }
+        </td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.status }}</td>
+        <td>{{ user.createdAt | date : "short" }}</td>
+        <td>
+          <ng-container *ngFor="let key of getExtraKeys(user)">
+            <strong>{{ key }}:</strong> {{ user[key] ?? "-" }}<br />
+          </ng-container>
+        </td>
+        <td>
+          <button
+            class="btn btn-warning btn-sm me-1"
+            (click)="toggleActive(user)"
+            [title]="user.status === 'Active' ? 'Désactiver' : 'Activer'"
+          >
+            <i
+              [ngClass]="
+                user.status === 'Active'
+                  ? 'bi bi-pause-circle'
+                  : 'bi bi-check-circle'
+              "
+            ></i>
+          </button>
+          <ng-container *ngIf="!user.isDeleted">
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="toggleDelete(user)"
+              title="Supprimer"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="user.isDeleted">
+            <button
+              class="btn btn-outline-success btn-sm"
+              (click)="toggleDelete(user)"
+              title="Restaurer"
+            >
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+          </ng-container>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -69,6 +69,7 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
                 var artisanList = artisans.Split(',').Select(a => a.Trim()).ToList();
                 products = products.Where(p => p.Artisan != null && artisanList.Contains(p.Artisan.UserId.ToString(), StringComparer.OrdinalIgnoreCase)).ToList();
             }
+
             if (!string.IsNullOrEmpty(categories))
             {
                 var categoryList = categories.Split(',').Select(c => c.Trim()).ToList();

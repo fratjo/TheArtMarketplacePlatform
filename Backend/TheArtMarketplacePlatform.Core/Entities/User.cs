@@ -36,8 +36,7 @@ namespace TheArtMarketplacePlatform.Core.Entities
     public enum UserStatus
     {
         Active,
-        Inactive,
-        Banned
+        Inactive
     }
 
     public class ArtisanProfile

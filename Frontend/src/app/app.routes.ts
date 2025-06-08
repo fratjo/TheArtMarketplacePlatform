@@ -116,6 +116,26 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'admin',
+    canActivate: [roleGuard('admin')],
+    children: [
+      {
+        path: 'panel/users',
+        loadComponent: () =>
+          import(
+            './features/admin/user-admin-panel/user-admin-panel.component'
+          ).then((c) => c.UserAdminPanelComponent),
+      },
+      {
+        path: 'panel/products',
+        loadComponent: () =>
+          import(
+            './features/admin/product-admin-panel/product-admin-panel.component'
+          ).then((c) => c.ProductAdminPanelComponent),
+      },
+    ],
+  },
+  {
     path: 'cart',
     loadComponent: () =>
       import('./features/cart/cart.component').then((c) => c.CartComponent),

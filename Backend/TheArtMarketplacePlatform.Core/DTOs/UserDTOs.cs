@@ -13,6 +13,26 @@ namespace TheArtMarketplacePlatform.Core.DTOs
         public string? Role { get; set; }
     }
 
+    public class UserFullProfileResponse
+    {
+        public Guid Id { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string? Email { get; set; }
+        public string? Status { get; set; }
+        public string? Role { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
+        // Customer-specific
+        public string? ShippingAddress { get; set; }
+
+        // Artisan-specific
+        public string? Bio { get; set; }
+        public string? City { get; set; }
+    }
+
     public class CustomerProfileResponse
     {
         public Guid Id { get; set; }

@@ -46,8 +46,24 @@
       'deliverypartner' ) {
       <a class="btn" href="/delivery-partner/dashboard">Dashboard</a>
       <a class="btn" href="/delivery-partner/deliveries">Deliveries</a>
-      } @else if ( (isLoggedIn$ | async) && (userRole$ | async) === 'admin' ) {}
-      @else {
+      } @else if ( (isLoggedIn$ | async) && (userRole$ | async) === 'admin' ) {
+      <!-- TODO -->
+      <a
+        class="btn"
+        href="/admin/panel/users"
+        [routerLinkActiveOptions]="{ exact: false }"
+        [routerLinkActive]="'active'"
+        >Users Panel</a
+      >
+      <a
+        class="btn"
+        href="/admin/panel/products"
+        [routerLinkActiveOptions]="{ exact: false }"
+        [routerLinkActive]="'active'"
+        >Products Panel</a
+      >
+      <!-- TODO -->
+      } @else {
       <a
         class="btn"
         href="/products/catalog"
@@ -69,9 +85,9 @@
       </a>
       } @if ( (isLoggedIn$ | async) === false ) {
       <a class="btn" href="/login">Login</a>
-      } @if ( isLoggedIn$ | async ) {
+      } @if ( (isLoggedIn$ | async) ) { @if( (userRole$ | async) !== 'admin' ) {
       <a class="btn" href="/profile">Profile</a>
-      @if ( (userRole$ | async) === 'customer' ) {
+      } @if ( (userRole$ | async) === 'customer' ) {
       <a class="btn" href="/customer/favorites">
         <i class="bi bi-heart mx-1"></i>
       </a>

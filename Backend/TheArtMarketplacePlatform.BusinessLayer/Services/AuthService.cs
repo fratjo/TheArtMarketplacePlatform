@@ -140,14 +140,13 @@ namespace TheArtMarketplacePlatform.BusinessLayer.Services
             // Verify the password
             if (!VerifyPassword(request.Password, user.PasswordSalt, user.PasswordHash)) throw new InvalidCredentialsException("Invalid email or password.");
 
+            // Check if the user is deleted
+            if (user.IsDeleted) throw new InactiveAccountException("Account is deleted.");
+
             // Verify if the user is active
             if (user.Status != UserStatus.Active) throw new InactiveAccountException("Account is inactive.");
 
-            // Check if account is banned 
-            if (user.Status == UserStatus.Banned) throw new InactiveAccountException("Account is banned.");
 
-            // Check if the user is deleted
-            if (user.IsDeleted) throw new InactiveAccountException("Account is deleted.");
 
             return await GenerateAuthResponse(user);
         }

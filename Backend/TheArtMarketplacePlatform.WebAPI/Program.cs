@@ -59,6 +59,7 @@ builder.Services.AddOpenApi();
 
 // Services
 builder.Services.AddScoped<IGuestService, GuestService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IArtisanService, ArtisanService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
