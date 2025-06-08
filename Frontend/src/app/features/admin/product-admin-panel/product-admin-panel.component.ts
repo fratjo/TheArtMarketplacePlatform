@@ -20,7 +20,7 @@ export class ProductAdminPanelComponent implements OnInit {
   filters: any = {
     search: '',
     artisan: '',
-    categorty: '',
+    category: '',
     sortBy: '',
     sortOrder: '',
   };
