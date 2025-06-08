@@ -116,3 +116,24 @@ Frontend Role service -> Api Role Controller -> Role Service -> Entity Repositor
 | Artisan          | artisan@marketplace.com         | Password1! |
 | Customer         | customer@marketplace.com        | Password1! |
 | Delivery Partner | deliverypartner@marketplace.com | Password1! |
+
+## Start App
+
+Download last "Examen Release"
+
+**! Don't forget to provide your own credentials for the database!**  
+Database connection settings are located in:  
+`Backend/TheArtMarketplacePlatform.WebAPI/appsettings.json`
+
+Frontend run :
+
+-   npm install
+-   ng serve
+
+Backend run :
+
+-   dotnet run --projet ./TheArtMarketplacePlatform.WebAPI
+
+> ⚠️ Database migration and seeding should run automatically on first start.  
+> If you encounter issues, check your connection string in `Backend/TheArtMarketplacePlatform.WebAPI/appsettings.json`.
+> If the database is not created or updated, try running a manual migration.
