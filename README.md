@@ -100,6 +100,8 @@
 
 -   [x] JWT information for validate route access (JWT UserId must be the same as the route UserId)
 
+-   [x] Role based Guard for limite page and childrens access
+
 ## Architecture
 
 As said is an N-Tier Architecture, with veticality on roles.
