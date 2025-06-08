@@ -1,6 +1,6 @@
 # TheArtMarketplacePlatform
 
-## Stack
+## Technologies
 
 -   [x] Angular
 
@@ -107,3 +107,12 @@
 As said is an N-Tier Architecture, with veticality on roles.
 
 Frontend Role service -> Api Role Controller -> Role Service -> Entity Repository
+
+## Test Users
+
+| Role             | Email                           | Password   |
+| ---------------- | ------------------------------- | ---------- |
+| Admin            | admin@marketplace.com           | Password1! |
+| Artisan          | artisan@marketplace.com         | Password1! |
+| Customer         | customer@marketplace.com        | Password1! |
+| Delivery Partner | deliverypartner@marketplace.com | Password1! |
